@@ -1,4 +1,4 @@
-
+ANH EM CHÚ Ý KHÔNG ĐẨY CODE LÊN NHÁNH MAIN , NHÁNH MAIN ĐÃ DEPLOYED NẾU ĐẨY LỖI TỰ CHỊU
  Backend Architecture
  ### Folder Structure
  - auth : xử lý authentication
