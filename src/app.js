@@ -12,10 +12,8 @@ app.use(compression()); // data compression
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
 //init db
-require("./dbs/init.mongodb");
+//require("./dbs/init.mongodb");
 
 //init routes
 app.use("/", require("./routes"));
@@ -27,7 +25,6 @@ app.use((req, res, next) => {
   next(error);
 });
 
-
 // hàm quản lí lỗi
 app.use((error, req, res, next) => {
   const statusCode = error.status || 500;
@@ -38,6 +35,5 @@ app.use((error, req, res, next) => {
     message: error.message || "Internal Server Error",
   });
 });
-
 
 module.exports = app;
