@@ -1,10 +1,16 @@
 "use strict";
 
 const mongoose = require("mongoose");
-const {
-  db: { host, port, name },
-} = require("../config/config.mongodb");
-const connectString = `mongodb://${host}:${port}/${name}`;
+const env = process.env.NODE_ENV;
+var connectString = "";
+if (env === "dev") {
+  const {
+    db: { host, port, name },
+  } = require("../config/config.mongodb");
+  connectString = `mongodb://${host}:${port}/${name}`;
+} else {
+  connectString = process.env.MONGO_CONNECTION_STRING;
+}
 
 class Database {
   constructor() {
