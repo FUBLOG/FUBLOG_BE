@@ -17,7 +17,8 @@
     "compression": "^1.7.4",
     "dotenv": "^16.3.2",
     "express": "^4.18.2",
-    "mongoose": "^8.1.0"
+    "mongoose": "^8.1.0",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
     "helmet": "^7.1.0",

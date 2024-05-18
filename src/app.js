@@ -3,8 +3,7 @@ const compression = require("compression");
 const express = require("express");
 const { default: helmet } = require("helmet");
 const morgan = require("morgan");
-const app = express();
-
+const { app, server } = require("./config/socket.config");
 //int middlewares
 app.use(morgan("dev")); //config request return
 app.use(helmet()); //config security request
@@ -13,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //init db
-//require("./dbs/init.mongodb");
+require("./dbs/init.mongodb");
 
 //init routes
 app.use("/", require("./routes"));
