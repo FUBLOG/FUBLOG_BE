@@ -3,7 +3,7 @@
 const {
   ReasonPhrases,
   StatusCodes,
-} = require("../../utils/errorConstant/httpStatusCode");
+} = require("../errorConstant/httpStatusCode");
 
 class ErrorResponse extends Error {
   constructor(message, status) {
@@ -115,5 +115,4 @@ module.exports = {
   BadGateway,
   ServiceUnavailable,
   GatewayTimeout,
-  
 };
