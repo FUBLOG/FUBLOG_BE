@@ -15,28 +15,30 @@ var userInfoSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      required: true,
       default: "",
     },
     cover_photo: {
       type: String,
-      required: true,
       default: "",
     },
     bio: {
       type: String,
-      required: true,
       default: "",
     },
     education: {
       type: String,
-      required: true,
       default: "",
     },
     relationship: {
       type: String,
-      required: true,
-      default: "",
+      enum: [
+        "single",
+        "married",
+        "divorced",
+        "complicated",
+        "in a relationship",
+      ],
+      default: "single",
     },
   },
   {

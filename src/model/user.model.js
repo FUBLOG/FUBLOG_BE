@@ -4,10 +4,14 @@ const COLLECTION_NAME = "Users";
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema(
   {
-    userSlug: {
+    profileHash: {
       type: String,
       required: true,
       unique: true,
+    },
+    displayName: {
+      type: String,
+      required: true,
     },
     firstName: {
       type: String,
@@ -32,7 +36,6 @@ var userSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
-      required: true,
       unique: true,
     },
     password: {
