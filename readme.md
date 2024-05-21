@@ -1,4 +1,4 @@
-
+ANH EM CHÚ Ý KHÔNG ĐẨY CODE LÊN NHÁNH MAIN , NHÁNH MAIN ĐÃ DEPLOYED NẾU ĐẨY LỖI TỰ CHỊU
  Backend Architecture
  ### Folder Structure
  - auth : xử lý authentication
@@ -9,6 +9,7 @@
  - repo : file viết query database
  - service : xử lý nghiệp vụ
  - util : các hàm common
+ - router: config path
  .env : biến môi trường
 
 

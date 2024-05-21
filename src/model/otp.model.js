@@ -19,10 +19,14 @@ const otpSchema = new Schema(
       default: "pending",
       enum: ["pending", "verified", "block"],
     },
+    otp_sign: {
+      type: String,
+      required: true,
+    },
     expire_at: {
       type: Date,
       default: Date.now,
-      expires: 60,
+      expires: 120,
     },
   },
   {
