@@ -1,4 +1,7 @@
 const post = require('../model/post.model');
+const { OK } = require("../core/response/success.response");
+const postService = require('../services/post.service')
+
 
 const createPost = async(req,res) =>{
     try {
@@ -52,14 +55,48 @@ const UpdateAPost = async (req,res) =>{
 const deletePost = async(req,res)=> {
     try {
         const {id} = req.params;
-        const aPost = await st.findByIdAndDelete(id);
+        const aPost = await post.findByIdAndDelete(id);
         if(!aPost){
             return res.status(404).json({message: `Cannot find id : ${id}`});
         }
-        res.status(200).json(student);
+        res.status(200).json(post);
     } catch (error) {
         res.status(500).json({message: error.message})
     }
+}
+class postController {
+    newpost = async(req, res, next)=> {
+        const result = new OK({
+            message: "Create Post Success",
+            metadata: await postService.createPost(req.body)
+        })
+        result.send(res);
+    };
+    getallpost = async(req, res, next)=>{
+        const result = new OK({
+            message:" View posts Sucess",
+            metadata: await postService.viewpost()
+        })
+    };
+    getApost = async(req, res, next)=>{
+        const result = new OK({
+            message:" View a post Sucess",
+            metadata: await postService.findpost(req.params)
+        })
+    };
+    updatePost = async(req, res, next)=>{
+        const result = new OK({
+            message:" Update a post Sucess",
+            metadata: await postService.updatepost(req.params,req.body)
+        })
+    };
+    deletePost = async(req, res, next)=>{
+        const result = new OK({
+            message:" Update a post Sucess",
+            metadata: await postService.deletepost(req.params)
+        })
+    };
+
 }
 module.exports= {
     createPost,
