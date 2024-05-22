@@ -64,7 +64,7 @@ const deletePost = async(req,res)=> {
         res.status(500).json({message: error.message})
     }
 }
-class postController {
+class postcontroller {
     newpost = async(req, res, next)=> {
         const result = new OK({
             message: "Create Post Success",
@@ -77,31 +77,29 @@ class postController {
             message:" View posts Sucess",
             metadata: await postService.viewpost()
         })
+        result.send(res);
     };
     getApost = async(req, res, next)=>{
         const result = new OK({
             message:" View a post Sucess",
             metadata: await postService.findpost(req.params)
         })
+        result.send(res);
     };
     updatePost = async(req, res, next)=>{
         const result = new OK({
             message:" Update a post Sucess",
             metadata: await postService.updatepost(req.params,req.body)
         })
+        result.send(res);
     };
     deletePost = async(req, res, next)=>{
         const result = new OK({
             message:" Update a post Sucess",
             metadata: await postService.deletepost(req.params)
         })
+        result.send(res);
     };
 
 }
-module.exports= {
-    createPost,
-    getAllPost,
-    getAPost,
-    UpdateAPost,
-    deletePost
-}
+module.exports= new postcontroller();
