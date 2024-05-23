@@ -1,5 +1,6 @@
 "use strict";
 const transporter = require("../config/nodemailer.config");
+const { BadRequestError } = require("../core/response/error.response");
 const { replacePlaceholders } = require("../utils");
 const otpService = require("./otp.service");
 const templateEmailService = require("./template.email.service");
@@ -11,22 +12,24 @@ class EmailService {
     });
     const templateH = template.template_html;
     const content = await replacePlaceholders(templateH, {
-      action_url: `has.io.vn/verify-email?token=${otp}`,
+      action_url: `has.io.vn/welcome-back?token=${otp}`,
     });
     const options = {
-      from: `"Has Team" <${process.env.MAIL_USER}>`,
+      from: `"Has Team" <kaidophan37@gmail.com>`,
       to: email,
       subject: template.template_subject,
       html: content,
     };
-    const result = await transporter.sendMail(options, (err, info) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(info);
-      }
-    });
-    return result;
+
+    try {
+      const result = await this.sendMail(options);
+      return result;
+    } catch (error) {
+      throw new BadRequestError("Send email failed");
+    }
+  };
+  sendMail = async (options, callback) => {
+    return transporter.sendMail(options);
   };
 }
 
