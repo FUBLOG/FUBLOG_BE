@@ -18,12 +18,17 @@ const createNewPost = async({
     postLinkToImages,
     postStatus,
     likes
-})=>{
+},filesdata)=>
+    
+    {
+        const imagelink = filesdata.map(file => file.path);
+        const finalImagePaths = imagelink.length > 0 ? imagelink : [];
+
     return await postModel.create({
         UserID,
         postTagID,
         postContent,
-        postLinkToImages,
+        postLinkToImages: finalImagePaths,
         postStatus,
         likes
 })

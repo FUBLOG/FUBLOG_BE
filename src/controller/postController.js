@@ -68,7 +68,7 @@ class postcontroller {
     newpost = async(req, res, next)=> {
         const result = new OK({
             message: "Create Post Success",
-            metadata: await postService.createPost(req.body)
+            metadata: await postService.createPost(req.body,req.files)
         })
         result.send(res);
     };
