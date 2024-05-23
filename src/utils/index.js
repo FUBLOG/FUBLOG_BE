@@ -46,8 +46,8 @@ const removeNull = (object) => {
   return object;
 };
 
-const convertToObjectId = (id) => {
-  return new mongoose.Types.ObjectId(id);
+const convertToObjectId = (string) => {
+  return mongoose.Types.ObjectId.createFromHexString(string);
 };
 
 const extractUserProfileFromEmail = (email) => {

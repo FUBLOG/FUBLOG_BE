@@ -27,6 +27,13 @@ class AccessController {
     });
     response.send(res);
   };
+  handleRefreshToken = async (req, res, next) => {
+    const response = new OK({
+      message: "Refresh token updated successfully",
+      metadata: await accessService.handleRefreshToken(req.headers),
+    });
+    response.send(res);
+  };
 
   forgotPassword = async (req, res, next) => {
     res.send("Forgot Password");
