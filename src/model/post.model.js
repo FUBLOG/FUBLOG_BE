@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const DOCUMENT_NAME = "Posts";
+const COLLECTION_NAME = "Posts";
 const postSchems = mongoose.Schema({
   UserID: {
     type: String,
@@ -22,10 +24,10 @@ const postSchems = mongoose.Schema({
     required: true,
     default: "public",
   },
-  numberOfLikes: {
-    type: Number,
-    require: true,
-    default: 0,
+  likes: {
+    type: Array,
+    default: [],
   },
-});
+}, {timestamps: true }
+);
 module.exports = mongoose.model("Post", postSchems);
