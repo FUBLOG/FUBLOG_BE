@@ -14,4 +14,9 @@ router.put('/:id', asyncHandler(postcontroller.updatePost));
 
 router.delete('/:id', asyncHandler(postcontroller.deletePost));
 
+router.get('/findPostByTag/:id', asyncHandler(postcontroller.searchPostsByTag));
+
+router.get('/findPostByUser/:id', asyncHandler(postcontroller.searchPostsByUserId));
+
+
 module.exports = router;
