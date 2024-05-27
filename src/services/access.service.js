@@ -14,7 +14,11 @@ const KeyTokenService = require("./keytoken.service");
 const { getInfoData } = require("../utils");
 const userInfoService = require("./userInfo.service");
 const { HEADER } = require("../core/constans/header.constant");
+<<<<<<< HEAD
+
+=======
 const validator = require("../core/validator");
+>>>>>>> da87c34db838cea6c561f762b0beb0c6a0eff9a5
 class AccessService {
   login = async ({ email = "", password = "" }) => {
     const result = await validator.isEmptyObject({
@@ -94,8 +98,11 @@ class AccessService {
   handleRefreshToken = async (headers) => {
     const profileHash = headers[HEADER.CLIENT_ID];
     const refreshToken = headers[HEADER.REFRESH_TOKEN];
+<<<<<<< HEAD
+=======
     if (!profileHash || !refreshToken)
       throw new NotFoundError("Invalid request");
+>>>>>>> da87c34db838cea6c561f762b0beb0c6a0eff9a5
     const keyStore = await KeyTokenService.findUserById(profileHash);
     try {
       const decodeUser = await CryptoService.verifyTokenByRSA(
