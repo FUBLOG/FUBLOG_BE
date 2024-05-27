@@ -12,7 +12,7 @@ class AccessController {
   };
 
   logout = async (req, res, next) => {
-    const profileHash = req.headers[HEADER.CLIENT_ID];
+    const profileHash = req.user.profileHash
     const response = new OK({
       message: "Logout successfully",
       metadata: await accessService.logout(profileHash),
@@ -24,6 +24,13 @@ class AccessController {
     const response = new CREATED({
       message: "Signup successfully , please redirect to login page",
       metadata: await accessService.signupWithMailVerify(req.query.token),
+    });
+    response.send(res);
+  };
+  handleRefreshToken = async (req, res, next) => {
+    const response = new OK({
+      message: "Refresh token updated successfully",
+      metadata: await accessService.handleRefreshToken(req.headers),
     });
     response.send(res);
   };

@@ -1,7 +1,8 @@
-var nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 
-var transporter = nodemailer.createTransport({
-  service: "gmail",
+const transporter = nodemailer.createTransport({
+  host: "email-smtp.ap-southeast-1.amazonaws.com",
+  port: 465,
   secure: true,
   auth: {
     user: process.env.MAIL_USER,
