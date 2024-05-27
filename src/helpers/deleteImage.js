@@ -8,13 +8,11 @@ const cloudinary = require('cloudinary').v2;
       });
       console.log(addressArr)
     try {
-      cloudinary.api
-      .delete_resources(addressArr, 
+      cloudinary.api.delete_resources(addressArr, 
         { type: 'upload', resource_type: 'image' })
         console.log("deleted")
     } catch (error) {
       throw(error)
     }
-  
   }
 module.exports =  deleteImage;

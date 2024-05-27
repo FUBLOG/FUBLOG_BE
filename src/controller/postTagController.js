@@ -1,7 +1,7 @@
 const { OK } = require("../core/response/success.response");
 const postTagService = require("../services/postTag.service");
 
-class postcontroller{
+class postTagController{
     newTag = async(req,res,next)=>{
         const result = new OK({
             message: "Create Tag Successful!",
@@ -42,4 +42,4 @@ class postcontroller{
         result.send(res)
     }
 }
-module.exports = new postcontroller();
+module.exports = new postTagController();

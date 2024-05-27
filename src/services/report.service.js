@@ -8,7 +8,7 @@ class reportService{
     newReport = async(data)=>{
             const create =  await reportModel.create(data);
             if(create.length===0)
-                throw new ConflictRequestError("Content is empty")
+                throw new ConflictRequestError("Report is empty")
             return create;
         } ;
     viewReport = async (id)=>{
@@ -18,7 +18,7 @@ class reportService{
         return view;
     }
     viewAllReport = async()=>{
-        const view = await postTagModel.find()
+        const view = await reportModel.find()
         if(!view)
             throw new NotFoundError();
         return view

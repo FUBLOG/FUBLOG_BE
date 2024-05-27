@@ -10,7 +10,7 @@ router.get('/:id',asyncHandler(postcontroller.getApost));
 
 router.get('/', asyncHandler(postcontroller.getallpost));
 
-router.put('/:id', asyncHandler(postcontroller.updatePost));
+router.patch('/:id', asyncHandler(postcontroller.updatePost));
 
 router.delete('/:id', asyncHandler(postcontroller.deletePost));
 

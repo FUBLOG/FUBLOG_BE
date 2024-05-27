@@ -1,25 +1,27 @@
 const post = require("../model/post.model");
 const { ConflictRequestError } = require("../core/response/error.response");
 const { NotFoundError } = require("../core/response/error.response");
-const { imageFormat,isUserIDExist,createNewPost,isEmpty,deleteimage,deleteOldImage, updatePost} = require("../repository/post.repo");
+const { createNewPost,deleteimage,deleteOldImage, updatePost} = require("../repository/post.repo");
 const { BadRequestError } = require("../core/response/error.response");
 const deleteImage = require("../helpers/deleteImage");
+const { isUserIDExist } = require("../repository/user.repo");
+const validator = require('../core/validator')
 
 
 class postService {
   createPost = async (data,filesdata) => {
-    // const condition =  imageFormat(data.postLinkToImages);
-    const condition2 =  isEmpty(data.postContent);
+    // const condition =  validator.imageFormat(data.postLinkToImages);
+    const condition2 =  validator.isEmpty(data.postContent);
     // const condition3 = await isUserIDExist(data.UserID);
     // if (!condition) {
     //   await deleteimages(filesdata);
     //   throw new ConflictRequestError("Wrong Format");
     // }
-    // if (condition2){  
-    //  const imagearr = filesdata.map(file=>file.path)
-    //   await deleteImage(imagearr); 
-    //   throw new BadRequestError("COntent is empty");
-    // }
+    if (condition2){  
+     const imagearr = filesdata.map(file=>file.path)
+      await deleteImage(imagearr); 
+      throw new BadRequestError("COntent is empty");
+    }
     // if (!condition) {
     //   await deleteimage(filesdata); 
     //   throw new ConflictRequestError("Wrong Format");
@@ -39,8 +41,8 @@ class postService {
     return viewApost;
   };
   updatepost = async ({id}, data,filesdata) => {
-    // const condition = await imageFormat(data.postLinkToImages);
-    // const condition2 = await isEmpty(data.postContent);
+    // const condition = await validator.imageFormat(data.postLinkToImages);
+    // const condition2 = await validator.isEmpty(data.postContent);
     // const condition3 = await isExist(id);
     // if (!condition) throw new ConflictRequestError("Wrong Format");
     // if (condition2) throw new BadRequestError("COntent is empty");

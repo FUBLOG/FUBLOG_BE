@@ -26,7 +26,7 @@ class postcontroller {
     };
     updatePost = async(req, res, next)=>{
         const result = new OK({
-            message:" Update a post Sucess",
+            message:" Update a post Success",
             metadata: await postService.updatepost(req.params,req.body,req.files)
         })
         result.send(res);

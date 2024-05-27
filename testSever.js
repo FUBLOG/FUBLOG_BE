@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = require('./src/routes/post');
 const router2 = require('./src/routes/postTag')
+const router3 = require('./src/routes/report')
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,8 @@ app.listen(port, () => {
 
 app.use('/API/posts', router);
 app.use('/API/postsTag', router2);
+app.use('/API/report', router3);
+
 
 
 mongoose.set("strictQuery", false)

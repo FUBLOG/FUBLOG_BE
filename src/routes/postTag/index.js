@@ -10,7 +10,7 @@ Router.get('/:id',asyncHandler(postTagController.viewATag));
 
 Router.get('/', asyncHandler(postTagController.viewAllTag));
 
-Router.put('/:id',asyncHandler(postTagController.updateTag));
+Router.patch('/:id',asyncHandler(postTagController.updateTag));
 
 Router.delete('/:id', asyncHandler(postTagController.deleteTag));
 

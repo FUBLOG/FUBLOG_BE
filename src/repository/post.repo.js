@@ -1,26 +1,16 @@
 "use strict";
-const cloudinary = require('cloudinary').v2;
+const cloudinaryTask = require('../core/cloudinary')
 const postModel = require('../model/post.model');
-const isUserIDExist = async (userID) => {
-    return await userModel.findOne({ _id: userID }).lean();
-};
-const imageFormat = (linkimage)=>{
-    const imagePattern = /\.(jpg|png)$/i;
-    return imagePattern.test(linkimage);
-};
-const isEmpty = (postContent) => {
-    return !postContent || postContent.trim() === '';
-};
 
 const deleteimage = async(filesdata) =>{
 
     for(const file of filesdata){
-        cloudinary.uploader.destroy(file.filename)
+        cloudinaryTask.deleteImagecloudinary(file.filename)
     }
 };
 const deleteOldImage = async(imagelinks)=>{
     for(const path of imagelinks){
-        cloudinary.uploader.destroy(path)
+        cloudinaryTask.deleteImagecloudinary(path)
     }
 }
 const createNewPost = async({
@@ -70,10 +60,7 @@ const updatePost = async(id,{
     }) 
 }
 module.exports = {
-    isUserIDExist,
     createNewPost,
-    imageFormat,
-    isEmpty,
     deleteimage,
     deleteOldImage,
     updatePost
