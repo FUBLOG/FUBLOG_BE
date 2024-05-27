@@ -1,20 +1,20 @@
 "use strict";
 const { NotFoundError } = require("../core/response/error.response");
 const Comment = require("../model/comment.model");
-const { findOneProduct } = require("../repository/product.repo");
+const { findOnePost } = require("../repository/post.repo");
 const { convertToObjectId } = require("../utils");
 
 class CommentService {
   static async addComment({
-    postID,
-    userId,
-    content,
+    comment_postID,
+    comment_userId,
+    comment_content,
     parent_CommentID = null,
   }) {
     const comment = new Comment({
-      comment_postID: postID,
-      comment_userId: userId,
-      comment_content: content,
+      comment_postID: comment_postID,
+      comment_userId: comment_userId,
+      comment_content: comment_content,
       parent_CommentID,
     });
     let rightValue;
@@ -43,7 +43,7 @@ class CommentService {
     } else {
       const maxRightValue = await Comment.findOne(
         {
-          comment_postID: convertToObjectId(postID),
+          comment_postID: convertToObjectId(comment_postID),
         },
         "comment_right"
       ).sort({ comment_right: -1 });
@@ -59,18 +59,17 @@ class CommentService {
     return comment;
   }
   static async getComments({
-    postID,
-    parentCommentId,
+    parent_CommentID,
     limit = 10,
     offset = 0,
   }) {
-    if (parentCommentId) {
-      const parent = await Comment.findById(parentCommentId);
+    if (parent_CommentID) {
+      const parent = await Comment.findById(parent_CommentID);
       if (!parent) {
         throw new NotFoundError("Parent comment not found");
       }
       const comments = await Comment.find({
-        comment_postID: convertToObjectId(postID),
+        comment_postID: convertToObjectId(parent.comment_postID),
         comment_left: { $gt: parent.comment_left },
         comment_right: { $lt: parent.comment_right },
       })
@@ -87,7 +86,7 @@ class CommentService {
       return comments;
     } else {
       const comments = await Comment.find({
-        comment_postID: convertToObjectId(postID),
+        comment_postID: convertToObjectId(parent.comment_postID),
         comment_parentId: null,
       })
         .limit(limit)
@@ -103,12 +102,35 @@ class CommentService {
       return comments;
     }
   }
-  static async deleteComment({ commentId, postID }) {
-    const foundProduct = await findOneProduct({
-      product_id: convertToObjectId(postID),
+
+   static async updateComment({ 
+    commentId, 
+    comment_content 
+  }) {
+    // Find the comment by ID
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      throw new NotFoundError("Comment not found");
+    }
+
+    // Update the comment content
+    comment.comment_content = comment_content;
+    comment.updatedAt = new Date();
+
+    // Save the updated comment
+    await comment.save();
+
+    return comment;
+  }
+  static async deleteComment({ 
+    commentId,
+    comment_postID 
+  }) {
+    const foundPost = await findOnePost({
+      post_id: convertToObjectId(comment_postID),
     });
-    if (!foundProduct) {
-      throw new NotFoundError("Product not found");
+    if (!foundPost) {
+      throw new NotFoundError("Post not found");
     }
     // determine left and right value of comment
     const comment = await Comment.findById(commentId);
@@ -121,12 +143,12 @@ class CommentService {
     const width = rightValue - leftValue + 1;
     // delete all comments children of comment
     await Comment.deleteMany({
-      comment_postID: convertToObjectId(postID),
+      comment_postID: convertToObjectId(comment_postID),
       comment_left: { $gte: leftValue, $lte: rightValue },
     });
     await Comment.updateMany(
       {
-        comment_postID: convertToObjectId(postID),
+        comment_postID: convertToObjectId(comment_postID),
         comment_right: { $gt: rightValue },
       },
       {
@@ -135,7 +157,7 @@ class CommentService {
     );
     await Comment.updateMany(
       {
-        comment_postID: convertToObjectId(postID),
+        comment_postID: convertToObjectId(comment_postID),
         comment_left: { $gt: rightValue },
       },
       {

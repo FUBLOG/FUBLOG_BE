@@ -1,16 +1,12 @@
+const { OK } = require("../core/response/success.response");
 const commentService = require("../services/comment.service")
 
 // create cmt
-const createCmt = async (req, res) => {
-  const { postID, userID, parentCommentID, content } = req.body
+const addComment = async (req, res) => {
+  const { comment_postID, comment_userId, parent_CommentID, comment_contentntent } = req.body
 
   try {
-    const newCmt = await commentService.createCmt(
-      postID,
-      userID,
-      parentCommentID,
-      content
-    );
+    const newCmt = await commentService.addComment(req.body);
     res.status(201).json({
       message: '',
       comment: newCmt,
@@ -19,58 +15,48 @@ const createCmt = async (req, res) => {
     res.status(400).json({
       message: error.message,
     });
-  }
+  }addComment
 };
 
 // get cmt
-const getCmt = async (req, res) => {
-  const { commentID } = req.params;
-
-  try {
-    const comment = await commentService.getCmt(commentID);
-    res.status(200).json({
-      comment,
-    });
-  } catch (error) {
-    res.status(404).json({
-      message: error.message,
-    });
-  }
+const getComments = async (req, res) => {
+  const { parent_CommentID } = req.query;
+  console.log(req.query);
+  const response = new OK({
+    message:"...",
+    metadata: await commentService.getComments({parent_CommentID})
+  })
+  response.send(res);
 };
 
 // update cmt
-const updateCmt = async (req, res) => {
-   const { commentID } = req.params;
-   const { content } = req.body;
+const updateComment = async (req, res) => {
+  const { commentId } = req.query;
+  const { comment_content } = req.body;
+
+  const updatedComment = await commentService.updateComment({ commentId, comment_content });
+
+  const response = new OK({
+    message: "Comment updated",
+    metadata: updatedComment,
+  });
+  response.send(res);
+};
+
+//delete cmt
+const commentService = require('../services/comment.service'); // Adjust the path as necessary
+const { OK } = require('../utils'); // Assuming you have this utility
+
+const deleteComment = async (req, res) => {
+  const { commentId, comment_postID } = req.query;
+  console.log(req.query);
+  const response = new OK({
+    message: "Comment deleted",
+    metadata: await commentService.deleteComment({ commentId, comment_postID }),
+  });
+  response.send(res);
+};
+
  
-   try {
-     const updatedCmt = await commentService.updateCmt(commentID, content);
-     res.status(200).json({
-       message: 'da cap nhat',
-       comment: updatedCmt,
-     });
-   } catch (error) {
-     res.status(400).json({
-       message: error.message,
-     });
-   }
- };
- 
- // xoa cmt
- const deleteCmt = async (req, res) => {
-   const { commentID } = req.params;
- 
-   try {
-     await commentService.deleteCmt(commentID);
-     res.status(200).json({
-       message: 'da xoa cmt',
-     });
-   } catch (error) {
-     res.status(500).json({
-       message: error.message,
-     });
-   }
- };
- 
- module.exports = {createCmt,getCmt,updateCmt,deleteCmt};
+ module.exports = {addComment,getComments,updateComment,deleteComment};
  
