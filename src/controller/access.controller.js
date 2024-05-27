@@ -12,7 +12,7 @@ class AccessController {
   };
 
   logout = async (req, res, next) => {
-    const profileHash = req.headers[HEADER.CLIENT_ID];
+    const profileHash = req.user.profileHash
     const response = new OK({
       message: "Logout successfully",
       metadata: await accessService.logout(profileHash),

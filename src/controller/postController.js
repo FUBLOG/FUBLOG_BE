@@ -1,19 +1,52 @@
+<<<<<<< HEAD
 const post = require('../model/post.model');
 const { OK } = require("../core/response/success.response");
 const postService = require('../services/post.service')
 
+=======
+const post = require("../model/post.model");
+const { OK } = require("../core/response/success.response");
+const postService = require("../services/post.service");
+>>>>>>> da87c34db838cea6c561f762b0beb0c6a0eff9a5
 
-const createPost = async(req,res) =>{
-    try {
-        const aPost = await post.create(req.body);
-        res.status(200).json(aPost)
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).json({message: error.message})
-    }
-    console.log(req.body);
-    res.send(req.body)
+class postcontroller {
+  newpost = async (req, res, next) => {
+    const result = new OK({
+      message: "Create Post Success",
+      metadata: await postService.createPost(req.body, req.files),
+    });
+    result.send(res);
+  };
+  getallpost = async (req, res, next) => {
+    const result = new OK({
+      message: " View posts Sucess",
+      metadata: await postService.viewpost(),
+    });
+    result.send(res);
+  };
+  getApost = async (req, res, next) => {
+    const result = new OK({
+      message: " View a post Sucess",
+      metadata: await postService.findpost(req.params),
+    });
+    result.send(res);
+  };
+  updatePost = async (req, res, next) => {
+    const result = new OK({
+      message: " Update a post Sucess",
+      metadata: await postService.updatepost(req.params, req.body),
+    });
+    result.send(res);
+  };
+  deletePost = async (req, res, next) => {
+    const result = new OK({
+      message: " Update a post Sucess",
+      metadata: await postService.deletepost(req.params),
+    });
+    result.send(res);
+  };
 }
+<<<<<<< HEAD
 
 
 const getAllPost = async(req,res) =>{
@@ -133,3 +166,6 @@ module.exports= {
 }
 module.exports= new postcontroller();
 >>>>>>> 56dadcddb52f373952911de37af528d272185027
+=======
+module.exports = new postcontroller();
+>>>>>>> da87c34db838cea6c561f762b0beb0c6a0eff9a5

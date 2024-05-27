@@ -4,6 +4,7 @@ const {
   NotFoundError,
   UnauthorizedError,
   BadRequestError,
+  UnprocessableEntityError,
 } = require("../core/response/error.response");
 const { findByToken, findAndDeleteOTP } = require("../repository/otp.repo");
 const { isEmailExists } = require("../repository/user.repo");
@@ -13,9 +14,21 @@ const KeyTokenService = require("./keytoken.service");
 const { getInfoData } = require("../utils");
 const userInfoService = require("./userInfo.service");
 const { HEADER } = require("../core/constans/header.constant");
+<<<<<<< HEAD
 
+=======
+const validator = require("../core/validator");
+>>>>>>> da87c34db838cea6c561f762b0beb0c6a0eff9a5
 class AccessService {
-  login = async ({ email, password }) => {
+  login = async ({ email = "", password = "" }) => {
+    const result = await validator.isEmptyObject({
+      email,
+      password,
+    });
+    if (result.length > 0)
+      throw new UnprocessableEntityError(`Missing ${result}`);
+    const isEmail = await validator.isEmail(email);
+    if (!isEmail) throw new UnprocessableEntityError("Invalid email");
     const existUser = await isEmailExists({ email });
     // Check if user exists
     if (!existUser) throw new NotFoundError("Authentication failed");
@@ -28,7 +41,7 @@ class AccessService {
     // Generate token
     const { publicKey, privateKey } = await CryptoService.generateKeyPair();
     const tokens = await CryptoService.generateTokenByRSA(
-      { profileHash: existUser.profileHash, email },
+      { userId: existUser._id, profileHash: existUser.profileHash },
       privateKey,
       { algorithm: "RS256" }
     );
@@ -41,25 +54,25 @@ class AccessService {
     const info = await userInfoService.getInfoUser(existUser._id);
     return {
       user: getInfoData({
-        filed: [
-          "profileHash",
-          "email",
-          "displayName",
-          "sex",
-          "dateOfBirth",
-          "mobile",
-        ],
+        filed: ["profileHash", "displayName"],
         object: existUser,
       }),
-      info,
-      tokens: tokens,
+      info: getInfoData({
+        filed: ["avatar"],
+        object: info,
+      }),
+      tokens: {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        privateKey,
+      },
     };
   };
 
   logout = async (profileHash) => {
+    if (!profileHash) throw new UnauthorizedError("Invalid request");
     const delKeyToken = await KeyTokenService.deleteKeyToken(profileHash);
     if (!delKeyToken) throw new NotFoundError("Logout failed");
-
     return null;
   };
 
@@ -85,6 +98,11 @@ class AccessService {
   handleRefreshToken = async (headers) => {
     const profileHash = headers[HEADER.CLIENT_ID];
     const refreshToken = headers[HEADER.REFRESH_TOKEN];
+<<<<<<< HEAD
+=======
+    if (!profileHash || !refreshToken)
+      throw new NotFoundError("Invalid request");
+>>>>>>> da87c34db838cea6c561f762b0beb0c6a0eff9a5
     const keyStore = await KeyTokenService.findUserById(profileHash);
     try {
       const decodeUser = await CryptoService.verifyTokenByRSA(
