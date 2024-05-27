@@ -13,7 +13,8 @@ class CryptoService {
     return jwt.sign(payload, secret, options);
   };
   static verifyToken = async (token, secret) => {
-    return jwt.verify(token, secret);
+    const publicKey = crypto.createPublicKey(secret);
+    return jwt.verify(token, publicKey);
   };
   static hashPassword = async (password) => {
     return bcrypt.hash(password, 10);

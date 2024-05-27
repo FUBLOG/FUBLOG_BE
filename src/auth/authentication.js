@@ -36,6 +36,7 @@ const authentication = asyncHandler(async (req, res, next) => {
         throw new UnauthorizedError("Invalid request");
       }
     } catch (e) {
+      console.log(e);
       throw new UnauthorizedError("JWT invalid");
     }
     req.keyStore = keyStore;
