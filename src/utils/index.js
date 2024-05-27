@@ -19,7 +19,6 @@ const unGetSelectData = (select = []) => {
 };
 const updateNestedObjectParser = (obj) => {
   const final = {};
-  console.log("[1]::", obj);
   Object.keys(obj).forEach((k) => {
     if (
       typeof obj[k] === "object" &&
@@ -34,7 +33,6 @@ const updateNestedObjectParser = (obj) => {
       final[k] = obj[k];
     }
   });
-  console.log("[2]::", final);
   return final;
 };
 const removeNull = (object) => {
@@ -47,7 +45,7 @@ const removeNull = (object) => {
 };
 
 const convertToObjectId = (string) => {
-  return mongoose.Types.ObjectId.createFromHexString(string);
+  return new mongoose.Types.ObjectId(string);
 };
 
 const extractUserProfileFromEmail = (email) => {

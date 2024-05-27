@@ -14,16 +14,6 @@ class KeyTokenService {
     refreshToken,
     publicKey,
   }) => {
-    console.log(
-      "userId",
-      userId,
-      "profileHash",
-      profileHash,
-      "refreshToken",
-      refreshToken,
-      "publicKey",
-      publicKey
-    );
     return await createNewKeyToken({
       userId,
       profileHash,
@@ -45,11 +35,7 @@ class KeyTokenService {
     refreshTokenUsed,
     refreshToken
   ) => {
-    return await updateKeyToken(
-      profileHash,
-      refreshTokenUsed,
-      refreshToken
-    );
+    return await updateKeyToken(profileHash, refreshTokenUsed, refreshToken);
   };
 }
 module.exports = KeyTokenService;

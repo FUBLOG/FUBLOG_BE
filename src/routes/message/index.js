@@ -2,11 +2,10 @@
 const express = require("express");
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
-const userController = require("../../controller/user.controller");
 const { authentication } = require("../../auth/authentication");
-
-router.post("/newUser", asyncHandler(userController.createUserWithEmail));
+const messageController = require("../../controller/message.controller");
 
 router.use(authentication);
-router.get("/getUserMessages", asyncHandler(userController.getUserMessages));
+router.get("/:id", asyncHandler(messageController.getMessage));
+router.post("/send/:id", asyncHandler(messageController.sendMessage));
 module.exports = router;
