@@ -23,17 +23,18 @@ class reportService{
             throw new NotFoundError();
         return view
     };
-    updateTag = async(id,content)=>{
+    updateReport = async(id,content)=>{
         if(await this.viewReport(id).length === 0)
              throw new NotFoundError("Cannot Find ID");
         if(content.length === 0)
             throw new ConflictRequestError("Content is empty")
         return await reportModel.findByIdAndUpdate(id, content)
     };
-    deleteTag = async(id)=>{
+    deleteReport = async(id)=>{
         if(await this.viewReport(id).length === 0)
             throw new NotFoundError("Cannot Find ID");
         return await reportModel.findByIdAndDelete(id)
     }
 
     }
+module.exports = new reportService();
