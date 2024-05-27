@@ -19,5 +19,13 @@ class Validator {
     });
     return result;
   };
+
+  imageFormat = (linkimage)=>{
+    const imagePattern = /\.(jpg|png)$/i;
+    return imagePattern.test(linkimage);
+};
+  isEmpty = (postContent) => {
+    return !postContent || postContent.trim() === '';
+};
 }
 module.exports = new Validator();

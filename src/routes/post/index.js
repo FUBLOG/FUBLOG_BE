@@ -17,9 +17,13 @@ router.use(authentication);
 router.post("/", postController.newpost);
 router.get('/', asyncHandler(postcontroller.getallpost));
 
-router.put("/:id", postController.updatePost);
-router.put('/:id', asyncHandler(postcontroller.updatePost));
+router.patch('/:id', asyncHandler(postcontroller.updatePost));
 
 router.delete('/:id', asyncHandler(postcontroller.deletePost));
+
+router.get('/findPostByTag/:id', asyncHandler(postcontroller.searchPostsByTag));
+
+router.get('/findPostByUser/:id', asyncHandler(postcontroller.searchPostsByUserId));
+
 
 module.exports = router;
