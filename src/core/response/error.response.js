@@ -60,6 +60,15 @@ class MethodNotAllowedError extends ErrorResponse {
     super(message, statusCode);
   }
 }
+//code 422
+class UnprocessableEntityError extends ErrorResponse {
+  constructor(
+    message = ReasonPhrases.UNPROCESSABLE_ENTITY,
+    statusCode = StatusCodes.UNPROCESSABLE_ENTITY
+  ) {
+    super(message, statusCode);
+  }
+}
 // code 500
 
 class InternalServerError extends ErrorResponse {
@@ -115,4 +124,5 @@ module.exports = {
   BadGateway,
   ServiceUnavailable,
   GatewayTimeout,
+  UnprocessableEntityError,
 };

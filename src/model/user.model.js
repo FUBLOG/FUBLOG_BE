@@ -2,7 +2,7 @@ const mongoose = require("mongoose"); // Erase if already required
 const DOCUMENT_NAME = "User";
 const COLLECTION_NAME = "Users";
 // Declare the Schema of the Mongo model
-var userSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     profileHash: {
       type: String,
@@ -36,7 +36,6 @@ var userSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
-      unique: true,
     },
     password: {
       type: String,
