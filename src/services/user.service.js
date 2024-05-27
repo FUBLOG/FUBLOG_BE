@@ -1,24 +1,37 @@
 "use strict";
-
-const userModel = require("../model/user.model");
 const { isEmailExists, createNewUser } = require("../repository/user.repo");
-const { ConflictRequestError } = require("../core/response/error.response");
+const {
+  ConflictRequestError,
+  UnprocessableEntityError,
+} = require("../core/response/error.response");
 const emailService = require("./email.service");
 const CryptoService = require("./crypto.service");
 const otpService = require("./otp.service");
 const { extractUserProfileFromEmail } = require("../utils");
 const { createDefaultUserInfo } = require("../repository/userInfo.repo");
-
+const validator = require("../core/validator");
 class UserService {
   createUserToken = async ({
-    email,
+    email = "",
     captcha = null,
-    password,
-    firstName,
-    lastName,
-    dateOfBirth,
-    sex,
+    password = "",
+    firstName = "",
+    lastName = "",
+    dateOfBirth = "",
+    sex = "",
   }) => {
+    const result = await validator.isEmptyObject({
+      email,
+      password,
+      firstName,
+      lastName,
+      dateOfBirth,
+      sex,
+    });
+    if (result.length > 0)
+      throw new UnprocessableEntityError(`Missing ${result}`);
+    const isEmail = await validator.isEmail(email);
+    if (!isEmail) throw new UnprocessableEntityError("Invalid email");
     const emailExists = await isEmailExists({ email });
     if (emailExists) throw new ConflictRequestError("Email already exists");
     const otp = await otpService.generateTokenRandom();
@@ -42,8 +55,8 @@ class UserService {
       sign,
     });
     //send email
-    const mailResponse = await emailService.sendEmailVerify({ email, otp });
-    return mailResponse;
+    emailService.sendEmailVerify({ email, otp });
+    return {};
   };
 
   createNewUser = async ({
@@ -55,7 +68,6 @@ class UserService {
     sex,
   }) => {
     const profileHash = extractUserProfileFromEmail(email);
-    if (!profileHash) throw new Error("Validation error: Invalid email");
     const newUser = await createNewUser({
       email,
       password,

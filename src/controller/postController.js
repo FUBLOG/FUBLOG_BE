@@ -1,4 +1,4 @@
-const post = require('../model/post.model');
+const post = require("../model/post.model");
 const { OK } = require("../core/response/success.response");
 const postService = require('../services/post.service')
 
@@ -54,4 +54,4 @@ class postcontroller {
         result.send(res);
 }
 }
-module.exports= new postcontroller();
+module.exports = new postcontroller();
