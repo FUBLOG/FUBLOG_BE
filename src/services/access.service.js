@@ -7,12 +7,12 @@ const {
 } = require("../core/response/error.response");
 const { findByToken, findAndDeleteOTP } = require("../repository/otp.repo");
 const { isEmailExists } = require("../repository/user.repo");
-const bcrypt = require("bcrypt");
 const CryptoService = require("./crypto.service");
 const userService = require("./user.service");
 const KeyTokenService = require("./keytoken.service");
 const { getInfoData } = require("../utils");
 const userInfoService = require("./userInfo.service");
+const { HEADER } = require("../core/constans/header.constant");
 
 class AccessService {
   login = async ({ email, password }) => {
@@ -70,7 +70,7 @@ class AccessService {
     const data = await CryptoService.verifyToken(otp.otp_sign, otp.otp_token);
     //delete token
     await findAndDeleteOTP({ token });
-    const newUser = await userService.createNewUser(data);
+    await userService.createNewUser(data);
     return null;
   };
 
@@ -80,6 +80,33 @@ class AccessService {
 
   changePassword = async (req, res, next) => {
     res.send("Change Password");
+  };
+
+  handleRefreshToken = async (headers) => {
+    const profileHash = headers[HEADER.CLIENT_ID];
+    const refreshToken = headers[HEADER.REFRESH_TOKEN];
+    const keyStore = await KeyTokenService.findUserById(profileHash);
+    try {
+      const decodeUser = await CryptoService.verifyTokenByRSA(
+        refreshToken,
+        keyStore.publicKey
+      );
+      if (profileHash !== decodeUser.profileHash)
+        throw new AuthFailureError("Invalid request");
+    } catch (e) {
+      throw new AuthFailureError("Invalid request");
+    }
+    const privateKey = req.headers[HEADER.PRIVATE_KEY];
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+      await CryptoService.generateTokenByRSA(decodeUser, privateKey, {
+        algorithm: "RS256",
+      });
+    await KeyTokenService.updateKeyToken(
+      decodeUser.profileHash,
+      refreshToken,
+      newRefreshToken
+    );
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   };
 }
 module.exports = new AccessService();

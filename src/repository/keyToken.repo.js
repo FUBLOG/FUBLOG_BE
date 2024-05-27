@@ -17,7 +17,23 @@ const deleteKeyToken = async (profileHash) => {
   return keyTokenModel.findOneAndDelete({ profileHash });
 };
 
+const findUserById = async (profileHash) => {
+  return keyTokenModel.findOne({ profileHash });
+};
+
+const updateKeyToken = async (profileHash, refreshTokenUsed, refreshToken) => {
+  return keyTokenModel.findOneAndUpdate(
+    { profileHash },
+    {
+      $push: { refreshTokenUsed: refreshTokenUsed },
+      refreshToken: refreshToken,
+      a,
+    }
+  );
+};
 module.exports = {
   createNewKeyToken,
   deleteKeyToken,
+  findUserById,
+  updateKeyToken,
 };

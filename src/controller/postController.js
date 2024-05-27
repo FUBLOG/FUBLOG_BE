@@ -64,11 +64,19 @@ const deletePost = async(req,res)=> {
         res.status(500).json({message: error.message})
     }
 }
+<<<<<<< HEAD
 class postController {
     newpost = async(req, res, next)=> {
         const result = new OK({
             message: "Create Post Success",
             metadata: await postService.createPost(req.body)
+=======
+class postcontroller {
+    newpost = async(req, res, next)=> {
+        const result = new OK({
+            message: "Create Post Success",
+            metadata: await postService.createPost(req.body,req.files)
+>>>>>>> 56dadcddb52f373952911de37af528d272185027
         })
         result.send(res);
     };
@@ -77,24 +85,37 @@ class postController {
             message:" View posts Sucess",
             metadata: await postService.viewpost()
         })
+<<<<<<< HEAD
+=======
+        result.send(res);
+>>>>>>> 56dadcddb52f373952911de37af528d272185027
     };
     getApost = async(req, res, next)=>{
         const result = new OK({
             message:" View a post Sucess",
             metadata: await postService.findpost(req.params)
         })
+<<<<<<< HEAD
+=======
+        result.send(res);
+>>>>>>> 56dadcddb52f373952911de37af528d272185027
     };
     updatePost = async(req, res, next)=>{
         const result = new OK({
             message:" Update a post Sucess",
             metadata: await postService.updatepost(req.params,req.body)
         })
+<<<<<<< HEAD
+=======
+        result.send(res);
+>>>>>>> 56dadcddb52f373952911de37af528d272185027
     };
     deletePost = async(req, res, next)=>{
         const result = new OK({
             message:" Update a post Sucess",
             metadata: await postService.deletepost(req.params)
         })
+<<<<<<< HEAD
     };
 
 }
@@ -105,3 +126,10 @@ module.exports= {
     UpdateAPost,
     deletePost
 }
+=======
+        result.send(res);
+    };
+
+}
+module.exports= new postcontroller();
+>>>>>>> 56dadcddb52f373952911de37af528d272185027
