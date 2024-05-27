@@ -6,14 +6,16 @@ const { BadRequestError } = require("../core/response/error.response");
 
 
 class postService {
-  createPost = async (data) => {
+  createPost = async (data,filesdata) => {
     // const condition =  imageFormat(data.postLinkToImages);
     // const condition2 =  isEmpty(data.postContent);
     // const condition3 = await isUserIDExist(data.UserID);
-    // if (!condition) throw new ConflictRequestError("Wrong Format");
+    // if (!condition) {
+    //   throw new ConflictRequestError("Wrong Format");
+    // }
     // if (condition2) throw new BadRequestError("COntent is empty");
     // if (!condition) throw new ConflictRequestError("Wrong Format");
-    return  await createNewPost(data);
+    return  await createNewPost(data,filesdata);
   };
 
   viewpost = async () => {
@@ -27,12 +29,12 @@ class postService {
     return viewApost;
   };
   updatepost = async ({id}, data) => {
-    // const condition = await imageFormat(data.postLinkToImages);
-    // const condition2 = await isEmpty(data.postContent);
-    // const condition3 = await isExist(id);
-    // if (!condition) throw new ConflictRequestError("Wrong Format");
-    // if (condition2) throw new BadRequestError("COntent is empty");
-    // if (!condition3) throw new ConflictRequestError("Post not exist");
+    const condition = await imageFormat(data.postLinkToImages);
+    const condition2 = await isEmpty(data.postContent);
+    const condition3 = await isExist(id);
+    if (!condition) throw new ConflictRequestError("Wrong Format");
+    if (condition2) throw new BadRequestError("COntent is empty");
+    if (!condition3) throw new ConflictRequestError("Post not exist");
     return await post.findByIdAndUpdate(id, data);
   };
   deletepost = async ({id}) => {
