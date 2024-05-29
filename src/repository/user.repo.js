@@ -33,9 +33,14 @@ const createNewUser = async ({
 const updatePassword = async ({ email, password }) => {
   return await userModel.findOneAndUpdate({ email }, { password });
 };
+
+const findUserById = async (userId) => {
+  return await userModel.findOne({ _id: userId }).lean();
+};
 module.exports = {
   isEmailExists,
   createNewUser,
   isUserIDExist,
   updatePassword,
+  findUserById,
 };

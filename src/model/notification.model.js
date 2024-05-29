@@ -3,8 +3,9 @@ const DOCUMENT_NAME = "Notification";
 const COLLECTION_NAME = "Notifications";
 const notificationSchemas = mongoose.Schema(
   {
-    title: {
+    type: {
       type: String,
+      enum: ["comment", "system", "friend"],
       required: true,
     },
     message: {
@@ -14,11 +15,10 @@ const notificationSchemas = mongoose.Schema(
     link: {
       type: String,
     },
-    status: {
-      type: String,
+    isRead: {
+      type: Boolean,
       required: true,
-      default: "unread",
-      enum: ["unread", "read"],
+      default: false,
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
