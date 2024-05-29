@@ -12,7 +12,7 @@ class AccessController {
   };
 
   logout = async (req, res, next) => {
-    const profileHash = req.user.profileHash
+    const profileHash = req.user.profileHash;
     const response = new OK({
       message: "Logout successfully",
       metadata: await accessService.logout(profileHash),
@@ -36,7 +36,19 @@ class AccessController {
   };
 
   forgotPassword = async (req, res, next) => {
-    res.send("Forgot Password");
+    const response = new OK({
+      message: "Send email forgot password successfully",
+      metadata: await accessService.forgotPassword(req.body),
+    });
+    response.send(res);
+  };
+
+  validateToken = async (req, res, next) => {
+    const response = new OK({
+      message: "Token is valid",
+      metadata: await accessService.validateToken(req.query.token),
+    });
+    response.send(res);
   };
 
   changePassword = async (req, res, next) => {

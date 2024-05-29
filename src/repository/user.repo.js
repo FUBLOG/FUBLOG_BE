@@ -30,8 +30,12 @@ const createNewUser = async ({
   });
 };
 
+const updatePassword = async ({ email, password }) => {
+  return await userModel.findOneAndUpdate({ email }, { password });
+};
 module.exports = {
   isEmailExists,
   createNewUser,
   isUserIDExist,
+  updatePassword,
 };
