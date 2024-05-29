@@ -1,24 +1,22 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-    username: { 
-      type: String, 
-      required: true 
+const requestFriendSchema = new Schema({
+    sourceID: { 
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
    },
-    email: { 
-      type: String, 
-      required: true, 
-      unique: true 
+    targetID: { 
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
    },
-    password: { 
-      type: String, 
-      required: true 
-   },
-    friends: [{ 
-      type: Schema.Types.ObjectId, 
-      ref: 'User' 
-   }],
+    status: {
+        type: String,
+        enum : ['pending','accepted','declined'],
+        default: 'pending'
+    },
     friendRequestsSent: [{ 
       type: Schema.Types.ObjectId, 
       ref: 'User' 
@@ -29,4 +27,4 @@ const userSchema = new Schema({
    }]
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('RequestFriend', requestFriendSchema);

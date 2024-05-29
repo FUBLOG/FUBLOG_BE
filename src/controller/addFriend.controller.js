@@ -1,8 +1,8 @@
 const addFriendService = require('../services/addFriends.service');
 const { OK } = require('../core/response/success.response');
-
+const user = require("../services/user.service")
 const sendFriendRequest = async (req, res) => {
-    const { senderId, receiverId } = req.body;
+    const { sourceID, tagetId } = req.user.userId;
     const response = new OK({
         message: "sent request",
         metadata: await addFriendService.sendFriendRequest(senderId, receiverId)
@@ -11,7 +11,7 @@ const sendFriendRequest = async (req, res) => {
 };
 
 const acceptFriendRequest= async (req, res) => {
-    const { userId, senderId } = req.body;
+    const { sourceID, tagetId } = req.user.userId;
     const response = new OK({
         message: "accepted request",
         metadata: await addFriendService.acceptFriendRequest(userId, senderId)
@@ -20,7 +20,7 @@ const acceptFriendRequest= async (req, res) => {
 };
 
 const declineFriendRequest = async (req, res) => {
-    const { userId, senderId } = req.body;
+    const { sourceID, tagetId } = req.user.userId;
     const response = new OK({
         message: "declined request",
         metadata: addFriendService.declineFriendRequest(userId, senderId)
@@ -29,10 +29,19 @@ const declineFriendRequest = async (req, res) => {
 };
 
 const getAllFriendRequests = async (req, res) => {
-    const { userId } = req.body;
+    const { userId } = req.user.userId;
     const response = new OK({
         message: "listed all sent request",
         metadata: await addFriendService.getAllFriendRequests(userId)
+    });
+    response.send(res);
+};
+
+const unFriend = async (req, res) => {
+    const { sourceID, tagetId } = req.user.userId;
+    const response = new OK({
+        message: "unfriended successfully",
+        metadata: await addFriendService.unfriend(userId, friendId)
     });
     response.send(res);
 };
@@ -41,5 +50,6 @@ module.exports = {
     sendFriendRequest,
     acceptFriendRequest,
     declineFriendRequest,
+    unFriend,
     getAllFriendRequests
 };
