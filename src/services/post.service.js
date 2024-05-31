@@ -10,22 +10,22 @@ const validator = require('../core/validator')
 
 class postService {
   createPost = async (data,filesdata) => {
-    // const condition =  validator.imageFormat(data.postLinkToImages);
     const condition2 =  validator.isEmpty(data.postContent);
-    // const condition3 = await isUserIDExist(data.UserID);
-    // if (!condition) {
-    //   await deleteimages(filesdata);
-    //   throw new ConflictRequestError("Wrong Format");
-    // }
+    const condition3 = await isUserIDExist(data.UserID);
+    if (!condition) {
+      await deleteimages(filesdata);
+      throw new BadRequestError("Wrong Format");
+    }
     if (condition2){  
      const imagearr = filesdata.map(file=>file.path)
       await deleteImage(imagearr); 
       throw new BadRequestError("COntent is empty");
     }
-    // if (!condition) {
-    //   await deleteimage(filesdata); 
-    //   throw new ConflictRequestError("Wrong Format");
-    // }
+    if (!condition3) {
+     const imagearr = filesdata.map(file=>file.path)
+      await deleteimage(imagearr); 
+      throw new NotFoundError("User is not exist");
+    }
     return  await createNewPost(data,filesdata);
   };
 
@@ -41,12 +41,19 @@ class postService {
     return viewApost;
   };
   updatepost = async ({id}, data,filesdata) => {
-    // const condition = await validator.imageFormat(data.postLinkToImages);
-    // const condition2 = await validator.isEmpty(data.postContent);
-    // const condition3 = await isExist(id);
-    // if (!condition) throw new ConflictRequestError("Wrong Format");
-    // if (condition2) throw new BadRequestError("COntent is empty");
-    // if (!condition3) throw new ConflictRequestError("Post not exist");
+    if (!condition) {
+      await deleteimages(filesdata);
+      throw new BadRequestError("Wrong Format");
+    }
+    if (condition2){  
+     const imagearr = filesdata.map(file=>file.path)
+      await deleteImage(imagearr); 
+      throw new BadRequestError("COntent is empty");
+    }
+    if (!condition3) {
+      await deleteimage(filesdata); 
+      throw new NotFoundError("User is not exist");
+    }
     const aPost = await this.findpost(id);
     await deleteImage(aPost.postLinkToImages);
     console.log(filesdata);

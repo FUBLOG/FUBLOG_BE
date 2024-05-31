@@ -13,6 +13,9 @@ const deleteOldImage = async(imagelinks)=>{
         cloudinaryTask.deleteImagecloudinary(path)
     }
 }
+const findPostByUserID = async(id) =>{
+    const posts = postModel.find({UserID : id})
+}
 const createNewPost = async({
     UserID,
     postTagID,
