@@ -23,6 +23,7 @@ class EmailService {
 
     try {
       const result = await this.sendMail(options);
+      console.log(result);
       return result;
     } catch (error) {
       throw new BadRequestError("Send email failed");

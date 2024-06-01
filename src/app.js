@@ -5,6 +5,10 @@ const morgan = require("morgan");
 const { app } = require("./config/socket.config");
 const cors = require("cors");
 const { corsOptions } = require("./config/cors.config");
+
+//config cors
+app.use(cors()); //config cors
+
 //int middlewares
 app.use(morgan("dev")); //config request return
 app.use(helmet()); //config security request
@@ -12,8 +16,6 @@ app.use(compression()); // data compression
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//config cors
-app.use(cors(corsOptions)); //config cors
 //init db
 require("./dbs/init.mongodb");
 

@@ -1,4 +1,4 @@
-const { BadRequestError } = require("../core/response/error.response");
+const { ForbiddenError } = require("../core/response/error.response");
 const { WHITELIST_DOMAINS } = require("../core/constans");
 
 const corsOptions = {
@@ -15,7 +15,7 @@ const corsOptions = {
     }
 
     // Cuối cùng nếu domain không được chấp nhận thì trả về lỗi
-    return callback(new BadRequestError("Not allowed by CORS"));
+    return callback(new ForbiddenError(`Origin ${origin} not allowed`));
   },
 
   // Some legacy browsers (IE11, various SmartTVs) choke on 204
