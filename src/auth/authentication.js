@@ -31,7 +31,6 @@ const authentication = asyncHandler(async (req, res, next) => {
         accessToken,
         keyStore.publicKey
       );
-      console.log(decodeUser);
       if (profileHash !== decodeUser.profileHash) {
         throw new UnauthorizedError("Invalid request");
       }
@@ -41,6 +40,7 @@ const authentication = asyncHandler(async (req, res, next) => {
     }
     req.keyStore = keyStore;
     req.user = decodeUser;
+    // decodeUser = { userId: '60f0d9f6b7d2b9e3d8d9f5f0', profileHash: 'kaidophan' }
     return next();
   }
 });

@@ -12,6 +12,7 @@ class UserController {
     });
     result.send(res);
   };
+  
   getUserMessages = async (req, res, next) => {
     const response = new OK({
       message: "Get user messages successfully",
@@ -19,5 +20,6 @@ class UserController {
     });
     response.send(res);
   };
+ 
 }
 module.exports = new UserController();

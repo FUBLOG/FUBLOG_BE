@@ -8,6 +8,7 @@ const dev = {
         name:process.env.DEV_DB_NAME || 'appPRO'
     }
 }
+console.log(process.env.DEV_DB_NAME);
 const pro = {
     app:{
         port: process.env.PRO_APP_PORT || 8080
