@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { OK } = require("../utils/response/success.response");
-router.get("/", (req, res) => {
-  new OK({
-    message: "Hello World",
-    metadata: "welcome to my website",
-  }).send(res);
-});
+
+router.use("/v1/api/access", require("./access"));
+router.use("/v1/api/test", require("./test"));
+router.use("/v1/api/user", require("./user"));
+router.use("/v1/api/post", require("./post"));
+router.use("/v1/api/message", require("./message"));
 module.exports = router;
+
+////v1/api/access

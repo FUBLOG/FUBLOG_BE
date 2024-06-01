@@ -3,7 +3,7 @@
 const {
   ReasonPhrases,
   StatusCodes,
-} = require("../../utils/errorConstant/httpStatusCode");
+} = require("../errorConstant/httpStatusCode");
 
 class ErrorResponse extends Error {
   constructor(message, status) {
@@ -56,6 +56,15 @@ class MethodNotAllowedError extends ErrorResponse {
   constructor(
     message = ReasonPhrases.METHOD_NOT_ALLOWED,
     statusCode = StatusCodes.METHOD_NOT_ALLOWED
+  ) {
+    super(message, statusCode);
+  }
+}
+//code 422
+class UnprocessableEntityError extends ErrorResponse {
+  constructor(
+    message = ReasonPhrases.UNPROCESSABLE_ENTITY,
+    statusCode = StatusCodes.UNPROCESSABLE_ENTITY
   ) {
     super(message, statusCode);
   }
@@ -115,5 +124,5 @@ module.exports = {
   BadGateway,
   ServiceUnavailable,
   GatewayTimeout,
-  
+  UnprocessableEntityError,
 };

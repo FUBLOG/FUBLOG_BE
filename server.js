@@ -1,3 +1,4 @@
+require("dotenv").config();
 const {
   app: { port },
 } = require("./src/config/config.mongodb");
