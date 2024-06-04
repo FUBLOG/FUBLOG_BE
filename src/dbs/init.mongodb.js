@@ -6,9 +6,14 @@ const {
   db: { host, port, name },
 } = require("../config/config.mongodb");
 if (env === "dev") {
+let connectString = "";
+const {
+  db: { host, port, name },
+} = require("../config/config.mongodb");
+if (env === "dev") {
   connectString = `mongodb://${host}:${port}/${name}`;
 } else {
-  connectString = `${process.env.MONGO_CONNECTION_STRING}appPRO`;
+  connectString = `${process.env.MONGO_CONNECTION_STRING}`;
 }
 
 class Database {
@@ -17,6 +22,7 @@ class Database {
   }
   connect(type = "mongodb") {
     mongoose.set("debug", { shell: true , color: true });
+    console.log(connectString);
     mongoose
       .connect(connectString)
       .then((_) => {

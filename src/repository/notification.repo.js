@@ -13,9 +13,10 @@ const updateStatusRead = async ({ notificationId }) => {
   );
 };
 
-const getAllNotification = async ({ user_id, limit = 20 }) => {
+const getAllNotification = async ({ user_id, limit = 10 }) => {
   return await notificationModel.find({ user_id }).limit(limit).lean();
 };
+
 module.exports = {
   createNewNotification,
   updateStatusRead,

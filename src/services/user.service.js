@@ -5,6 +5,11 @@ const {
   updatePassword,
 } = require("../repository/user.repo");
 const {
+  isEmailExists,
+  createNewUser,
+  updatePassword,
+} = require("../repository/user.repo");
+const {
   ConflictRequestError,
   UnprocessableEntityError,
 } = require("../core/response/error.response");
@@ -107,6 +112,10 @@ class UserService {
     await updatePassword({ email, password: passwordHash });
     return {};
   };
- 
+
+  updatePassword = async (email, password) => {
+    const passwordHash = await CryptoService.hashPassword(password);
+    await updatePassword({ email, password: passwordHash });
+  };
 }
 module.exports = new UserService();
