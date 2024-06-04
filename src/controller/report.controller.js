@@ -1,7 +1,7 @@
 const express = require("express");
-const { OK } = require("../core/errorConstant/statusCodes");
 const postTagController = require("./postTagController");
 const reportService = require("../services/report.service");
+const { OK } = require("../core/response/success.response");
 
 
 

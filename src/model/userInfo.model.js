@@ -40,14 +40,22 @@ var userInfoSchema = new mongoose.Schema(
       ],
       default: "single",
     },
-    friendList: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    }],
-    blockList: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    }],
+    friendList: {
+      type: [String],
+      default: "",
+    },
+    blockList: {
+      type: [String],
+      default: "",
+    },
+    avatarList: {
+      type: [String],
+      default: "",
+    },
+    coverList: {
+      type: [String],
+      default: "",
+    }
   },
   {
     timestamps: true,
