@@ -11,6 +11,11 @@ const {
   findAndDeleteOTP,
   createOTP,
 } = require("../repository/otp.repo");
+const {
+  findByToken,
+  findAndDeleteOTP,
+  createOTP,
+} = require("../repository/otp.repo");
 const { isEmailExists } = require("../repository/user.repo");
 const CryptoService = require("./crypto.service");
 const userService = require("./user.service");
@@ -19,6 +24,8 @@ const { getInfoData } = require("../utils");
 const userInfoService = require("./userInfo.service");
 const { HEADER } = require("../core/constans/header.constant");
 const validator = require("../core/validator");
+const emailService = require("./email.service");
+const otpService = require("./otp.service");
 const emailService = require("./email.service");
 const otpService = require("./otp.service");
 class AccessService {
