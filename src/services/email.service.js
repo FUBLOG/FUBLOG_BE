@@ -26,7 +26,6 @@ class EmailService {
       console.log(result);
       return result;
     } catch (error) {
-      console.log(error);
       throw new BadRequestError("Send email failed");
     }
   };

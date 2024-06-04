@@ -6,4 +6,3 @@ class UserInfoService {
   };
 }
 module.exports = new UserInfoService();
-
