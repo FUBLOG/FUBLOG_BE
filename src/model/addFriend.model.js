@@ -15,16 +15,8 @@ const requestFriendSchema = new Schema({
     status: {
         type: String,
         enum : ['pending','accepted','declined'],
-        default: 'pending'
-    },
-    friendRequestsSent: [{ 
-      type: Schema.Types.ObjectId, 
-      ref: 'User' 
-   }],
-    friendRequestsReceived: [{ 
-      type: Schema.Types.ObjectId, 
-      ref: 'User' 
-   }]
+        default: 'pending',
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('RequestFriend', requestFriendSchema);

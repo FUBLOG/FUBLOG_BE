@@ -6,7 +6,11 @@ const {
   BadRequestError,
   UnprocessableEntityError,
 } = require("../core/response/error.response");
-const { findByToken, findAndDeleteOTP } = require("../repository/otp.repo");
+const {
+  findByToken,
+  findAndDeleteOTP,
+  createOTP,
+} = require("../repository/otp.repo");
 const { isEmailExists } = require("../repository/user.repo");
 const CryptoService = require("./crypto.service");
 const userService = require("./user.service");
@@ -15,6 +19,8 @@ const { getInfoData } = require("../utils");
 const userInfoService = require("./userInfo.service");
 const { HEADER } = require("../core/constans/header.constant");
 const validator = require("../core/validator");
+const emailService = require("./email.service");
+const otpService = require("./otp.service");
 class AccessService {
   login = async ({ email = "", password = "" }) => {
     const result = await validator.isEmptyObject({
@@ -83,8 +89,19 @@ class AccessService {
     return null;
   };
 
-  forgotPassword = async (req, res, next) => {
-    res.send("Forgot Password");
+  forgotPassword = async ({ email = "" }) => {
+    const isEmpty = await validator.isEmpty(email);
+    if (isEmpty) throw new UnprocessableEntityError(`Missing ${result}`);
+    const isEmail = await validator.isEmail(email);
+    if (!isEmail) throw new UnprocessableEntityError("Invalid email");
+    const existUser = await isEmailExists({ email });
+    if (!existUser) throw new NotFoundError("User not found");
+    const otp = await CryptoService.generateRandomString(10);
+    const token = await CryptoService.generateToken({ email }, otp);
+    await createOTP({ email, otp, sign: token });
+    // Send email
+    await emailService.sendEmailForgotPassword({ email, otp });
+    return null;
   };
 
   changePassword = async (req, res, next) => {
@@ -118,6 +135,16 @@ class AccessService {
       newRefreshToken
     );
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  };
+
+  validateToken = async ({ token = "" }) => {
+    const isEmpty = await validator.isEmpty(token);
+    if (isEmpty) throw new UnprocessableEntityError(`Missing ${result}`);
+    const otp = await otpService.findByToken({ token });
+    if (!otp) throw new NotFoundError("Token is not found");
+    const data = await CryptoService.verifyToken(otp.otp_sign, otp.otp_token);
+    await findAndDeleteOTP({ token });
+    return data;
   };
 }
 module.exports = new AccessService();

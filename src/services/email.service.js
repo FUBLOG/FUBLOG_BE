@@ -15,7 +15,7 @@ class EmailService {
       action_url: `has.io.vn/welcome-back?token=${otp}`,
     });
     const options = {
-      from: `"Has Team" <kaidophan37@gmail.com>`,
+      from: `"Has Team" <hasteam@has.io.vn>`,
       to: email,
       subject: template.template_subject,
       html: content,
@@ -23,13 +23,36 @@ class EmailService {
 
     try {
       const result = await this.sendMail(options);
+      console.log(result);
       return result;
     } catch (error) {
+      console.log(error);
       throw new BadRequestError("Send email failed");
     }
   };
   sendMail = async (options, callback) => {
     return transporter.sendMail(options);
+  };
+  sendEmailForgotPassword = async ({ email = null, otp = null }) => {
+    const template = await templateEmailService.getTemplateEmail({
+      name: "HTML EMAIL FORGOT PASSWORD",
+    });
+    const templateH = template.template_html;
+    const content = await replacePlaceholders(templateH, {
+      action_url: `has.io.vn/reset-password?token=${otp}`,
+    });
+    const options = {
+      from: `"Has Team" <kaidophan37@gmail.com>`,
+      to: email,
+      subject: template.template_subject,
+      html: content,
+    };
+    try {
+      const result = await this.sendMail(options);
+      return result;
+    } catch (error) {
+      throw new BadRequestError("Send email failed");
+    }
   };
 }
 

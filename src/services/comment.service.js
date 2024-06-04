@@ -2,8 +2,9 @@
 
 const { NotFoundError } = require("../core/response/error.response");
 const Comment = require("../model/comment.model");
-const { findOnePost } = require("../repository/post.repo");
+const findOnePost = require("../repository/comment.repo");
 const { convertToObjectId } = require("../utils");
+const Post = require("../model/post.model")
 
 class CommentService {
   static async addComment({
@@ -105,66 +106,86 @@ class CommentService {
   }
 
    static async updateComment({ 
-    commentId, 
+    parent_CommentID, 
     comment_content 
   }) {
-    // Find the comment by ID
-    const comment = await Comment.findById(commentId);
+    const comment = await Comment.findById(parent_CommentID);
     if (!comment) {
       throw new NotFoundError("Comment not found");
     }
 
-    // Update the comment content
     comment.comment_content = comment_content;
     comment.updatedAt = new Date();
-
-    // Save the updated comment
     await comment.save();
 
     return comment;
   }
-  static async deleteComment({ 
-    commentId,
-    comment_postID 
-  }) {
-    const foundPost = await findOnePost({
-      post_id: convertToObjectId(comment_postID),
-    });
-    if (!foundPost) {
-      throw new NotFoundError("Post not found");
-    }
-    // determine left and right value of comment
-    const comment = await Comment.findById(commentId);
+ 
+  static async deleteComment({ parent_CommentID }) {
+    const comment = await Comment.findById(parent_CommentID);
     if (!comment) {
       throw new NotFoundError("Comment not found");
     }
+
     const leftValue = comment.comment_left;
     const rightValue = comment.comment_right;
-    // determine width of comment
     const width = rightValue - leftValue + 1;
-    // delete all comments children of comment
+
+    const commentsToDelete = await Comment.find({
+      comment_left: { $gte: leftValue },
+      comment_right: { $lte: rightValue },
+    }).lean();
+
     await Comment.deleteMany({
-      comment_postID: convertToObjectId(comment_postID),
-      comment_left: { $gte: leftValue, $lte: rightValue },
+      comment_left: { $gte: leftValue },
+      comment_right: { $lte: rightValue },
     });
+
     await Comment.updateMany(
-      {
-        comment_postID: convertToObjectId(comment_postID),
-        comment_right: { $gt: rightValue },
-      },
-      {
-        $inc: { comment_right: -width },
-      }
+      { comment_right: { $gt: rightValue } },
+      { $inc: { comment_right: -width } }
     );
+
     await Comment.updateMany(
-      {
-        comment_postID: convertToObjectId(comment_postID),
-        comment_left: { $gt: rightValue },
-      },
-      {
-        $inc: { comment_left: -width },
-      }
+      { comment_left: { $gt: rightValue } },
+      { $inc: { comment_left: -width } }
     );
+
+    return commentsToDelete;
   }
-}
+
+  static async getCommentPost({
+    postID,
+    limit = 10,
+    offset = 0,
+  }) {
+    if (!postID) {
+      throw new Error("postID is required to retrieve comments");
+    }
+  
+    const comments = await Comment.find({
+      comment_postID: convertToObjectId(postID),
+      parent_CommentID: null, 
+    })
+      .limit(limit)
+      .skip(offset)
+      .select({
+        comment_content: 1,
+        comment_parentId: 1,
+        comment_left: 1,
+        comment_right: 1,
+      })
+      .sort({ comment_left: 1 })
+      .lean();
+  
+    return comments;
+  }
+  
+  }
+
+  
+  
+  
+  
+
 module.exports = CommentService;

@@ -1,5 +1,9 @@
 "use strict";
-const { isEmailExists, createNewUser } = require("../repository/user.repo");
+const {
+  isEmailExists,
+  createNewUser,
+  updatePassword,
+} = require("../repository/user.repo");
 const {
   ConflictRequestError,
   UnprocessableEntityError,
@@ -80,5 +84,29 @@ class UserService {
     createDefaultUserInfo({ userId: newUser._id });
     return newUser;
   };
+
+  resetPassword = async ({
+    newPassword = "",
+    confirmPassword = "",
+    email = "",
+  }) => {
+    const result = await validator.isEmptyObject({
+      newPassword,
+      confirmPassword,
+      email,
+    });
+    if (result.length > 0)
+      throw new UnprocessableEntityError(`Missing ${result}`);
+    const isEmail = await validator.isEmail(email);
+    if (!isEmail) throw new UnprocessableEntityError("Invalid email");
+    if (newPassword !== confirmPassword)
+      throw new UnprocessableEntityError("Password not match");
+    const passwordHash = await CryptoService.hashPassword(newPassword);
+    const user = await isEmailExists({ email });
+    if (!user) throw new ConflictRequestError("Email not exists");
+    await updatePassword({ email, password: passwordHash });
+    return {};
+  };
+ 
 }
 module.exports = new UserService();
