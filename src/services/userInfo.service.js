@@ -7,9 +7,10 @@ const { updateUserAvatar } = require("../repository/userInfo.repo");
 
 class UserInfoService {
   getInfoUser = async (_id) => {
-    if(Validator.isEmpty(_id))
-      throw new NotFoundError("ID Is Empty")
-    if(isUserIDExist(_id))
+    // if(Validator.isEmpty(_id))
+    //   throw new NotFoundError("ID Is Empty")
+    
+    if(!(await isUserIDExist(_id)))
       throw new NotFoundError("ID Not Found")
     return await userInfoModel.findOne({ user_id: _id });
   };
@@ -18,38 +19,39 @@ class UserInfoService {
   findAllUser = async() => {
     const findAll = await userInfoModel.find();
     if(findAll.length === 0)
-      throw new NotFoundError();
+      throw new NotFoundError("Empty List of User");
     return findAll;
   }
   // Update Profile
   updateUserInfo = async(_id, data) =>{
-    if(Validator.isEmpty(_id))
+    if(await Validator.isEmpty(_id))
       throw new NotFoundError("ID Is Empty")
+    
     return await userInfoModel.findByIdAndUpdate(_id,data)
   }
 
   // Update Avartar
   updateAvatar = async(_id,filedata) => {
-    if(Validator.isEmpty(_id))
+    if(await Validator.isEmpty(_id))
       throw new NotFoundError("ID Is Empty")
     return await updateUserAvatar(_id,filedata)
   }
   // Update COver Photo
   updateCoverPhoto = async(_id,filedata) => {
-    if(Validator.isEmpty(_id))
+    if(await Validator.isEmpty(_id))
       throw new NotFoundError("ID Is Empty")
     return await updateUserCVPhoto(_id,filedata)
   }
   //  View post photo
   viewPhotos = async(_userId)=>{
-    if(!isUserIDExist(_userId))
-      throw new NotFoundError("Id not exists")
+    if(!await isUserIDExist(_userId))
+      throw new NotFoundError("Id is not exists")
      return await viewAllPhotos(_userId)
   }
 
   deleteUserInfo = async(_userId) => {
-    if(!isUserIDExist(_userId))
-      throw new NotFoundError("Id not exists")
+    if(!await isUserIDExist(_userId))
+      throw new NotFoundError("Id is not exists")
     const userInfoId = userInfoModel.find({_userId})._id ;
      return await userInfoModel.findByIdAndDelete(userInfoId)
   }

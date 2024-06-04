@@ -1,16 +1,9 @@
 "use strict";
-const cloudinaryTask = require('../core/cloudinary')
+
 const cloudinaryTask = require('../core/cloudinary')
 const postModel = require('../model/post.model');
 
 const deleteimage = async(filesdata) =>{
-
-    for(const file of filesdata){
-        cloudinaryTask.deleteImagecloudinary(file.filename)
-    }
-
-const deleteimage = async(filesdata) =>{
-
     for(const file of filesdata){
         cloudinaryTask.deleteImagecloudinary(file.filename)
     }
@@ -30,14 +23,15 @@ const createNewPost = async({
     postLinkToImages,
     postStatus,
     likes
-},filesdata)=>
+},filesdata,userId)=>
     
     {
+        const uid = userId;
         const imagelink = filesdata.map(file => file.path);
         const finalImagePaths = imagelink.length > 0 ? imagelink : [];
 
     return await postModel.create({
-        UserID,
+        UserID: uid,
         postTagID,
         postContent,
         postLinkToImages: finalImagePaths,
@@ -56,33 +50,8 @@ const updatePost = async(id,{
     postStatus,
     likes
 },filesdata)=>{
-    console.log(id)
     const path = filesdata.map(file => file.path);
-    console.log(path);
-    const filepath = path.length > 0 ? path : [];
-    return await postModel.findByIdAndUpdate(id,{
-        UserID,
-        postTagID,
-        postContent,
-        postLinkToImages: filepath,
-        postStatus,
-        likes
-    }) 
-
-
-}
-const updatePost = async(id,{
-    UserID,
-    postTagID,
-    postContent,
-    postLinkToImages,
-    postStatus,
-    likes
-},filesdata)=>{
-    console.log(id)
-    const path = filesdata.map(file => file.path);
-    console.log(path);
-    const filepath = path.length > 0 ? path : [];
+    const filepath = path.length > 0 ? path : postLinkToImages;
     return await postModel.findByIdAndUpdate(id,{
         UserID,
         postTagID,
@@ -96,8 +65,6 @@ module.exports = {
     createNewPost,
     deleteimage,
     deleteOldImage,
-    updatePost
-    deleteimage,
-    deleteOldImage,
-    updatePost
+    updatePost,
+    findPostByUserID
 }

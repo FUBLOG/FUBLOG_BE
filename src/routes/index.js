@@ -10,9 +10,12 @@ router.use("/v1/api/user", require("./user"));
 // Post API Router
 router.use("/v1/api/post", require("./post"));
 // PostTag API Router
-router.use("v1/api/posttag", require("./postTag"));
+router.use("/v1/api/posttag", require("./postTag"));
 // Report API Router
-router.use("v1/api/report", require("./report"));
+router.use("/v1/api/report", require("./report"));
+// Report 
+router.use("/v1/api/userinfo", require("./userInfo"));
+
 
 router.use("/v1/api/message", require("./message"));
 module.exports = router;

@@ -19,14 +19,14 @@ class userInfoController{
     };
     changeCoverPhoto = async(req, res, next)=> {
         const result = new OK({
-            message: "Change Avatar Success",
+            message: "Change Cover Photo Success",
             metadata: await userInfoService.updateCoverPhoto(req.params.id,req.file)
         })
         result.send(res);
     };
     getUserInfo = async(req, res, next)=> {
         const result = new OK({
-            message: "Change Avatar Success",
+            message: "Get User Info Success",
             metadata: await userInfoService.getInfoUser(req.params.id)
         })
         result.send(res);
@@ -34,7 +34,7 @@ class userInfoController{
 
     getAllUserInfo = async(req, res, next)=> {
         const result = new OK({
-            message: "Change Avatar Success",
+            message: "Get all User Info Success",
             metadata: await userInfoService.findAllUser()
         })
         result.send(res);

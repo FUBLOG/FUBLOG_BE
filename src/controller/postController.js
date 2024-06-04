@@ -2,10 +2,11 @@ const { OK } = require("../core/response/success.response");
 const postService = require('../services/post.service')
 
 class postcontroller {
+   
     newPost = async(req, res, next)=> {
         const result = new OK({
             message: "Create Post Success",
-            metadata: await postService.createPost(req.body,req.files)
+            metadata: await postService.createPost(req,req.files)
         })
         result.send(res);
     };
