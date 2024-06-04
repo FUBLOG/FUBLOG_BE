@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const postController = require("../../controller/postController");
+const { authentication } = require("../../auth/authentication");
 const asyncHandler = require("express-async-handler");
 const postcontroller = require("../../controller/postController");
 const uploader = require("../../config/cloudiany.config")

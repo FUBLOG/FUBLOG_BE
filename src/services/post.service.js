@@ -2,7 +2,11 @@ const post = require("../model/post.model");
 const { ConflictRequestError } = require("../core/response/error.response");
 const { NotFoundError } = require("../core/response/error.response");
 const { createNewPost,deleteimage,deleteOldImage, updatePost} = require("../repository/post.repo");
+const { createNewPost,deleteimage,deleteOldImage, updatePost} = require("../repository/post.repo");
 const { BadRequestError } = require("../core/response/error.response");
+const deleteImage = require("../helpers/deleteImage");
+const { isUserIDExist } = require("../repository/user.repo");
+const validator = require('../core/validator')
 const deleteImage = require("../helpers/deleteImage");
 const { isUserIDExist } = require("../repository/user.repo");
 const validator = require('../core/validator')
@@ -34,7 +38,9 @@ class postService {
     if (viewposts.length === 0) throw new NotFoundError();
     return viewposts;
     
+    
   };
+  findpost = async (id) => {
   findpost = async (id) => {
     const viewApost = await post.findById(id);
     if (viewApost.length > 0) throw new NotFoundError();
@@ -61,6 +67,7 @@ class postService {
   };
   deletepost = async ({id}) => {
     const deletePost = await post.findByIdAndDelete(id);
+    const deletePost = await post.findByIdAndDelete(id);
     if (post.findByIdAndDelete(id).length === 0) throw new NotFoundError();
     return deletePost;
   };
@@ -70,7 +77,22 @@ class postService {
       if(!findPostsByTag)
         throw new NotFoundError();  
       return findPostsByTag;
+    return deletePost;
   };
+  findPostByTag = async({id})=>{
+    const findPostsByTag = await post.find({postTagID: id})
+    console.log(findPostsByTag)
+      if(!findPostsByTag)
+        throw new NotFoundError();  
+      return findPostsByTag;
+  };
+  findPostByUserId = async({id})=>{
+    const findPostsByUser = await post.find({UserID: id})
+    console.log(findPostsByUser)
+      if(!findPostsByUser)
+        throw new NotFoundError();  
+      return findPostsByUser;
+  }
   findPostByUserId = async({id})=>{
     const findPostsByUser = await post.find({UserID: id})
     console.log(findPostsByUser)

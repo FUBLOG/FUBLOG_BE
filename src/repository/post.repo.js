@@ -1,6 +1,13 @@
 "use strict";
 const cloudinaryTask = require('../core/cloudinary')
+const cloudinaryTask = require('../core/cloudinary')
 const postModel = require('../model/post.model');
+
+const deleteimage = async(filesdata) =>{
+
+    for(const file of filesdata){
+        cloudinaryTask.deleteImagecloudinary(file.filename)
+    }
 
 const deleteimage = async(filesdata) =>{
 
@@ -61,9 +68,35 @@ const updatePost = async(id,{
         postStatus,
         likes
     }) 
+
+
+}
+const updatePost = async(id,{
+    UserID,
+    postTagID,
+    postContent,
+    postLinkToImages,
+    postStatus,
+    likes
+},filesdata)=>{
+    console.log(id)
+    const path = filesdata.map(file => file.path);
+    console.log(path);
+    const filepath = path.length > 0 ? path : [];
+    return await postModel.findByIdAndUpdate(id,{
+        UserID,
+        postTagID,
+        postContent,
+        postLinkToImages: filepath,
+        postStatus,
+        likes
+    }) 
 }
 module.exports = {
     createNewPost,
+    deleteimage,
+    deleteOldImage,
+    updatePost
     deleteimage,
     deleteOldImage,
     updatePost
