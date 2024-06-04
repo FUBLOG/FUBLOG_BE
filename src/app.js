@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const { app } = require("./config/socket.config");
 const cors = require("cors");
 const { corsOptions } = require("./config/cors.config");
-
+const logger = require("./logger/log.system");
 //config cors
 app.use(cors(corsOptions)); //config cors
 
@@ -31,6 +31,7 @@ app.use((req, res, next) => {
 
 // hàm quản lí lỗi
 app.use((error, req, res, next) => {
+  logger.error("error", [req.path, ` ${error.status}:${error.message}`]);
   const statusCode = error.status || 500;
   return res.status(statusCode).json({
     status: "error",

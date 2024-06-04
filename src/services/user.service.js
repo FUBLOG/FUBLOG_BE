@@ -5,11 +5,6 @@ const {
   updatePassword,
 } = require("../repository/user.repo");
 const {
-  isEmailExists,
-  createNewUser,
-  updatePassword,
-} = require("../repository/user.repo");
-const {
   ConflictRequestError,
   UnprocessableEntityError,
 } = require("../core/response/error.response");

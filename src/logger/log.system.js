@@ -1,8 +1,7 @@
 "use strict";
 
-const { format } = require("morgan");
 const winston = require("winston");
-const { combine, timestamp, printf, json, align } = winston.format;
+const format = winston.format;
 require("winston-daily-rotate-file");
 const { createLogger } = winston;
 class LoggerSystem {
@@ -49,7 +48,29 @@ class LoggerSystem {
         }),
       ],
     });
-    
+  }
+
+  commonParams(params) {
+    let context, req, metadata;
+    if (!Array.isArray(params)) {
+      context = params;
+    } else {
+      [context, req, metadata] = params;
+    }
+    const requestId = req ? req.requestId : "unknown";
+    return { context, requestId, metadata };
+  }
+
+  log(message, params) {
+    const paramsLog = this.commonParams(params);
+    const logObject = Object.assign({ message }, paramsLog);
+    this.logger.info(logObject);
+  }
+
+  error(message, params) {
+    const paramsLog = this.commonParams(params);
+    const logObject = Object.assign({ message }, paramsLog);
+    this.logger.error(logObject);
   }
 }
 
