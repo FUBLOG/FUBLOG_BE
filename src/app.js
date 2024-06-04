@@ -7,7 +7,7 @@ const cors = require("cors");
 const { corsOptions } = require("./config/cors.config");
 
 //config cors
-app.use(cors()); //config cors
+app.use(cors(corsOptions)); //config cors
 
 //int middlewares
 app.use(morgan("dev")); //config request return
