@@ -79,7 +79,7 @@ class AccessService {
   };
 
   signupWithMailVerify = async (token) => {
-    if (!token) throw new BadRequestError("Token is required");
+    if (!token) throw new UnprocessableEntityError("Missing token");
     const otp = await findByToken({ token });
     if (!otp) throw new NotFoundError("Token is not found");
     const data = await CryptoService.verifyToken(otp.otp_sign, otp.otp_token);
@@ -101,6 +101,25 @@ class AccessService {
     await createOTP({ email, otp, sign: token });
     // Send email
     await emailService.sendEmailForgotPassword({ email, otp });
+    return null;
+  };
+
+  resetPassword = async ({
+    password = "",
+    token = "",
+    confirmPassword = "",
+  }) => {
+    const result = await validator.isEmptyObject({
+      password,
+      token,
+      confirmPassword,
+    });
+    if (result.length > 0)
+      throw new UnprocessableEntityError(`Missing ${result}`);
+    if (password !== confirmPassword)
+      throw new UnprocessableEntityError("Password not match");
+    const data = await this.validateToken({ token });
+    await userService.updatePassword(data.email,password);
     return null;
   };
 

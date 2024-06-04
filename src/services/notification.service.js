@@ -15,6 +15,13 @@ class NotificationService {
     system: this.sendNotificationWithTypeSystem,
     comment: this.sendNotificationWithTypeComment,
   };
+  getAllNotifications = async ({ userId, limit = 10, offset = 0 }) => {
+    const notifications = await getAllNotification({ user_id: userId });
+    if (notifications.length === 0) {
+      return [];
+    }
+    return notifications;
+  };
 
   sendNotification = async ({ type = "system", link = "", user_id = "" }) => {
     // check type
@@ -63,10 +70,6 @@ class NotificationService {
 
   updateNotificationStatusRead = async ({ notificationId }) => {
     return await updateStatusRead({ notificationId });
-  };
-
-  getAllNotificationByUserId = async ({ user_id }) => {
-    return await getAllNotification({ user_id });
   };
 }
 module.exports = new NotificationService();
