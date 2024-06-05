@@ -36,7 +36,7 @@ const authentication = asyncHandler(async (req, res, next) => {
       }
     } catch (e) {
       console.log(e);
-      throw new UnauthorizedError("JWT invalid");
+      throw new UnauthorizedError("JWT expired");
     }
     req.keyStore = keyStore;
     req.user = decodeUser;
