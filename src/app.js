@@ -12,6 +12,7 @@ app.use((req, res, next) => {
   req.header.origin = req.header.origin || req.header.host;
   next();
 });
+
 //config cors
 app.use(cors(corsOptions)); //config cors
 
