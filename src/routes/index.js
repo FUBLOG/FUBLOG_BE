@@ -1,23 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-router.use("/v1/api/access", require("./access"));
-router.use("/v1/api/test", require("./test"));
-router.use("/v1/api/user", require("./user"));
-
-
-
-// Post API Router
-router.use("/v1/api/post", require("./post"));
-// PostTag API Router
-router.use("/v1/api/posttag", require("./postTag"));
-// Report API Router
-router.use("/v1/api/report", require("./report"));
-// Report 
-router.use("/v1/api/userinfo", require("./userInfo"));
-
-
-router.use("/v1/api/message", require("./message"));
+router.use("/access", require("./access"));
+router.use("/user", require("./user"));
+router.use("/post", require("./post"));
+router.use("/posttag", require("./postTag"));
+router.use("/report", require("./report"));
+router.use("/userinfo", require("./userInfo"));
+router.use("/message", require("./message"));
+router.use("/notification", require("./notification"));
+router.use("/comment", require("./comment"));
+router.use('/auth', require('./auth'));
 module.exports = router;
-
-////v1/api/access
