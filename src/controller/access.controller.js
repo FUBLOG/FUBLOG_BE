@@ -63,5 +63,14 @@ class AccessController {
   changePassword = async (req, res, next) => {
     res.send("Change Password");
   };
+
+  checkToken = async (req, res, next) => {
+    const response = new OK({
+      message: "Token is valid",
+      metadata: await accessService.checkToken(req.headers),
+    });
+    response.send(res);
+  };
+
 }
 module.exports = new AccessController();
