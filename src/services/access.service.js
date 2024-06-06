@@ -82,8 +82,18 @@ class AccessService {
     if (!token) throw new UnprocessableEntityError("Missing token");
     const otp = await findByToken({ token });
     if (!otp) throw new NotFoundError("Token is not found");
-    const data = await CryptoService.verifyToken(otp.otp_sign, otp.otp_token);
+    const data = await CryptoService.verifyToken(
+      otp.otp_sign,
+      otp.otp_token,
+      (err, user) => {
+        if (err) {
+          throw new UnauthorizedError("Invalid request");
+        }
+        return user;
+      }
+    );
     //delete token
+    console.log(data);
     await findAndDeleteOTP({ token });
     await userService.createNewUser(data);
     io.emit(`${data.email}`, "Signup successfully");
