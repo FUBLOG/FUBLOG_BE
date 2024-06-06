@@ -8,10 +8,6 @@ const { corsOptions } = require("./config/cors.config");
 const logger = require("./logger/log.system");
 const { v4: uuidv4 } = require("uuid");
 
-app.use((req, res, next) => {
-  req.header.origin = req.header.origin || req.header.host;
-  next();
-});
 //config cors
 app.use(cors(corsOptions)); //config cors
 
