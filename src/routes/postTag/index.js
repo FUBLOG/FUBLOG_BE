@@ -6,12 +6,12 @@ const postTagController = require('../../controller/postTagController');
 
 Router.post('/createposttag', asyncHandler(postTagController.newTag));
 
-Router.get('/:id',asyncHandler(postTagController.viewATag));
+Router.get('/getaposttag/:id',asyncHandler(postTagController.viewATag));
 
-Router.get('/', asyncHandler(postTagController.viewAllTag));
+Router.get('/getallposttag', asyncHandler(postTagController.viewAllTag));
 
-Router.patch('/:id',asyncHandler(postTagController.updateTag));
+Router.patch('/updateposttag/:id',asyncHandler(postTagController.updateTag));
 
-Router.delete('/:id', asyncHandler(postTagController.deleteTag));
+Router.delete('/deleteposttag/:id', asyncHandler(postTagController.deleteTag));
 
 module.exports = Router;

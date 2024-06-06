@@ -1,11 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-router.use("/v1/api/access", require("./access"));
-router.use("/v1/api/test", require("./test"));
-router.use("/v1/api/user", require("./user"));
-router.use("/v1/api/post", require("./post"));
-router.use("/v1/api/message", require("./message"));
-module.exports = router;
+router.use("/access", require("./access"));
+router.use("/test", require("./test"));
+router.use("/user", require("./user"));
+router.use("/post", require("./post"));
+router.use("/posttag", require("./postTag"));
+router.use("/report", require("./report"));
+router.use("/userinfo", require("./userInfo"));
+router.use("/message", require("./message"));
+router.use("/notification", require("./notification"));
+router.use("/comment", require("./comment"));
+router.use('/auth', require('./auth'));
 
-////v1/api/access
+module.exports = router;

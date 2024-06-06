@@ -1,5 +1,4 @@
 "use strict";
-
 const {
   NotFoundError,
   UnauthorizedError,
@@ -21,6 +20,7 @@ const { HEADER } = require("../core/constans/header.constant");
 const validator = require("../core/validator");
 const emailService = require("./email.service");
 const otpService = require("./otp.service");
+const { io } = require("../config/socket.config");
 class AccessService {
   login = async ({ email = "", password = "" }) => {
     const result = await validator.isEmptyObject({
@@ -79,13 +79,24 @@ class AccessService {
   };
 
   signupWithMailVerify = async (token) => {
-    if (!token) throw new BadRequestError("Token is required");
+    if (!token) throw new UnprocessableEntityError("Missing token");
     const otp = await findByToken({ token });
     if (!otp) throw new NotFoundError("Token is not found");
-    const data = await CryptoService.verifyToken(otp.otp_sign, otp.otp_token);
+    const data = await CryptoService.verifyToken(
+      otp.otp_sign,
+      otp.otp_token,
+      (err, user) => {
+        if (err) {
+          throw new UnauthorizedError("Invalid request");
+        }
+        return user;
+      }
+    );
     //delete token
+    console.log(data);
     await findAndDeleteOTP({ token });
     await userService.createNewUser(data);
+    io.emit(`${data.email}`, "Signup successfully");
     return null;
   };
 
@@ -101,6 +112,25 @@ class AccessService {
     await createOTP({ email, otp, sign: token });
     // Send email
     await emailService.sendEmailForgotPassword({ email, otp });
+    return null;
+  };
+
+  resetPassword = async ({
+    password = "",
+    token = "",
+    confirmPassword = "",
+  }) => {
+    const result = await validator.isEmptyObject({
+      password,
+      token,
+      confirmPassword,
+    });
+    if (result.length > 0)
+      throw new UnprocessableEntityError(`Missing ${result}`);
+    if (password !== confirmPassword)
+      throw new UnprocessableEntityError("Password not match");
+    const data = await this.validateToken({ token });
+    await userService.updatePassword(data.email, password);
     return null;
   };
 
@@ -145,6 +175,25 @@ class AccessService {
     const data = await CryptoService.verifyToken(otp.otp_sign, otp.otp_token);
     await findAndDeleteOTP({ token });
     return data;
+  };
+
+  checkToken = async (headers) => {
+    const profileHash = headers[HEADER.CLIENT_ID];
+    const accessToken = headers[HEADER.ACCESS_TOKEN];
+    if (!profileHash || !accessToken)
+      throw new UnauthorizedError("Invalid request");
+    const keyStore = await KeyTokenService.findUserById(profileHash);
+    try {
+      const decodeUser = await CryptoService.verifyTokenByRSA(
+        accessToken,
+        keyStore.publicKey
+      );
+      if (profileHash !== decodeUser.profileHash)
+        throw new UnauthorizedError("Invalid request");
+    } catch (e) {
+      throw new UnauthorizedError("Invalid request");
+    }
+    return decodeUser;
   };
 }
 module.exports = new AccessService();
