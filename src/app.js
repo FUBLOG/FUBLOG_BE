@@ -7,6 +7,11 @@ const cors = require("cors");
 const { corsOptions } = require("./config/cors.config");
 const logger = require("./logger/log.system");
 const { v4: uuidv4 } = require("uuid");
+
+app.use((req, res, next) => {
+  req.header.origin = req.header.origin || req.header.host;
+  next();
+});
 //config cors
 app.use(cors(corsOptions)); //config cors
 
@@ -25,12 +30,18 @@ app.use((req, res, next) => {
   const traceId = req.headers["x-trace-id"] || uuidv4();
   if (traceId) {
     req.traceId = traceId;
+    req.now = Date.now();
   }
+  logger.log(`Input: ${req.method}`, [
+    req.path,
+    { requestId: traceId },
+    req.method === "GET" ? req.query : req.body,
+  ]);
   next();
 });
 
 //init routes
-app.use("/", require("./routes"));
+app.use("/v1/api", require("./routes"));
 
 //handle Error
 app.use((req, res, next) => {
@@ -41,8 +52,20 @@ app.use((req, res, next) => {
 
 // hàm quản lí lỗi
 app.use((error, req, res, next) => {
-  logger.error("error", [req.path, ` ${error.status}:${error.message}`]);
+  const resMessage = `${error.status} - ${Date.now() - req.now}ms - ${
+    error.message
+  }`;
+  const options = [
+    req.path,
+    { requestId: req.traceId },
+    { message: resMessage },
+  ];
   const statusCode = error.status || 500;
+  if (statusCode === 500) {
+    logger.error("error", options);
+  } else {
+    logger.warn("warn", options);
+  }
   return res.status(statusCode).json({
     status: "error",
     code: statusCode,

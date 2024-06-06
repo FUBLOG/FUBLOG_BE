@@ -176,5 +176,24 @@ class AccessService {
     await findAndDeleteOTP({ token });
     return data;
   };
+
+  checkToken = async (headers) => {
+    const profileHash = headers[HEADER.CLIENT_ID];
+    const accessToken = headers[HEADER.ACCESS_TOKEN];
+    if (!profileHash || !accessToken)
+      throw new UnauthorizedError("Invalid request");
+    const keyStore = await KeyTokenService.findUserById(profileHash);
+    try {
+      const decodeUser = await CryptoService.verifyTokenByRSA(
+        accessToken,
+        keyStore.publicKey
+      );
+      if (profileHash !== decodeUser.profileHash)
+        throw new UnauthorizedError("Invalid request");
+    } catch (e) {
+      throw new UnauthorizedError("Invalid request");
+    }
+    return decodeUser;
+  };
 }
 module.exports = new AccessService();
