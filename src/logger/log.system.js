@@ -1,5 +1,4 @@
 "use strict";
-
 const winston = require("winston");
 const format = winston.format;
 require("winston-daily-rotate-file");
@@ -46,6 +45,19 @@ class LoggerSystem {
           ),
           level: "error",
         }),
+        new winston.transports.DailyRotateFile({
+          dirname: "src/logs",
+          filename: "logs/%DATE%-warn.log",
+          datePattern: "YYYY-MM-DD",
+          zippedArchive: true,
+          maxSize: "1m",
+          maxFiles: "14d",
+          format: format.combine(
+            format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+            formatPrint
+          ),
+          level: "warn",
+        }),
       ],
     });
   }
@@ -71,6 +83,11 @@ class LoggerSystem {
     const paramsLog = this.commonParams(params);
     const logObject = Object.assign({ message }, paramsLog);
     this.logger.error(logObject);
+  }
+  warning(message, params) {
+    const paramsLog = this.commonParams(params);
+    const logObject = Object.assign({ message }, paramsLog);
+    this.logger.warn(logObject);
   }
 }
 

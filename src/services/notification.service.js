@@ -49,10 +49,11 @@ class NotificationService {
 
   sendNotificationWithTypeComment = async ({ link = "", user_id = "" }) => {
     const message = `Someone commented on your post`;
+    const path = `https://has.io.vn/posts/${link}`;
     const notification = await createNewNotification({
       user_id,
       message,
-      link,
+      link: path,
       type: "comment",
     });
     await this.sendSocketNotification(notification);

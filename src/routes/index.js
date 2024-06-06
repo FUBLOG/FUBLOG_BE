@@ -19,5 +19,3 @@ router.use("/v1/api/userinfo", require("./userInfo"));
 
 router.use("/v1/api/message", require("./message"));
 module.exports = router;
-
-////v1/api/access

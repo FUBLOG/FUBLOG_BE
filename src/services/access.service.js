@@ -1,5 +1,4 @@
 "use strict";
-
 const {
   NotFoundError,
   UnauthorizedError,
@@ -21,6 +20,7 @@ const { HEADER } = require("../core/constans/header.constant");
 const validator = require("../core/validator");
 const emailService = require("./email.service");
 const otpService = require("./otp.service");
+const { io } = require("../config/socket.config");
 class AccessService {
   login = async ({ email = "", password = "" }) => {
     const result = await validator.isEmptyObject({
@@ -86,6 +86,7 @@ class AccessService {
     //delete token
     await findAndDeleteOTP({ token });
     await userService.createNewUser(data);
+    io.emit(`${data.email}`, "Signup successfully");
     return null;
   };
 
@@ -119,7 +120,7 @@ class AccessService {
     if (password !== confirmPassword)
       throw new UnprocessableEntityError("Password not match");
     const data = await this.validateToken({ token });
-    await userService.updatePassword(data.email,password);
+    await userService.updatePassword(data.email, password);
     return null;
   };
 
