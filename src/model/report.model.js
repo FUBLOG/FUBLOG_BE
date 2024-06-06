@@ -12,7 +12,7 @@ const report = mongoose.Schema({
         type: String,
         enum: ["account", "post"],
         require: true,
-        default: "Post"
+        default: "post"
     },
 
     reason:{

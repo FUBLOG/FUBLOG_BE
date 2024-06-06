@@ -40,6 +40,22 @@ var userInfoSchema = new mongoose.Schema(
       ],
       default: "single",
     },
+    friendList: {
+      type: [String],
+      default: "",
+    },
+    blockList: {
+      type: [String],
+      default: "",
+    },
+    avatarList: {
+      type: [String],
+      default: "",
+    },
+    coverList: {
+      type: [String],
+      default: "",
+    }
   },
   {
     timestamps: true,
