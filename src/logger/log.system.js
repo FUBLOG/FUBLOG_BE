@@ -84,7 +84,8 @@ class LoggerSystem {
     const logObject = Object.assign({ message }, paramsLog);
     this.logger.error(logObject);
   }
-  warning(message, params) {
+
+  warn(message, params) {
     const paramsLog = this.commonParams(params);
     const logObject = Object.assign({ message }, paramsLog);
     this.logger.warn(logObject);
