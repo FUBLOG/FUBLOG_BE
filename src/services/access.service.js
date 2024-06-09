@@ -60,7 +60,7 @@ class AccessService {
         object: existUser,
       }),
       info: getInfoData({
-        filed: ["avatar"],
+        filed: ["avatar", "friendList", "blockList"],
         object: info,
       }),
       tokens: {
