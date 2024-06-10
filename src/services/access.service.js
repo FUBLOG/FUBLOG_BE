@@ -15,12 +15,12 @@ const CryptoService = require("./crypto.service");
 const userService = require("./user.service");
 const KeyTokenService = require("./keytoken.service");
 const { getInfoData } = require("../utils");
-const userInfoService = require("./userInfo.service");
 const { HEADER } = require("../core/constans/header.constant");
 const validator = require("../core/validator");
 const emailService = require("./email.service");
 const otpService = require("./otp.service");
 const { io } = require("../config/socket.config");
+const { findUserInfoById } = require("../repository/userInfo.repo");
 class AccessService {
   login = async ({ email = "", password = "" }) => {
     const result = await validator.isEmptyObject({
@@ -53,7 +53,7 @@ class AccessService {
       refreshToken: tokens.refreshToken,
       publicKey,
     });
-    const info = await userInfoService.getInfoUser(existUser._id);
+    const info = await findUserInfoById(existUser._id);
     return {
       user: getInfoData({
         filed: ["profileHash", "displayName"],
@@ -183,16 +183,23 @@ class AccessService {
     if (!profileHash || !accessToken)
       throw new UnauthorizedError("Invalid request");
     const keyStore = await KeyTokenService.findUserById(profileHash);
-    try {
-      const decodeUser = await CryptoService.verifyTokenByRSA(
-        accessToken,
-        keyStore.publicKey
-      );
-      if (profileHash !== decodeUser.profileHash)
-        throw new UnauthorizedError("Invalid request");
-    } catch (e) {
+    let decodeUser = {};
+    const jwt = accessToken.split(" ")[1];
+    decodeUser = await CryptoService.verifyToken(
+      jwt,
+      keyStore.publicKey,
+      (err, user) => {
+        if (err && err.name === "TokenExpiredError") {
+          throw new UnauthorizedError("JWT invalid");
+        }
+        if (err) {
+          throw new UnauthorizedError("Invalid request");
+        }
+        return user;
+      }
+    );
+    if (profileHash !== decodeUser.profileHash)
       throw new UnauthorizedError("Invalid request");
-    }
     return decodeUser;
   };
 }

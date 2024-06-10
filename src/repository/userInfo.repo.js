@@ -48,7 +48,7 @@ const viewCvPhotos = async (_id) => {
   return arrayOfCvPhotos;
 };
 
-const findUserInfoById = async (userId, unselect) => {
+const findUserInfoById = async (userId, unselect = []) => {
   return await userInfoModel
     .findOne({ user_id: userId })
     .select(unselect)
