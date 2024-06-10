@@ -12,3 +12,4 @@ router.use("/notification", require("./notification"));
 router.use("/comment", require("./comment"));
 router.use('/auth', require('./auth'));
 module.exports = router;
+
