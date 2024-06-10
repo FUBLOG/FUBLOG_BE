@@ -39,10 +39,14 @@ const updatePassword = async ({ email, password }) => {
 const findUserById = async (userId) => {
   return await userModel.findOne({ _id: userId }).lean();
 };
+const findUserByProfileHash = async (profileHash) => {
+  return await userModel.findOne({ profileHash }).lean();
+};
 module.exports = {
   isEmailExists,
   createNewUser,
   isUserIDExist,
   updatePassword,
   findUserById,
+  findUserByProfileHash,
 };

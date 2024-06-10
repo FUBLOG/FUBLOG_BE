@@ -112,5 +112,7 @@ class UserService {
     const passwordHash = await CryptoService.hashPassword(password);
     await updatePassword({ email, password: passwordHash });
   };
+
+ 
 }
 module.exports = new UserService();
