@@ -1,8 +1,8 @@
 const HEADER = {
   API_KEY: "x-api-key",
-  AUTHORIZATION: "authorization",
-  CLIENT_ID: "x-client-id",
-  REFRESH_TOKEN:'x-rtoken-id',
-  PRIVATE_KEY: "x-private-key",
+  AUTHORIZATION: "Authorization",
+  CLIENT_ID: "X-Client-Id",
+  REFRESH_TOKEN: "X-Rtoken-Id",
+  PRIVATE_KEY: "X-Private-Key",
 };
 module.exports = { HEADER };
