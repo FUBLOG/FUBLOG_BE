@@ -26,4 +26,4 @@ jobs:
       - run: npm ci
       - name: "Create .env file"
         run: echo "${{secrets.ENV_FILE}}" >> .env
-          pm2 restart has-backend
+      - run: pm2 restart has-backend
