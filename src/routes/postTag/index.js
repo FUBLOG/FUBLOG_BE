@@ -14,3 +14,4 @@ router.patch("/updateposttag/:id", asyncHandler(postTagController.updateTag));
 router.delete("/deleteposttag/:id", asyncHandler(postTagController.deleteTag));
 
 module.exports = router;
+
