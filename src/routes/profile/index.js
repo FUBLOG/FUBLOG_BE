@@ -8,7 +8,10 @@ const { authentication } = require("../../auth/authentication");
 router.get("/getalluserinfo", asyncHandler(userInfoController.getAllUserInfo));
 
 // Get one User Info
-router.get("/getuserinfo/:profileHash", asyncHandler(userInfoController.getUserInfo));
+router.get(
+  "/getuserinfo/:profileHash",
+  asyncHandler(userInfoController.getUserInfo)
+);
 
 router.use(authentication);
 // Delete a user info
@@ -37,4 +40,4 @@ router.patch(
   asyncHandler(userInfoController.changeCoverPhoto)
 );
 
-module.exports = Router;
+module.exports = router;
