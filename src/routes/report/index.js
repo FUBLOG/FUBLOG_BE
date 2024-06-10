@@ -20,5 +20,4 @@ router.patch('/updatereport/:id', asyncHandler(reportController.updateReport));
 
 router.delete('/deletereport/:id', asyncHandler(reportController.deleteReport));
 
-
 module.exports = router
