@@ -11,12 +11,12 @@ const validator = require('../core/validator')
 
 class postService {
   createPost =  async (data,filesdata) => {
-    const condition2 =  validator.isEmpty(data.postContent);
+    // const condition2 =  validator.isEmpty(data.postContent);
     // const condition4 = await validator.isEmpty(filesdata)
-    console.log(data);
+    console.log(filesdata);
     // if (!condition) {
     //   await deleteimages(filesdata);
-    //   throw new BadRequestError("Wrong Format");
+    //   throw new BadRequestError("Wrong file Format");
     // }
     // if (condition2){  
     //  const imagearr = filesdata.map(file=>file.path)
@@ -28,14 +28,14 @@ class postService {
 
   viewpost = async () => {
     const viewposts = await post.find();
-    if (viewposts.length === 0) throw new NotFoundError();
+    if (viewposts.length === 0) throw new NotFoundError("Cannot Find Any Post");
     return viewposts;
     
     
   };
   findpost = async (id) => {
     const viewApost = await post.findById(id);
-    if (viewApost.length > 0) throw new NotFoundError();
+    if (viewApost.length > 0) throw new NotFoundError("Cannot Find Post Id");
     return viewApost;
   };
   updatepost = async ({id}, data,filesdata) => {
@@ -53,15 +53,47 @@ class postService {
     const findPostsByTag = await post.find({postTagID: id})
     console.log(findPostsByTag)
       if(!findPostsByTag)
-        throw new NotFoundError();  
+        throw new NotFoundError("Cannot Find Tag ID");  
       return findPostsByTag;
   };
   findPostByUserId = async({id})=>{
     const findPostsByUser = await post.find({UserID: id})
     console.log(findPostsByUser)
       if(!findPostsByUser)
-        throw new NotFoundError();  
+        throw new NotFoundError("Cannot Find UserID");  
       return findPostsByUser;
+  };
+  updateCommentCount = async(PId,sign) =>{
+    let count = post.findById(PId).countComment;
+    if(!post.findById(PId))
+      throw new NotFoundError("Cannot Find PostId");
+    switch (sign) {
+      case 1:
+        count = count + 1;
+        break;
+      case 2:
+        count = count - 1;
+        break;
+      default:
+        throw new BadRequestError("Gia tri sign khong hop le")
+    }
+    return post.findByIdAndUpdate(PId,{countComment : count})
+  }
+  updateLikeCount = async(PId,sign) =>{
+    let count = post.findById(PId).countLike;
+    if(!post.findById(PId))
+      throw new NotFoundError("Cannot Find PostId");
+    switch (sign) {
+      case 1:
+        count = count + 1;
+        break;
+      case 2:
+        count = count - 1;
+        break;
+      default:
+        throw new BadRequestError("Gia tri sign khong hop le")
+    }
+    return post.findByIdAndUpdate(PId,{countLike : count})
   }
 }
 module.exports = new postService();

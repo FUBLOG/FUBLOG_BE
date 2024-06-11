@@ -33,7 +33,7 @@ class postcontroller {
     };
     deletePost = async(req, res, next)=>{
         const result = new OK({
-            message:" Update a post Sucess",
+            message:" Delete a post Sucess",
             metadata: await postService.deletepost(req.params)
         })
         result.send(res);

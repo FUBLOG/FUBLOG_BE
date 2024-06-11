@@ -1,22 +1,23 @@
 const express = require('express')
-const Router = express.Router()
+const router = express.Router()
 const asyncHandler = require('express-async-handler');
 const reportController = require('../../controller/report.controller');
+const { authentication } = require('../../auth/authentication');
 
-Router.get('/getareport/:id',asyncHandler(reportController.getAReport));
+router.get('/getareport/:id',asyncHandler(reportController.getAReport));
 
-Router.get('/getallreports', asyncHandler(reportController.getAllReport));
-
-
-
-Router.use(authentication);
+router.get('/getallreports', asyncHandler(reportController.getAllReport));
 
 
 
-Router.post('/createreport', asyncHandler(reportController.newReport));
+router.use(authentication);
 
-Router.patch('/updatereport/:id', asyncHandler(reportController.updateReport));
 
-Router.delete('/deletereport/:id', asyncHandler(reportController.deleteReport));
 
-module.exports = Router
+router.post('/createreport', asyncHandler(reportController.newReport));
+
+router.patch('/updatereport/:id', asyncHandler(reportController.updateReport));
+
+router.delete('/deletereport/:id', asyncHandler(reportController.deleteReport));
+
+module.exports = router

@@ -1,4 +1,6 @@
 "use strict";
+const cloudinary = require('cloudinary').v2;
+
 
 const cloudinaryTask = require('../core/cloudinary')
 const postModel = require('../model/post.model');
@@ -27,14 +29,16 @@ const createNewPost = async({
     
     {
         const uid = userId;
-        const imagelink = filesdata.map(file => file.path);
-        const finalImagePaths = imagelink.length > 0 ? imagelink : [];
-
+        const urls = filesdata.map(file => {
+            const pID = file.filename;
+            return cloudinary.url(pID, { width: 750, height: 500, crop: 'fill' });
+        });
+        console.log(urls);
     return await postModel.create({
         UserID: uid,
         postTagID,
         postContent,
-        postLinkToImages: finalImagePaths,
+        postLinkToImages: urls,
         postStatus,
         likes
 })
@@ -43,20 +47,22 @@ const createNewPost = async({
 
 }
 const updatePost = async(id,{
-    UserID,
+    UserID ,
     postTagID,
     postContent,
     postLinkToImages,
     postStatus,
     likes
 },filesdata)=>{
-    const path = filesdata.map(file => file.path);
-    const filepath = path.length > 0 ? path : postLinkToImages;
+    const urls = filesdata.map(file => {
+        const pID = file.filename;
+        return cloudinary.url(pID, { width: 750, height: 500, crop: 'fill' });
+    });
     return await postModel.findByIdAndUpdate(id,{
         UserID,
         postTagID,
         postContent,
-        postLinkToImages: filepath,
+        postLinkToImages: urls,
         postStatus,
         likes
     }) 
