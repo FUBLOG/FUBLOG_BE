@@ -17,6 +17,10 @@ const conversationSchema = new Schema(
         default: [],
       },
     ],
+    score: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     collection: COLLECTION_NAME,

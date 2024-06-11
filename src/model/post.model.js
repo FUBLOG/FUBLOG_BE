@@ -1,33 +1,51 @@
 const mongoose = require("mongoose");
-const DOCUMENT_NAME = "Posts";
+const DOCUMENT_NAME = "Post";
 const COLLECTION_NAME = "Posts";
-const postSchems = mongoose.Schema({
-  UserID: {
-    type: String,
-    required: true,
+const postSchemas = mongoose.Schema(
+  {
+    UserID: {
+      type: String,
+      required: true,
+    },
+    postTagID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "PostTag",
+      required: true,
+    },
+    postContent: {
+      type: String,
+      required: true,
+    },
+    postLinkToImages: {
+      type: [String],
+      required: false,
+    },
+    postStatus: {
+      type: String,
+      enum: ["public", "private", "friend"],
+      required: true,
+      default: "public",
+    },
+    likes: {
+      type: Array,
+      default: [],
+    },
+    commentCount: {
+      type: Number,
+      default: 0,
+    },
+    score: {
+      type: Number,
+      default: 0,
+    },
+    timeDecay: {
+      type: Number,
+      default: 100,
+    },
   },
-  postTagID: {
-    type: String,
-    required: true,
-  },
-  postContent: {
-    type: String,
-    required: true,
-  },
-  postLinkToImages: {
-    type: [String],
-    required: false,
-  },
-  postStatus: {
-    type: String,
-    enum: ["public", "private", "friend"],
-    required: true,
-    default: "public",
-  },
-  likes: {
-    type: Array,
-    default: [],
-  },
-}, {timestamps: true }
+  {
+    collection: COLLECTION_NAME,
+    timestamps: true,
+  }
 );
-module.exports = mongoose.model("Post", postSchems);
+module.exports = mongoose.model(DOCUMENT_NAME, postSchemas);

@@ -1,67 +1,88 @@
 const post = require("../model/post.model");
-const { ConflictRequestError } = require("../core/response/error.response");
 const { NotFoundError } = require("../core/response/error.response");
-const { createNewPost,deleteimage,deleteOldImage, updatePost,deletePost} = require("../repository/post.repo");
+const {
+  createNewPost,
+  deleteimage,
+  deleteOldImage,
+  updatePost,
+  deletePost,
+} = require("../repository/post.repo");
 const { BadRequestError } = require("../core/response/error.response");
 const deleteImage = require("../helpers/deleteImage");
-const { isUserIDExist } = require("../repository/user.repo");
-const validator = require('../core/validator')
+const validator = require("../core/validator");
+const { HEADER } = require("../core/constans/header.constant");
+const RedisService = require("./redis.service");
 
-
-
-class postService {
-  createPost =  async (data,filesdata) => {
-    const condition2 =  validator.isEmpty(data.postContent);
-    // const condition4 = await validator.isEmpty(filesdata)
-    console.log(data);
-    // if (!condition) {
-    //   await deleteimages(filesdata);
-    //   throw new BadRequestError("Wrong Format");
-    // }
-    // if (condition2){  
-    //  const imagearr = filesdata.map(file=>file.path)
-    //   await deleteImage(imagearr); 
-    //   throw new BadRequestError("COntent is empty");
-    // }
-    return  await createNewPost(data.body,filesdata,data.user.userId);
+class PostService {
+  createPost = async ({ userId, post = {}, filesData = [], traceId }) => {
+    const isValidPost = await validator.validatePost(post, filesData);
+    if (!isValidPost) throw new BadRequestError("Missing content and image");
+    const newPost = await createNewPost(post, filesData, userId);
+    if (newPost) {
+      RedisService.setPublicPost(newPost);
+    }
+    return newPost;
   };
 
   viewpost = async () => {
     const viewposts = await post.find();
     if (viewposts.length === 0) throw new NotFoundError();
     return viewposts;
-    
-    
   };
   findpost = async (id) => {
     const viewApost = await post.findById(id);
     if (viewApost.length > 0) throw new NotFoundError();
     return viewApost;
   };
-  updatepost = async ({id}, data,filesdata) => {
-    if(filesdata)
-      await deleteImage(aPost.postLinkToImages);
-    return await updatePost(id,data,filesdata);
+  updatepost = async ({ id }, data, filesData) => {
+    if (filesData) await deleteImage(aPost.postLinkToImages);
+    return await updatePost(id, data, filesData);
   };
-  deletepost = async ({id}) => {
+  deletepost = async ({ id }) => {
     const deletePost = await post.findByIdAndDelete(id);
-    if (!deletePost) 
-      throw new NotFoundError("Cannot find ID");
+    if (!deletePost) throw new NotFoundError("Cannot find ID");
     return deletePost;
   };
-  findPostByTag = async({id})=>{
-    const findPostsByTag = await post.find({postTagID: id})
-    console.log(findPostsByTag)
-      if(!findPostsByTag)
-        throw new NotFoundError();  
-      return findPostsByTag;
+  findPostByTag = async ({ id }) => {
+    const findPostsByTag = await post.find({ postTagID: id });
+    console.log(findPostsByTag);
+    if (!findPostsByTag) throw new NotFoundError();
+    return findPostsByTag;
   };
-  findPostByUserId = async({id})=>{
-    const findPostsByUser = await post.find({UserID: id})
-    console.log(findPostsByUser)
-      if(!findPostsByUser)
-        throw new NotFoundError();  
-      return findPostsByUser;
-  }
+  findPostByUserId = async ({ id }) => {
+    const findPostsByUser = await post.find({ UserID: id });
+    console.log(findPostsByUser);
+    if (!findPostsByUser) throw new NotFoundError();
+    return findPostsByUser;
+  };
+  getPosts = async (req) => {
+    const clientId = req.headers[HEADER.CLIENT_ID];
+    const accessToken = req.headers[HEADER.AUTHORIZATION];
+    if (!clientId || !accessToken) {
+      return await this.getPostsForGuest();
+    }
+    const keyStore = await KeyTokenService.findUserById(profileHash);
+    if (!keyStore) throw new NotFoundError("Not found keyStore");
+    let decodeUser = {};
+    const jwt = accessToken.split(" ")[1];
+    decodeUser = await CryptoService.verifyToken(
+      jwt,
+      keyStore.publicKey,
+      (err, user) => {
+        if (err && err.name === "TokenExpiredError") {
+          throw new BadRequestError("JWT invalid");
+        }
+        if (err) {
+          throw new BadRequestError("Invalid request");
+        }
+        return user;
+      }
+    );
+    return await this.getPostsForUser(decodeUser.userId);
+  };
+
+  getPostsForUser = async (userId) => {};
+
+  getPostsForGuest = async (req) => {};
 }
-module.exports = new postService();
+module.exports = new PostService();

@@ -17,21 +17,20 @@ const findPostByUserID = async (id) => {
   const posts = postModel.find({ UserID: id });
 };
 const createNewPost = async (
-  { UserID, postTagID, postContent, postLinkToImages, postStatus, likes },
-  filesdata,
+  { tagId, content, status = "public" },
+  filesData,
   userId
 ) => {
   const uid = userId;
-  const imagelink = filesdata.map((file) => file.path);
-  const finalImagePaths = imagelink.length > 0 ? imagelink : [];
+  const imageLink = filesData.map((file) => file.path);
+  const finalImagePaths = imageLink.length > 0 ? imageLink : [];
 
   return await postModel.create({
     UserID: uid,
-    postTagID,
-    postContent,
+    postTagID: tagId,
+    postContent : content,
     postLinkToImages: finalImagePaths,
-    postStatus,
-    likes,
+    postStatus: status,
   });
 };
 const updatePost = async (
