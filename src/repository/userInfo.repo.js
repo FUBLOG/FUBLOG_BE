@@ -1,6 +1,7 @@
 "use strict";
 const userInfoModel = require("../model/userInfo.model");
 const postService = require("../services/post.service");
+
 const createDefaultUserInfo = async ({ userId }) => {
   return await userInfoModel.create({
     user_id: userId,
@@ -54,6 +55,12 @@ const findUserInfoById = async (userId, unselect = []) => {
     .select(unselect)
     .lean();
 };
+const getFriendsList = async (userId) => {
+  return await userInfoModel
+    .findOne({ user_id: userId })
+    .select("friends")
+    .lean();
+};
 module.exports = {
   createDefaultUserInfo,
   updateUserAvatar,
@@ -62,4 +69,5 @@ module.exports = {
   viewAvatars,
   viewCvPhotos,
   findUserInfoById,
+  getFriendsList,
 };

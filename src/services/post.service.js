@@ -12,14 +12,23 @@ const deleteImage = require("../helpers/deleteImage");
 const validator = require("../core/validator");
 const { HEADER } = require("../core/constans/header.constant");
 const RedisService = require("./redis.service");
+const NewFeedsService = require("./newfeeds.service");
 
 class PostService {
   createPost = async ({ userId, post = {}, filesData = [], traceId }) => {
     const isValidPost = await validator.validatePost(post, filesData);
     if (!isValidPost) throw new BadRequestError("Missing content and image");
     const newPost = await createNewPost(post, filesData, userId);
-    if (newPost) {
-      RedisService.setPublicPost(newPost);
+    if (newPost.postStatus === "public") {
+      NewFeedsService.pushPublicNewFeed({
+        userId: userId,
+        post: newPost,
+      });
+    } else if (newPost.postStatus === "friend") {
+      NewFeedsService.pushNewFeed({
+        userId: userId,
+        post: newPost,
+      });
     }
     return newPost;
   };
