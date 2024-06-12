@@ -21,8 +21,15 @@ class addFriendService {
     
         const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);
     
-        if (existingRequest) {
+        if (existingRequest && existingRequest.status === "pending") {
             throw new Error('already sent');
+        }
+        if (existingRequest && existingRequest.status === 'accepted') {
+            throw new Error('You are already friends');
+        }
+
+        if (existingRequest && existingRequest.status === 'declined') {
+            throw new Error('Friend request was declined');
         }
     
         const createdRequest = await addFriendRepo.createRequest(sourceID, targetID);
@@ -35,8 +42,8 @@ class addFriendService {
         if (!isMongoId(sourceID) || !isMongoId(targetID)) {
             throw new Error('invalid userID');
         }  
-        const friendRequest = await addFriendRepo.findRequest(sourceID, targetID);   
-        if (!friendRequest ) {
+        const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);   
+        if (!existingRequest || existingRequest.status !== 'pending') {
             throw new Error('friend request not found or already processed');
         }
 
@@ -53,6 +60,7 @@ class addFriendService {
             receiverInfo.friendList.push(sourceID);
             await receiverInfo.save();
         }
+        await addFriendRepo.updateRequestStatus(sourceID, targetID,"accepted")
         const updatedFriendRequest = await addFriendRepo.findRequest(sourceID, targetID);
 
         return updatedFriendRequest;
@@ -71,40 +79,30 @@ class addFriendService {
         return requests;
     };
 
-    static declineFriendRequest = async (sourceID, targetID) => {
+  static declineFriendRequest = async (sourceID, targetID) => {
         if (!isMongoId(sourceID) || !isMongoId(targetID)) {
             throw new Error('invalid userID');
         }
-    
+        const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);   
+        if (!existingRequest || existingRequest.status !== 'pending') {
+            throw new Error('friend request not found or already processed');
+        }
         const deletedRequest = await addFriendRepo.deleteRequest(sourceID, targetID);
-    
+
         return deletedRequest;
-    };static declineFriendRequest = async (sourceID, targetID) => {
-    if (!isMongoId(sourceID) || !isMongoId(targetID)) {
-        throw new Error('invalid userID');
-    }
+        await addFriendRepo.updateRequestStatus(sourceID, targetID, "declined");
 
-    const deletedRequest = await addFriendRepo.deleteRequest(sourceID, targetID);
-
-    return deletedRequest;
-};
-
-    
-    
-static declineFriendRequest = async (sourceID, targetID) => {
-    if (!isMongoId(sourceID) || !isMongoId(targetID)) {
-        throw new Error('invalid userID');
-    }
-
-    const deletedRequest = await addFriendRepo.deleteRequest(sourceID, targetID);
-
-    return deletedRequest;
-};
-
+        
+    };
 
     static unFriend = async (sourceID, targetID) => {
         if (!isMongoId(sourceID) || !isMongoId(targetID)) {
             throw new Error('invalid userID');
+        }
+        const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);
+
+        if (!existingRequest || existingRequest.status === 'pending') {
+            throw new Error('friend request not found or not a friend');
         }
         const senderInfo = await userInfor.findOne({ user_id: sourceID });
         const receiverInfo = await userInfor.findOne({ user_id: targetID });
@@ -119,6 +117,7 @@ static declineFriendRequest = async (sourceID, targetID) => {
             await receiverInfo.save();
         }
 
+        await addFriendRepo.updateRequestStatus(sourceID, targetID,"declined")
 
         const deletedRequest = await addFriendRepo.deleteRequest(sourceID, targetID);
       
@@ -129,13 +128,18 @@ static declineFriendRequest = async (sourceID, targetID) => {
         if (!isMongoId(sourceID) || !isMongoId(targetID)) {
             throw new Error('invalid userID');
         }
+        const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);
 
+        if (!existingRequest || existingRequest.status === 'pending') {
+            throw new Error('friend request not found or not a friend');
+        }
         const senderInfo = await userInfor.findOne({ user_id: sourceID });
 
         if (!senderInfo.blockList.includes(targetID)) {
             senderInfo.blockList.push(targetID);
             await senderInfo.save();
         }
+        await addFriendRepo.updateRequestStatus(sourceID, targetID,"declined")
 
         const deletedRequest = await addFriendRepo.deleteRequest(sourceID, targetID);
 

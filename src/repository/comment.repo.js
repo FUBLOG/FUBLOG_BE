@@ -1,13 +1,10 @@
 const Post = require("../model/post.model");
-const { convertToObjectId } = require("../utils");
-const { NotFoundError } = require("../core/response/error.response");
 
-async function findOnePost({ post_id }) {
-  const post = await Post.findById(convertToObjectId(post_id));
-  if (!post) {
-    throw new NotFoundError("Post not found");
-  }
-  return post;
-}
+const updateCommentCount = async (comment_postID, increment = 1) => {
+  await Post.updateOne(
+    { _id: comment_postID },
+    { $inc: { commentCount: increment } }
+  );
+};
 
-module.exports = findOnePost; // Export the function directly
+module.exports = updateCommentCount;

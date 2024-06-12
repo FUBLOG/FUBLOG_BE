@@ -10,19 +10,19 @@ router.get('/findPostByTag/:id', asyncHandler(postcontroller.searchPostsByTag));
 
 router.get('/findPostByUser/:id', asyncHandler(postcontroller.searchPostsByUserId));
 
-router.get('/getapost/:id',asyncHandler(postcontroller.getAPost));
+router.get('/getPost/:id',asyncHandler(postcontroller.getAPost));
 
-router.get('/getallpost', asyncHandler(postcontroller.getAllPost));
+router.get('/getAllPosts', asyncHandler(postcontroller.getAllPost));
 
 
 
 // Authen
 router.use(authentication);
-router.post('/createpost',uploader.array('image'), asyncHandler(postcontroller.newPost));
+router.post('/createPost',uploader.array('image'), asyncHandler(postcontroller.newPost));
 
-router.patch('/updateapost/:id', uploader.array('image'),asyncHandler(postcontroller.updatePost));
+router.patch('/updatePost/:id', uploader.array('image'),asyncHandler(postcontroller.updatePost));
 
-router.delete('/deletepost/:id', asyncHandler(postcontroller.deletePost));
+router.delete('/deletePost/:id', asyncHandler(postcontroller.deletePost));
 
 
 

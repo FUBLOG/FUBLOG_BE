@@ -1,17 +1,17 @@
 const express = require('express')
-const Router = express.Router()
+const router = express.Router()
 const asyncHandler = require('express-async-handler');
 const postTagController = require('../../controller/postTagController');
 
 
-Router.post('/createposttag', asyncHandler(postTagController.newTag));
+router.post('/createTag', asyncHandler(postTagController.newTag));
 
-Router.get('/getaposttag/:id',asyncHandler(postTagController.viewATag));
+router.get('/getTag/:id',asyncHandler(postTagController.viewATag));
 
-Router.get('/getallposttag', asyncHandler(postTagController.viewAllTag));
+router.get('/getAllTag', asyncHandler(postTagController.viewAllTag));
 
-Router.patch('/updateposttag/:id',asyncHandler(postTagController.updateTag));
+router.patch('/updateTag/:id',asyncHandler(postTagController.updateTag));
 
-Router.delete('/deleteposttag/:id', asyncHandler(postTagController.deleteTag));
+router.delete('/deleteTag/:id', asyncHandler(postTagController.deleteTag));
 
-module.exports = Router;
+module.exports = router;

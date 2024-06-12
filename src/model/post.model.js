@@ -28,6 +28,10 @@ const postSchems = mongoose.Schema({
     type: Array,
     default: [],
   },
+  commentCount:{
+    type:Number,
+    default:0,
+  },
 }, {timestamps: true }
 );
 module.exports = mongoose.model("Post", postSchems);

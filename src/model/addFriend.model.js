@@ -14,7 +14,7 @@ const requestFriendSchema = new Schema({
    },
     status: {
         type: String,
-        enum : ['pending','accepted','declined'],
+        enum : ['pending','accepted','declined',],
         default: 'pending',
     }
 }, { timestamps: true });

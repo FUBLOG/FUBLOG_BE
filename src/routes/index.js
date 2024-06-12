@@ -15,9 +15,11 @@ router.use("/v1/api/posttag", require("./postTag"));
 router.use("/v1/api/report", require("./report"));
 // Report 
 router.use("/v1/api/userinfo", require("./userInfo"));
+router.use("/v1/api/comment", require("./comment"));
+router.use("/v1/api/message", require("./comment"));
+router.use("/v1.5/api/searchUser",require("./searchUser"))
 
-
-router.use("/v1/api/message", require("./message"));
+router.use("/v1/api/addFriend", require("./addFriend"));
 module.exports = router;
 
 ////v1/api/access

@@ -2,7 +2,7 @@
 
 const { NotFoundError } = require("../core/response/error.response");
 const Comment = require("../model/comment.model");
-const findOnePost = require("../repository/comment.repo");
+const updateCommentCount = require("../repository/comment.repo");
 const { convertToObjectId } = require("../utils");
 const Post = require("../model/post.model")
 
@@ -58,6 +58,9 @@ class CommentService {
     comment.comment_left = rightValue;
     comment.comment_right = rightValue + 1;
     await comment.save();
+
+    await updateCommentCount(comment_postID, 1);
+
     return comment;
   }
   static async getComments({
@@ -121,7 +124,7 @@ class CommentService {
     return comment;
   }
  
-  static async deleteComment({ parent_CommentID }) {
+  static async deleteComment({ parent_CommentID ,comment_postID}) {
     const comment = await Comment.findById(parent_CommentID);
     if (!comment) {
       throw new NotFoundError("Comment not found");
@@ -150,7 +153,7 @@ class CommentService {
       { comment_left: { $gt: rightValue } },
       { $inc: { comment_left: -width } }
     );
-
+    await updateCommentCount(comment_postID, -1);
     return commentsToDelete;
   }
 
@@ -182,10 +185,5 @@ class CommentService {
   }
   
   }
-
-  
-  
-  
-  
 
 module.exports = CommentService;
