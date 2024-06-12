@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const asyncHandler = require('express-async-handler');
 const reportController = require('../../controller/report.controller');
-const { authentication } = require("../../auth/authentication");
+const { authentication } = require('../../auth/authentication');
 
 router.get('/getareport/:id',asyncHandler(reportController.getAReport));
 

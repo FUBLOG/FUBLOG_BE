@@ -27,7 +27,7 @@ class userInfoController{
     getUserInfo = async(req, res, next)=> {
         const result = new OK({
             message: "Get User Info Success",
-            metadata: await userInfoService.getInfoUser(req.params.profileHash)
+            metadata: await userInfoService.getInfoUser(req.params.id)
         })
         result.send(res);
     };

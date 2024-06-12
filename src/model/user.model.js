@@ -1,4 +1,5 @@
 const mongoose = require("mongoose"); // Erase if already required
+const { profile } = require("winston");
 const DOCUMENT_NAME = "User";
 const COLLECTION_NAME = "Users";
 // Declare the Schema of the Mongo model
@@ -53,6 +54,12 @@ const userSchema = new mongoose.Schema(
     collection: COLLECTION_NAME,
   }
 );
-
+userSchema.index({ profileHash: 1 });
+userSchema.virtual("userInfo", {
+  ref: "UserInfo",
+  localField: "_id",
+  foreignField: "user_id",
+  justOne: true,
+});
 //Export the model
 module.exports = mongoose.model(DOCUMENT_NAME, userSchema);

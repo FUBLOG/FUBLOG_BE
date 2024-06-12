@@ -1,33 +1,88 @@
 const mongoose = require("mongoose");
-const DOCUMENT_NAME = "Posts";
+const DOCUMENT_NAME = "Post";
 const COLLECTION_NAME = "Posts";
-const postSchems = mongoose.Schema({
-  UserID: {
-    type: String,
-    required: true,
+const newFeed = require("./newfeeds.model");
+const postSchemas = mongoose.Schema(
+  {
+    UserID: {
+      type: String,
+      required: true,
+    },
+    postTagID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "PostTag",
+      required: true,
+    },
+    postContent: {
+      type: String,
+      required: true,
+    },
+    postLinkToImages: {
+      type: [String],
+      required: false,
+    },
+    postStatus: {
+      type: String,
+      enum: ["public", "private", "friend"],
+      required: true,
+      default: "public",
+    },
+    likes: {
+      type: Array,
+      default: [],
+    },
+    countLike: {
+      type: Number,
+      default: 0,
+    },
+    commentCount: {
+      type: Number,
+      default: 0,
+    },
+    score: {
+      type: Number,
+      default: 0,
+    },
   },
-  postTagID: {
-    type: String,
-    required: true,
-  },
-  postContent: {
-    type: String,
-    required: true,
-  },
-  postLinkToImages: {
-    type: [String],
-    required: false,
-  },
-  postStatus: {
-    type: String,
-    enum: ["public", "private", "friend"],
-    required: true,
-    default: "public",
-  },
-  likes: {
-    type: Array,
-    default: [],
-  },
-}, {timestamps: true }
+  {
+    collection: COLLECTION_NAME,
+    timestamps: true,
+  }
 );
-module.exports = mongoose.model("Post", postSchems);
+let oldScore;
+
+postSchemas.pre("findOneAndUpdate", function (next) {
+  this.findOne({}, function (err, doc) {
+    if (err) {
+      console.error(err);
+    } else {
+      oldScore = doc.score;
+    }
+    next();
+  });
+});
+
+postSchemas.post("findOneAndUpdate", function (next) {
+  if (!doc.isModified("score")) return next();
+  const scoreChange = doc.score - oldScore;
+  newFeed.findOneAndUpdate(
+    { postId: doc._id },
+    {
+      $set: {
+        rank: {
+          inc: scoreChange,
+        },
+      },
+    },
+    { new: true },
+    function (err, result) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("Updated rank in NewFeed");
+      }
+      next();
+    }
+  );
+});
+module.exports = mongoose.model(DOCUMENT_NAME, postSchemas);

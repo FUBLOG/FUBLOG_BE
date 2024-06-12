@@ -20,9 +20,15 @@ class Validator {
     return result;
   };
 
-  imageFormat = (linkimage)=>{
+  imageFormat = (linkimage) => {
     const imagePattern = /\.(jpg|png)$/i;
     return imagePattern.test(linkimage);
-};
+  };
+
+  validatePost = async (post, filesData) => {
+    const isEmptyContent = !post.content;
+    const isEmptyImage = filesData.length === 0;
+    return !(isEmptyContent && isEmptyImage);
+  };
 }
 module.exports = new Validator();
