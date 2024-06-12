@@ -1,32 +1,18 @@
 "use strict";
 
-const { createNewFeed } = require("../repository/newfeed.repo");
+const {
+  createNewFeed,
+  getPublicNewFeeds,
+  getFriendNewFeeds,
+} = require("../repository/newfeed.repo");
 const { getFriendsList } = require("../repository/userInfo.repo");
 
 class NewFeedsService {
-  static async getNewFeeds() {
-    return [
-      {
-        id: 1,
-        title: "Newfeeds 1",
-        content: "Content 1",
-      },
-      {
-        id: 2,
-        title: "Newfeeds 2",
-        content: "Content 2",
-      },
-      {
-        id: 3,
-        title: "Newfeeds 3",
-        content: "Content 3",
-      },
-      {
-        id: 4,
-        title: "Newfeeds 4",
-        content: "Content 4",
-      },
-    ];
+  static async getPublicNewFeeds({ page, limit }) {
+    return await getPublicNewFeeds({ page, limit });
+  }
+  static async getFriendNewFeeds({ userId, page, limit }) {
+    return await getFriendNewFeeds({ userId, page, limit });
   }
   static async pushNewFeed({ userId, post }) {
     const friendsList = await getFriendsList(userId);

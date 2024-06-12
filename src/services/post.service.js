@@ -35,12 +35,12 @@ class PostService {
 
   viewpost = async () => {
     const viewposts = await post.find();
-    if (viewposts.length === 0) throw new NotFoundError();
+    if (viewposts.length === 0) throw new NotFoundError("Cannot Find Any Post");
     return viewposts;
   };
   findpost = async (id) => {
     const viewApost = await post.findById(id);
-    if (viewApost.length > 0) throw new NotFoundError();
+    if (viewApost.length > 0) throw new NotFoundError("Cannot Find Post Id");
     return viewApost;
   };
   updatepost = async ({ id }, data, filesData) => {
@@ -67,8 +67,9 @@ class PostService {
   getPosts = async (req) => {
     const clientId = req.headers[HEADER.CLIENT_ID];
     const accessToken = req.headers[HEADER.AUTHORIZATION];
+    const { page, limit } = req.query;
     if (!clientId || !accessToken) {
-      return await this.getPostsForGuest();
+      return await this.getPostsForGuest(page, limit);
     }
     const keyStore = await KeyTokenService.findUserById(profileHash);
     if (!keyStore) throw new NotFoundError("Not found keyStore");
@@ -87,11 +88,27 @@ class PostService {
         return user;
       }
     );
-    return await this.getPostsForUser(decodeUser.userId);
+    return await this.getPostsForUser(decodeUser.userId, page, limit);
   };
 
-  getPostsForUser = async (userId) => {};
-
-  getPostsForGuest = async (req) => {};
+  getPostsForUser = async (userId, page = 0, limit = 20) => {
+    const newLimit = limit / 2;
+    const publicPosts = await NewFeedsService.getPublicNewFeeds({
+      page,
+      newLimit,
+    });
+    const friendPosts = await NewFeedsService.getFriendNewFeeds({
+      userId,
+      page,
+      newLimit,
+    });
+    const posts = publicPosts.concat(friendPosts).sort((a, b) => {
+      return b.createdAt - a.createdAt;
+    });
+    return posts;
+  };
+  getPostsForGuest = async (page = 0, limit = 20) => {
+    return await NewFeedsService.getPublicNewFeeds({ page, limit });
+  };
 }
 module.exports = new PostService();

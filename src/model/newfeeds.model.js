@@ -35,4 +35,11 @@ const newFeedSchemas = mongoose.Schema(
     timestamps: true,
   }
 );
+newFeedSchemas.post("findOneAndUpdate", async function (doc) {
+  if (doc.isModified("timeDecay")) {
+    doc.rank = doc.rank - 10;
+    await post.save();
+  }
+  next();
+});
 module.exports = mongoose.model(DOCUMENT_NAME, newFeedSchemas);

@@ -38,14 +38,12 @@ const initRedis = async () => {
   handleErrors({ instance });
   await instance.connect();
   client.instance = instance;
-  
 };
 
 const getRedis = () => client.instance;
 
 const closeRedis = () => {
   client.instance.quit();
-  logger.log("Redis closed", []);
 };
 
 module.exports = {

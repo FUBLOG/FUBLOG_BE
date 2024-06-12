@@ -201,7 +201,8 @@ class AccessService {
     );
     if (profileHash !== decodeUser.profileHash)
       throw new UnauthorizedError("Invalid request");
-    return decodeUser;
+    const user = await userService.findUserById(decodeUser.userId);
+    return user;
   };
 }
 module.exports = new AccessService();

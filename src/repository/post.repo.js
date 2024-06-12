@@ -1,21 +1,23 @@
 "use strict";
+const cloudinary = require('cloudinary').v2;
 
-const cloudinaryTask = require("../core/cloudinary");
-const postModel = require("../model/post.model");
 
-const deleteimage = async (filesdata) => {
-  for (const file of filesdata) {
-    cloudinaryTask.deleteImagecloudinary(file.filename);
-  }
+const cloudinaryTask = require('../core/cloudinary')
+const postModel = require('../model/post.model');
+
+const deleteimage = async(filesdata) =>{
+    for(const file of filesdata){
+        cloudinaryTask.deleteImagecloudinary(file.filename)
+    }
 };
-const deleteOldImage = async (imagelinks) => {
-  for (const path of imagelinks) {
-    cloudinaryTask.deleteImagecloudinary(path);
-  }
-};
-const findPostByUserID = async (id) => {
-  const posts = postModel.find({ UserID: id });
-};
+const deleteOldImage = async(imagelinks)=>{
+    for(const path of imagelinks){
+        cloudinaryTask.deleteImagecloudinary(path)
+    }
+}
+const findPostByUserID = async(id) =>{
+    const posts = postModel.find({UserID : id})
+}
 const createNewPost = async (
   { tagId, content, status = "public" },
   filesData,
@@ -33,32 +35,31 @@ const createNewPost = async (
     postStatus: status,
   });
 };
-const updatePost = async (
-  id,
-  { UserID, postTagID, postContent, postLinkToImages, postStatus, likes },
-  filesdata
-) => {
-  const path = filesdata.map((file) => file.path);
-  const filepath = path.length > 0 ? path : postLinkToImages;
-  return await postModel.findByIdAndUpdate(id, {
-    UserID,
+const updatePost = async(id,{
+    UserID ,
     postTagID,
     postContent,
     postLinkToImages: filepath,
     postStatus,
-    likes,
-  });
-};
-
-const findPostAuthor = async (postID) => {
-  const post = postModel.findOne({ _id: postID });
-  return post?.UserID || null;
-};
+    likes
+},filesdata)=>{
+    const urls = filesdata.map(file => {
+        const pID = file.filename;
+        return cloudinary.url(pID, { width: 750, height: 500, crop: 'fill' });
+    });
+    return await postModel.findByIdAndUpdate(id,{
+        UserID,
+        postTagID,
+        postContent,
+        postLinkToImages: urls,
+        postStatus,
+        likes
+    }) 
+}
 module.exports = {
-  createNewPost,
-  deleteimage,
-  deleteOldImage,
-  updatePost,
-  findPostByUserID,
-  findPostAuthor,
-};
+    createNewPost,
+    deleteimage,
+    deleteOldImage,
+    updatePost,
+    findPostByUserID
+}
