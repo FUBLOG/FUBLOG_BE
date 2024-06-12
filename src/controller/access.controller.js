@@ -71,6 +71,5 @@ class AccessController {
     });
     response.send(res);
   };
-
 }
 module.exports = new AccessController();

@@ -29,14 +29,14 @@ class reportController {
     };
     updateReport = async(req, res, next)=>{
         const result = new OK({
-            message:" Update a post Success",
+            message:" Update a post tag Success",
             metadata: await reportService.updateReport(req.params,req.body)
         })
         result.send(res);
     };
     deleteReport = async(req, res, next)=>{
         const result = new OK({
-            message:" Update a post Sucess",
+            message:" Update a post tag Sucess",
             metadata: await reportService.deleteReport(req.params)
         })
         result.send(res);

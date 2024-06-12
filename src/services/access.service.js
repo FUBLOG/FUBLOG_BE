@@ -179,7 +179,8 @@ class AccessService {
 
   checkToken = async (headers) => {
     const profileHash = headers[HEADER.CLIENT_ID];
-    const accessToken = headers[HEADER.ACCESS_TOKEN];
+    const accessToken = headers[HEADER.AUTHORIZATION];
+    console.log(profileHash, accessToken);
     if (!profileHash || !accessToken)
       throw new UnauthorizedError("Invalid request");
     const keyStore = await KeyTokenService.findUserById(profileHash);
@@ -200,7 +201,8 @@ class AccessService {
     );
     if (profileHash !== decodeUser.profileHash)
       throw new UnauthorizedError("Invalid request");
-    return decodeUser;
+    const user = await userService.findUserById(decodeUser.userId);
+    return user;
   };
 }
 module.exports = new AccessService();
