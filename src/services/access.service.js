@@ -14,13 +14,11 @@ const { isEmailExists } = require("../repository/user.repo");
 const CryptoService = require("./crypto.service");
 const userService = require("./user.service");
 const KeyTokenService = require("./keytoken.service");
-const { getInfoData } = require("../utils");
 const { HEADER } = require("../core/constans/header.constant");
 const validator = require("../core/validator");
 const emailService = require("./email.service");
 const otpService = require("./otp.service");
 const { io } = require("../config/socket.config");
-const { findUserInfoById } = require("../repository/userInfo.repo");
 class AccessService {
   login = async ({ email = "", password = "" }) => {
     const result = await validator.isEmptyObject({
@@ -53,16 +51,9 @@ class AccessService {
       refreshToken: tokens.refreshToken,
       publicKey,
     });
-    const info = await findUserInfoById(existUser._id);
+    const user = await userService.findUserById(decodeUser.userId);
     return {
-      user: getInfoData({
-        filed: ["profileHash", "displayName"],
-        object: existUser,
-      }),
-      info: getInfoData({
-        filed: ["avatar", "friendList", "blockList"],
-        object: info,
-      }),
+      user,
       tokens: {
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
