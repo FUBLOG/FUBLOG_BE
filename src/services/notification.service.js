@@ -15,6 +15,13 @@ class NotificationService {
     system: this.sendNotificationWithTypeSystem,
     comment: this.sendNotificationWithTypeComment,
   };
+  getAllNotifications = async ({ userId, limit = 10, offset = 0 }) => {
+    const notifications = await getAllNotification({ user_id: userId });
+    if (notifications.length === 0) {
+      return [];
+    }
+    return notifications;
+  };
 
   sendNotification = async ({ type = "system", link = "", user_id = "" }) => {
     // check type
@@ -42,10 +49,11 @@ class NotificationService {
 
   sendNotificationWithTypeComment = async ({ link = "", user_id = "" }) => {
     const message = `Someone commented on your post`;
+    const path = `https://has.io.vn/posts/${link}`;
     const notification = await createNewNotification({
       user_id,
       message,
-      link,
+      link: path,
       type: "comment",
     });
     await this.sendSocketNotification(notification);
@@ -63,10 +71,6 @@ class NotificationService {
 
   updateNotificationStatusRead = async ({ notificationId }) => {
     return await updateStatusRead({ notificationId });
-  };
-
-  getAllNotificationByUserId = async ({ user_id }) => {
-    return await getAllNotification({ user_id });
   };
 }
 module.exports = new NotificationService();

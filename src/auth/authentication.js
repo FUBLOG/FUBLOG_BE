@@ -26,21 +26,25 @@ const authentication = asyncHandler(async (req, res, next) => {
     throw new UnauthorizedError("Invalid request");
   } else {
     let decodeUser = {};
-    try {
-      decodeUser = await CryptoService.verifyToken(
-        accessToken,
-        keyStore.publicKey
-      );
-      if (profileHash !== decodeUser.profileHash) {
-        throw new UnauthorizedError("Invalid request");
+    const jwt = accessToken.split(" ")[1];
+    decodeUser = await CryptoService.verifyToken(
+      jwt,
+      keyStore.publicKey,
+      (err, user) => {
+        if (err && err.name === "TokenExpiredError") {
+          throw new UnauthorizedError("JWT invalid");
+        }
+        if (err) {
+          throw new UnauthorizedError("Invalid request");
+        }
+        return user;
       }
-    } catch (e) {
-      console.log(e);
-      throw new UnauthorizedError("JWT invalid");
+    );
+    if (profileHash !== decodeUser.profileHash) {
+      throw new UnauthorizedError("Invalid request");
     }
     req.keyStore = keyStore;
     req.user = decodeUser;
-    // decodeUser = { userId: '60f0d9f6b7d2b9e3d8d9f5f0', profileHash: 'kaidophan' }
     return next();
   }
 });

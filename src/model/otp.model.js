@@ -1,5 +1,6 @@
 "use strict";
 
+const { create } = require("lodash");
 const { model, Schema } = require("mongoose");
 const DOCUMENT_NAME = "otp_log";
 const COLLECTION_NAME = "otp_logs";
@@ -23,15 +24,11 @@ const otpSchema = new Schema(
       type: String,
       required: true,
     },
-    expire_at: {
-      type: Date,
-      default: Date.now,
-      expires: 120,
-    },
   },
   {
     collection: COLLECTION_NAME,
     timestamps: true,
   }
 );
+otpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
 module.exports = model(DOCUMENT_NAME, otpSchema);

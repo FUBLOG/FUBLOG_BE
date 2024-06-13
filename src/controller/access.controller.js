@@ -35,14 +35,6 @@ class AccessController {
     response.send(res);
   };
 
-  forgotPassword = async (req, res, next) => {
-    const response = new OK({
-      message: "Send email forgot password successfully",
-      metadata: await accessService.forgotPassword(req.body),
-    });
-    response.send(res);
-  };
-
   validateToken = async (req, res, next) => {
     const response = new OK({
       message: "Token is valid",
@@ -51,8 +43,33 @@ class AccessController {
     response.send(res);
   };
 
+  forgotPassword = async (req, res, next) => {
+    const email = req.body.email;
+    const response = new OK({
+      message: "Send email forgot password successfully",
+      metadata: await accessService.forgotPassword(email),
+    });
+    response.send(res);
+  };
+
+  resetPassword = async (req, res, next) => {
+    const response = new OK({
+      message: "Reset password successfully",
+      metadata: await accessService.resetPassword(req.body),
+    });
+    response.send(res);
+  };
+
   changePassword = async (req, res, next) => {
     res.send("Change Password");
+  };
+
+  checkToken = async (req, res, next) => {
+    const response = new OK({
+      message: "user is valid",
+      metadata: await accessService.checkToken(req.headers),
+    });
+    response.send(res);
   };
 }
 module.exports = new AccessController();

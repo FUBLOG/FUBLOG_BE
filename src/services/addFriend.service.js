@@ -4,32 +4,33 @@ const User = require('../model/user.model');
 const { isMongoId } = require('validator');
 const userInfor = require('../model/userInfo.model');
 const addFriendRepo = require('../repository/addFriend.repo')
-
+const {NotFoundError} = require("../core/response/error.response")
+const {CREATED} = require("../core/response/success.response")
 
 class addFriendService {
     static sendFriendRequest = async (sourceID, targetID) => {
         if (!isMongoId(sourceID) || !isMongoId(targetID)) {
-            throw new Error('invalid userID');
+            throw new NotFoundError('invalid userID');
         }
     
         const sender = await User.findById(sourceID);
         const receiver = await User.findById(targetID);
     
         if (!sender || !receiver) {
-            throw new Error('user not found');
+            throw new NotFoundError('user not found');
         }
     
         const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);
     
         if (existingRequest && existingRequest.status === "pending") {
-            throw new Error('already sent');
+            throw new CREATED('already sent');
         }
         if (existingRequest && existingRequest.status === 'accepted') {
-            throw new Error('You are already friends');
+            throw new CREATED('You are already friends');
         }
 
         if (existingRequest && existingRequest.status === 'declined') {
-            throw new Error('Friend request was declined');
+            throw new CREATED('Friend request was declined');
         }
     
         const createdRequest = await addFriendRepo.createRequest(sourceID, targetID);
@@ -40,17 +41,16 @@ class addFriendService {
     
     static acceptFriendRequest = async (sourceID, targetID) => {
         if (!isMongoId(sourceID) || !isMongoId(targetID)) {
-            throw new Error('invalid userID');
+            throw new NotFoundError('invalid userID');
         }  
         const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);   
         if (!existingRequest || existingRequest.status !== 'pending') {
-            throw new Error('friend request not found or already processed');
+            throw new NotFoundError('friend request not found or already processed');
         }
 
         const senderInfo = await userInfor.findOne({ user_id: sourceID });
         const receiverInfo = await userInfor.findOne({ user_id: targetID });
-        console.log(senderInfo)
-        console.log(receiverInfo)
+
         if (!senderInfo.friendList.includes(targetID)) {
             senderInfo.friendList.push(targetID);
             await senderInfo.save();
@@ -71,7 +71,7 @@ class addFriendService {
    
     static getAllFriendRequests = async (userID) => {
         if (!isMongoId(userID)) {
-            throw new Error('invalid userID');
+            throw new NotFoundError('invalid userID');
         }
 
         const requests = await addFriendRepo.findAllRequests(userID);
@@ -81,11 +81,11 @@ class addFriendService {
 
   static declineFriendRequest = async (sourceID, targetID) => {
         if (!isMongoId(sourceID) || !isMongoId(targetID)) {
-            throw new Error('invalid userID');
+            throw new NotFoundError('invalid userID');
         }
         const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);   
         if (!existingRequest || existingRequest.status !== 'pending') {
-            throw new Error('friend request not found or already processed');
+            throw new NotFoundError('friend request not found or already processed');
         }
         const deletedRequest = await addFriendRepo.deleteRequest(sourceID, targetID);
 
@@ -97,12 +97,12 @@ class addFriendService {
 
     static unFriend = async (sourceID, targetID) => {
         if (!isMongoId(sourceID) || !isMongoId(targetID)) {
-            throw new Error('invalid userID');
+            throw new NotFoundError('invalid userID');
         }
         const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);
 
         if (!existingRequest || existingRequest.status === 'pending') {
-            throw new Error('friend request not found or not a friend');
+            throw new NotFoundError('friend request not found or not a friend');
         }
         const senderInfo = await userInfor.findOne({ user_id: sourceID });
         const receiverInfo = await userInfor.findOne({ user_id: targetID });
@@ -126,12 +126,12 @@ class addFriendService {
 
     static blockFriend = async (sourceID, targetID) => {
         if (!isMongoId(sourceID) || !isMongoId(targetID)) {
-            throw new Error('invalid userID');
+            throw new NotFoundError('invalid userID');
         }
         const existingRequest = await addFriendRepo.findRequest(sourceID, targetID);
 
         if (!existingRequest || existingRequest.status === 'pending') {
-            throw new Error('friend request not found or not a friend');
+            throw new NotFoundError('friend request not found or not a friend');
         }
         const senderInfo = await userInfor.findOne({ user_id: sourceID });
 

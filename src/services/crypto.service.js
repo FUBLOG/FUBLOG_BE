@@ -12,8 +12,8 @@ class CryptoService {
   static generateToken = async (payload, secret, options) => {
     return jwt.sign(payload, secret, options);
   };
-  static verifyToken = async (token, secret) => {
-    return jwt.verify(token, secret);
+  static verifyToken = async (token, secret, callback = () => {}) => {
+    return jwt.verify(token, secret, callback);
   };
   static hashPassword = async (password) => {
     return bcrypt.hash(password, 10);

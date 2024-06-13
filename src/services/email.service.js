@@ -1,6 +1,7 @@
 "use strict";
 const transporter = require("../config/nodemailer.config");
 const { BadRequestError } = require("../core/response/error.response");
+const { log } = require("../logger/log.system");
 const { replacePlaceholders } = require("../utils");
 const otpService = require("./otp.service");
 const templateEmailService = require("./template.email.service");
@@ -26,6 +27,7 @@ class EmailService {
       console.log(result);
       return result;
     } catch (error) {
+      console.log(error);
       throw new BadRequestError("Send email failed");
     }
   };

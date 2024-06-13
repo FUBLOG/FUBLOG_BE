@@ -1,4 +1,6 @@
 "use strict";
+const cloudinary = require('cloudinary').v2;
+
 
 const cloudinaryTask = require('../core/cloudinary')
 const postModel = require('../model/post.model');
@@ -16,47 +18,40 @@ const deleteOldImage = async(imagelinks)=>{
 const findPostByUserID = async(id) =>{
     const posts = postModel.find({UserID : id})
 }
-const createNewPost = async({
-    UserID,
-    postTagID,
-    postContent,
-    postLinkToImages,
-    postStatus,
-    likes
-},filesdata,userId)=>
-    
-    {
-        const uid = userId;
-        const imagelink = filesdata.map(file => file.path);
-        const finalImagePaths = imagelink.length > 0 ? imagelink : [];
+const createNewPost = async (
+  { tagId, content, status = "public" },
+  filesData,
+  userId
+) => {
+  const uid = userId;
+  const imageLink = filesData.map((file) => file.path);
+  const finalImagePaths = imageLink.length > 0 ? imageLink : [];
 
-    return await postModel.create({
-        UserID: uid,
-        postTagID,
-        postContent,
-        postLinkToImages: finalImagePaths,
-        postStatus,
-        likes
-})
-
-
-
-}
+  return await postModel.create({
+    UserID: uid,
+    postTagID: tagId,
+    postContent : content,
+    postLinkToImages: finalImagePaths,
+    postStatus: status,
+  });
+};
 const updatePost = async(id,{
-    UserID,
+    UserID ,
     postTagID,
     postContent,
-    postLinkToImages,
+    postLinkToImages: filepath,
     postStatus,
     likes
 },filesdata)=>{
-    const path = filesdata.map(file => file.path);
-    const filepath = path.length > 0 ? path : postLinkToImages;
+    const urls = filesdata.map(file => {
+        const pID = file.filename;
+        return cloudinary.url(pID, { width: 750, height: 500, crop: 'fill' });
+    });
     return await postModel.findByIdAndUpdate(id,{
         UserID,
         postTagID,
         postContent,
-        postLinkToImages: filepath,
+        postLinkToImages: urls,
         postStatus,
         likes
     }) 

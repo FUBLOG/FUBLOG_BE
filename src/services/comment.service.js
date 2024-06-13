@@ -60,7 +60,6 @@ class CommentService {
     await comment.save();
 
     await updateCommentCount(comment_postID, 1);
-
     return comment;
   }
   static async getComments({
@@ -163,7 +162,7 @@ class CommentService {
     offset = 0,
   }) {
     if (!postID) {
-      throw new Error("postID is required to retrieve comments");
+      throw new NotFoundError("postID not found");
     }
   
     const comments = await Comment.find({

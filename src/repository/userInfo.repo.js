@@ -46,6 +46,18 @@ const viewCvPhotos = async(_id) => {
   const arrayOfCvPhotos = usersInfo.map(user => user.coverList) || [];
   return arrayOfCvPhotos;
 }
+const findUserInfoById = async (userId, unselect = []) => {
+  return await userInfoModel
+    .findOne({ user_id: userId })
+    .select(unselect)
+    .lean();
+};
+const getFriendsList = async (userId) => {
+  return await userInfoModel
+    .findOne({ user_id: userId })
+    .select("friends")
+    .lean();
+};
 module.exports = {
   createDefaultUserInfo,
   updateUserAvatar,
@@ -53,4 +65,6 @@ module.exports = {
   viewAllPhotos,
   viewAvatars,
   viewCvPhotos,
+  findUserInfoById,
+  getFriendsList,
 };

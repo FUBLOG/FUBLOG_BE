@@ -1,5 +1,4 @@
 "use strict";
-
 const {
   NotFoundError,
   UnauthorizedError,
@@ -16,11 +15,12 @@ const CryptoService = require("./crypto.service");
 const userService = require("./user.service");
 const KeyTokenService = require("./keytoken.service");
 const { getInfoData } = require("../utils");
-const userInfoService = require("./userInfo.service");
 const { HEADER } = require("../core/constans/header.constant");
 const validator = require("../core/validator");
 const emailService = require("./email.service");
 const otpService = require("./otp.service");
+const { io } = require("../config/socket.config");
+const { findUserInfoById } = require("../repository/userInfo.repo");
 class AccessService {
   login = async ({ email = "", password = "" }) => {
     const result = await validator.isEmptyObject({
@@ -53,14 +53,14 @@ class AccessService {
       refreshToken: tokens.refreshToken,
       publicKey,
     });
-    const info = await userInfoService.getInfoUser(existUser._id);
+    const info = await findUserInfoById(existUser._id);
     return {
       user: getInfoData({
         filed: ["profileHash", "displayName"],
         object: existUser,
       }),
       info: getInfoData({
-        filed: ["avatar"],
+        filed: ["avatar", "friendList", "blockList"],
         object: info,
       }),
       tokens: {
@@ -79,13 +79,24 @@ class AccessService {
   };
 
   signupWithMailVerify = async (token) => {
-    if (!token) throw new BadRequestError("Token is required");
+    if (!token) throw new UnprocessableEntityError("Missing token");
     const otp = await findByToken({ token });
     if (!otp) throw new NotFoundError("Token is not found");
-    const data = await CryptoService.verifyToken(otp.otp_sign, otp.otp_token);
+    const data = await CryptoService.verifyToken(
+      otp.otp_sign,
+      otp.otp_token,
+      (err, user) => {
+        if (err) {
+          throw new UnauthorizedError("Invalid request");
+        }
+        return user;
+      }
+    );
     //delete token
+    console.log(data);
     await findAndDeleteOTP({ token });
     await userService.createNewUser(data);
+    io.emit(`${data.email}`, "Signup successfully");
     return null;
   };
 
@@ -101,6 +112,25 @@ class AccessService {
     await createOTP({ email, otp, sign: token });
     // Send email
     await emailService.sendEmailForgotPassword({ email, otp });
+    return null;
+  };
+
+  resetPassword = async ({
+    password = "",
+    token = "",
+    confirmPassword = "",
+  }) => {
+    const result = await validator.isEmptyObject({
+      password,
+      token,
+      confirmPassword,
+    });
+    if (result.length > 0)
+      throw new UnprocessableEntityError(`Missing ${result}`);
+    if (password !== confirmPassword)
+      throw new UnprocessableEntityError("Password not match");
+    const data = await this.validateToken({ token });
+    await userService.updatePassword(data.email, password);
     return null;
   };
 
@@ -145,6 +175,34 @@ class AccessService {
     const data = await CryptoService.verifyToken(otp.otp_sign, otp.otp_token);
     await findAndDeleteOTP({ token });
     return data;
+  };
+
+  checkToken = async (headers) => {
+    const profileHash = headers[HEADER.CLIENT_ID];
+    const accessToken = headers[HEADER.AUTHORIZATION];
+    console.log(profileHash, accessToken);
+    if (!profileHash || !accessToken)
+      throw new UnauthorizedError("Invalid request");
+    const keyStore = await KeyTokenService.findUserById(profileHash);
+    let decodeUser = {};
+    const jwt = accessToken.split(" ")[1];
+    decodeUser = await CryptoService.verifyToken(
+      jwt,
+      keyStore.publicKey,
+      (err, user) => {
+        if (err && err.name === "TokenExpiredError") {
+          throw new UnauthorizedError("JWT invalid");
+        }
+        if (err) {
+          throw new UnauthorizedError("Invalid request");
+        }
+        return user;
+      }
+    );
+    if (profileHash !== decodeUser.profileHash)
+      throw new UnauthorizedError("Invalid request");
+    const user = await userService.findUserById(decodeUser.userId);
+    return user;
   };
 }
 module.exports = new AccessService();
