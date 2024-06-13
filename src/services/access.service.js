@@ -51,7 +51,7 @@ class AccessService {
       refreshToken: tokens.refreshToken,
       publicKey,
     });
-    const user = await userService.findUserById(decodeUser.userId);
+    const user = await userService.findUserById(existUser._id);
     return {
       user,
       tokens: {
