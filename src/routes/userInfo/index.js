@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const uploader = require("../../config/cloudiany.config");
 const asyncHandler = require('express-async-handler');
 const userInfoController = require("../../controller/user.info.controller");
 const { authentication } = require("../../auth/authentication");
+const uploader = require("../../config/multer.config")
 
 
 // Get All User Info
