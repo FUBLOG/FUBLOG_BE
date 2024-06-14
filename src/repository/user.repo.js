@@ -42,8 +42,8 @@ const updatePassword = async ({ email, password }) => {
 const findUserById = async (userId) => {
   return await userModel.findOne({ _id: userId }).lean();
 };
-const findUserByProfileHash = async (profileHash) => {
-  return await userModel.findOne({ profileHash }).lean();
+const findUserByProfileHash = async (profileHash, unselect = []) => {
+  return await userModel.findOne({ profileHash }).select(unselect).lean();
 };
 const findUserDetailById = async (userId) => {
   return await userModel

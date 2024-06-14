@@ -2,6 +2,26 @@ const mongoose = require("mongoose"); // Erase if already required
 const DOCUMENT_NAME = "UserInfo";
 const COLLECTION_NAME = "UserInfos";
 // Declare the Schema of the Mongo model
+const friendSchema = new mongoose.Schema({
+  friend_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  profileHash: {
+    type: String,
+    required: true,
+  },
+  avatar: {
+    type: String,
+    default: "",
+  },
+  displayName: {
+    type: String,
+    required: true,
+    default: "",
+  },
+});
 var userInfoSchema = new mongoose.Schema(
   {
     user_id: {
@@ -41,11 +61,11 @@ var userInfoSchema = new mongoose.Schema(
       default: "single",
     },
     friendList: {
-      type: [String],
+      type: [friendSchema],
       default: "",
     },
     blockList: {
-      type: [String],
+      type: [friendSchema],
       default: "",
     },
     avatarList: {
@@ -55,7 +75,7 @@ var userInfoSchema = new mongoose.Schema(
     coverList: {
       type: [String],
       default: "",
-    }
+    },
   },
   {
     timestamps: true,
