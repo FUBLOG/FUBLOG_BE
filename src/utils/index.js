@@ -56,6 +56,10 @@ const extractUserProfileFromEmail = (email) => {
     return null; // Invalid email format
   }
 };
+
+function removeAccents(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 module.exports = {
   replacePlaceholders,
   getInfoData,
@@ -65,4 +69,5 @@ module.exports = {
   removeNull,
   convertToObjectId,
   extractUserProfileFromEmail,
+  removeAccents,
 };

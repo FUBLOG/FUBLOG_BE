@@ -1,6 +1,7 @@
 "use strict";
 
 const userModel = require("../model/user.model");
+const { removeAccents } = require("../utils");
 
 const isEmailExists = async ({ email = null }) => {
   return await userModel.findOne({ email }).lean();
@@ -20,6 +21,7 @@ const createNewUser = async ({
   profileHash,
 }) => {
   const displayName = `${firstName} ${lastName}`;
+  const searchable = removeAccents(displayName);
   return await userModel.create({
     email,
     password,
@@ -29,6 +31,7 @@ const createNewUser = async ({
     sex,
     profileHash,
     displayName,
+    searchable,
   });
 };
 
@@ -39,8 +42,8 @@ const updatePassword = async ({ email, password }) => {
 const findUserById = async (userId) => {
   return await userModel.findOne({ _id: userId }).lean();
 };
-const findUserByProfileHash = async (profileHash) => {
-  return await userModel.findOne({ profileHash }).lean();
+const findUserByProfileHash = async (profileHash, unselect = []) => {
+  return await userModel.findOne({ profileHash }).select(unselect).lean();
 };
 const findUserDetailById = async (userId) => {
   return await userModel

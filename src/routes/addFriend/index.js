@@ -10,14 +10,14 @@ router.use(authentication);
 
 router.post('/send', asyncHandler(addFriendController.sendFriendRequest));
 
-router.post('/accept', asyncHandler(addFriendController.acceptFriendRequest));
+router.put('/accept', asyncHandler(addFriendController.acceptFriendRequest));
 
 router.delete('/decline', asyncHandler(addFriendController.declineFriendRequest));
 
-router.delete('/unFriend', asyncHandler(addFriendController.unFriend));
+router.put('/unFriend', asyncHandler(addFriendController.unFriend));
 
 router.get('/getAll', asyncHandler(addFriendController.getAllFriendRequests));
 
-router.delete('/block', asyncHandler(addFriendController.block));
+router.post('/block', asyncHandler(addFriendController.block));
 
 module.exports = router;
