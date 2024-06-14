@@ -3,6 +3,8 @@ const {
   isEmailExists,
   createNewUser,
   updatePassword,
+  findUserById,
+  findUserDetailById,
 } = require("../repository/user.repo");
 const {
   ConflictRequestError,
@@ -111,6 +113,10 @@ class UserService {
   updatePassword = async (email, password) => {
     const passwordHash = await CryptoService.hashPassword(password);
     await updatePassword({ email, password: passwordHash });
+  };
+
+  findUserById = async (id) => {
+    return await findUserDetailById(id);
   };
 }
 module.exports = new UserService();

@@ -7,12 +7,6 @@ const cors = require("cors");
 const { corsOptions } = require("./config/cors.config");
 const logger = require("./logger/log.system");
 const { v4: uuidv4 } = require("uuid");
-
-app.use((req, res, next) => {
-  req.header.origin = req.header.origin || req.header.host;
-  next();
-});
-
 //config cors
 app.use(cors(corsOptions)); //config cors
 
@@ -25,7 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 
 //init db
 require("./dbs/init.mongodb");
-
+const Redis = require("./dbs/init.redis");
+Redis.initRedis();
+//init cron-job
+require("./cron-job/index");
 //Set traceId
 app.use((req, res, next) => {
   const traceId = req.headers["x-trace-id"] || uuidv4();

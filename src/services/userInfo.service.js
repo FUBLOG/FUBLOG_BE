@@ -1,18 +1,24 @@
 "use strict";
 const userInfoModel = require("../model/userInfo.model");
-const Validator = require("../core/validator");
-const { NotFoundError, BadRequestError} = require("../core/response/error.response");
-const { isUserIDExist, } = require("../repository/user.repo");
-const { updateUserAvatar } = require("../repository/userInfo.repo");
+const validator = require("../core/validator");
+const {
+  NotFoundError,
+  BadRequestError,
+  UnprocessableEntityError,
+} = require("../core/response/error.response");
+const {
+  isUserIDExist,
+  findUserByProfileHash,
+} = require("../repository/user.repo");
+const {
+  updateUserAvatar,
+  findUserInfoById,
+} = require("../repository/userInfo.repo");
+const { getInfoData, unGetSelectData } = require("../utils");
 
 class UserInfoService {
   getInfoUser = async (_id) => {
-    // if(Validator.isEmpty(_id))
-    //   throw new NotFoundError("ID Is Empty")
-    
-    if(!(await isUserIDExist(_id)))
-      throw new NotFoundError("ID Not Found")
-    return await userInfoModel.findOne({ user_id: _id });
+    return userInfoModel.findOne({ user_id: _id });
   };
 
   // Show all Profile

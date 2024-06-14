@@ -1,32 +1,33 @@
 const express = require("express");
 const router = express.Router();
-const postController = require("../../controller/postController");
 const { authentication } = require("../../auth/authentication");
 const asyncHandler = require("express-async-handler");
-const postcontroller = require("../../controller/postController");
-const uploader = require("../../config/cloudiany.config")
+const postController = require("../../controller/postController");
+const uploadCloud = require("../../config/multer.config");
 
-router.get('/findPostByTag/:id', asyncHandler(postcontroller.searchPostsByTag));
+router.get("/:id", asyncHandler(postController.searchPostsByTag));
 
-router.get('/findPostByUser/:id', asyncHandler(postcontroller.searchPostsByUserId));
+router.get("/user/:id", asyncHandler(postController.searchPostsByUserId));
 
-router.get('/getapost/:id',asyncHandler(postcontroller.getAPost));
+router.get("/:id", asyncHandler(postController.getAPost));
 
-router.get('/getallpost', asyncHandler(postcontroller.getAllPost));
-
-
+router.get("", asyncHandler(postController.getPosts));
+//router.get('/getallpost', asyncHandler(postcontroller.getAllPost));
 
 // Authen
 router.use(authentication);
-router.post('/createpost',uploader.array('image'), asyncHandler(postcontroller.newPost));
+router.post(
+  "",
+  uploadCloud.array("image"),
+  asyncHandler(postController.newPost)
+);
 
-router.patch('/updateapost/:id', uploader.array('image'),asyncHandler(postcontroller.updatePost));
+router.patch(
+  "/:id",
+  uploadCloud.array("image"),
+  asyncHandler(postController.updatePost)
+);
 
-router.delete('/deletepost/:id', asyncHandler(postcontroller.deletePost));
-
-
-
-
-
+router.delete("/:id", asyncHandler(postController.deletePost));
 
 module.exports = router;

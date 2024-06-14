@@ -6,9 +6,10 @@ router.use("/user", require("./user"));
 router.use("/post", require("./post"));
 router.use("/posttag", require("./postTag"));
 router.use("/report", require("./report"));
-router.use("/userinfo", require("./userInfo"));
+router.use("/profile", require("./profile"));
 router.use("/message", require("./message"));
 router.use("/notification", require("./notification"));
 router.use("/comment", require("./comment"));
 router.use('/auth', require('./auth'));
 module.exports = router;
+

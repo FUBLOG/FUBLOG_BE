@@ -66,11 +66,10 @@ class AccessController {
 
   checkToken = async (req, res, next) => {
     const response = new OK({
-      message: "Token is valid",
+      message: "user is valid",
       metadata: await accessService.checkToken(req.headers),
     });
     response.send(res);
   };
-
 }
 module.exports = new AccessController();
