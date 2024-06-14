@@ -2,6 +2,26 @@ const mongoose = require("mongoose"); // Erase if already required
 const DOCUMENT_NAME = "UserInfo";
 const COLLECTION_NAME = "UserInfos";
 // Declare the Schema of the Mongo model
+const friendSchema = new mongoose.Schema({
+  friend_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  profileHash: {
+    type: String,
+    required: true,
+  },
+  avatar: {
+    type: String,
+    default: "", 
+  }, 
+  displayName: {
+    type: String,
+    required: true,
+    default: "",
+  },
+});
 var userInfoSchema = new mongoose.Schema(
   {
     user_id: {
@@ -41,27 +61,28 @@ var userInfoSchema = new mongoose.Schema(
       default: "single",
     },
     friendList: {
-      type: [String],
-      default: "",
+      type: [friendSchema],
+      default: [],
     },
     blockList: {
-      type: [String],
-      default: "",
+      type: [friendSchema],
+      default: [],
     },
     avatarList: {
       type: [String],
-      default: "",
+      default: [],
     },
     coverList: {
       type: [String],
-      default: "",
-    }
+      default: [],
+    },
   },
   {
     timestamps: true,
     collection: COLLECTION_NAME,
   }
 );
+
 
 //Export the model
 module.exports = mongoose.model(DOCUMENT_NAME, userInfoSchema);

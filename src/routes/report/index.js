@@ -2,11 +2,11 @@ const express = require('express')
 const router = express.Router()
 const asyncHandler = require('express-async-handler');
 const reportController = require('../../controller/report.controller');
-const { authentication } = require('../../auth/authentication');
+const {authentication} = require("../../auth/authentication")
 
-router.get('/getareport/:id',asyncHandler(reportController.getAReport));
+router.get('/getReport/:id',asyncHandler(reportController.getAReport));
 
-router.get('/getallreports', asyncHandler(reportController.getAllReport));
+router.get('/getAllReports', asyncHandler(reportController.getAllReport));
 
 
 
@@ -14,10 +14,10 @@ router.use(authentication);
 
 
 
-router.post('/createreport', asyncHandler(reportController.newReport));
+router.post('/createReport', asyncHandler(reportController.newReport));
 
-router.patch('/updatereport/:id', asyncHandler(reportController.updateReport));
+router.patch('/updateReport/:id', asyncHandler(reportController.updateReport));
 
-router.delete('/deletereport/:id', asyncHandler(reportController.deleteReport));
+router.delete('/deleteReport/:id', asyncHandler(reportController.deleteReport));
 
 module.exports = router

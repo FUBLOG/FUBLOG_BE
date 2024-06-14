@@ -9,10 +9,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+
     },
     displayName: {
       type: String,
       required: true,
+    },
+    searchable:{
+      type: String,
     },
     firstName: {
       type: String,
@@ -55,11 +59,13 @@ const userSchema = new mongoose.Schema(
   }
 );
 userSchema.index({ profileHash: 1 });
+userSchema.index({ displayName: "text", firstName:"text",lastName:"text" });
 userSchema.virtual("userInfo", {
   ref: "UserInfo",
   localField: "_id",
   foreignField: "user_id",
   justOne: true,
 });
+
 //Export the model
 module.exports = mongoose.model(DOCUMENT_NAME, userSchema);

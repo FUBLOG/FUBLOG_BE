@@ -2,12 +2,10 @@
 
 const { NotFoundError } = require("../core/response/error.response");
 const Comment = require("../model/comment.model");
-const findOnePost = require("../repository/comment.repo");
+const updateCommentCount = require("../repository/comment.repo");
 const { convertToObjectId } = require("../utils");
-const Post = require("../model/post.model");
-const { getReceiverSocketId } = require("../config/socket.config");
-const { findPostAuthor } = require("../repository/post.repo");
-const notificationService = require("./notification.service");
+const Post = require("../model/post.model")
+
 class CommentService {
   static async addComment({
     comment_postID,
@@ -60,17 +58,15 @@ class CommentService {
     comment.comment_left = rightValue;
     comment.comment_right = rightValue + 1;
     await comment.save();
-    const postAuthor = await findPostAuthor(comment_postID);
-    if (postAuthor) {
-      notificationService.sendNotification({
-        type: "comment",
-        link: comment_postID,
-        user_id: postAuthor,
-      });
-    }
+
+    await updateCommentCount(comment_postID, 1);
     return comment;
   }
-  static async getComments({ parent_CommentID, limit = 10, offset = 0 }) {
+  static async getComments({
+    parent_CommentID,
+    limit = 10,
+    offset = 0,
+  }) {
     if (parent_CommentID) {
       const parent = await Comment.findById(parent_CommentID);
       if (!parent) {
@@ -111,7 +107,10 @@ class CommentService {
     }
   }
 
-  static async updateComment({ parent_CommentID, comment_content }) {
+   static async updateComment({ 
+    parent_CommentID, 
+    comment_content 
+  }) {
     const comment = await Comment.findById(parent_CommentID);
     if (!comment) {
       throw new NotFoundError("Comment not found");
@@ -123,8 +122,8 @@ class CommentService {
 
     return comment;
   }
-
-  static async deleteComment({ parent_CommentID }) {
+ 
+  static async deleteComment({ parent_CommentID ,comment_postID}) {
     const comment = await Comment.findById(parent_CommentID);
     if (!comment) {
       throw new NotFoundError("Comment not found");
@@ -153,18 +152,22 @@ class CommentService {
       { comment_left: { $gt: rightValue } },
       { $inc: { comment_left: -width } }
     );
-
+    await updateCommentCount(comment_postID, -1);
     return commentsToDelete;
   }
 
-  static async getCommentPost({ postID, limit = 10, offset = 0 }) {
+  static async getCommentPost({
+    postID,
+    limit = 10,
+    offset = 0,
+  }) {
     if (!postID) {
-      throw new Error("postID is required to retrieve comments");
+      throw new NotFoundError("postID not found");
     }
-
+  
     const comments = await Comment.find({
       comment_postID: convertToObjectId(postID),
-      parent_CommentID: null,
+      parent_CommentID: null, 
     })
       .limit(limit)
       .skip(offset)
@@ -176,9 +179,10 @@ class CommentService {
       })
       .sort({ comment_left: 1 })
       .lean();
-
+  
     return comments;
   }
-}
+  
+  }
 
 module.exports = CommentService;
