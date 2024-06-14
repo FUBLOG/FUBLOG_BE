@@ -62,14 +62,14 @@ const findUserHasConversation = async ({ userId }) => {
     .lean();
 
   await Promise.all(
-    allConversation.map(async (conversation, index) => {
+    allConversation.map(async (conversation) => {
       conversation.participants = conversation.participants.filter(
         (participant) => participant._id.toString() !== userId.toString()
       );
       let user = await userInfoModel.findOne({
-        user_id: conversation.participants[index]._id,
+        user_id: conversation.participants[0]._id,
       });
-      conversation.participants[index].avatar =
+      conversation.participants[0].avatar =
         user.avatar === ""
           ? "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
           : user.avatar;
