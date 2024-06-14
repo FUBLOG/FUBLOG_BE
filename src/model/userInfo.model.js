@@ -14,8 +14,8 @@ const friendSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: "",
-  },
+    default: "", 
+  }, 
   displayName: {
     type: String,
     required: true,
@@ -62,19 +62,19 @@ var userInfoSchema = new mongoose.Schema(
     },
     friendList: {
       type: [friendSchema],
-      default: "",
+      default: [],
     },
     blockList: {
       type: [friendSchema],
-      default: "",
+      default: [],
     },
     avatarList: {
       type: [String],
-      default: "",
+      default: [],
     },
     coverList: {
       type: [String],
-      default: "",
+      default: [],
     },
   },
   {
@@ -82,6 +82,7 @@ var userInfoSchema = new mongoose.Schema(
     collection: COLLECTION_NAME,
   }
 );
+
 
 //Export the model
 module.exports = mongoose.model(DOCUMENT_NAME, userInfoSchema);
