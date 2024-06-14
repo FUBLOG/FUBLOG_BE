@@ -4,8 +4,6 @@ const router = express.Router();
 router.use("/access", require("./access"));
 router.use("/user", require("./user"));
 
-
-
 // Post API Router
 router.use("/post", require("./post"));
 // PostTag API Router
