@@ -171,7 +171,6 @@ class AccessService {
   checkToken = async (headers) => {
     const profileHash = headers[HEADER.CLIENT_ID];
     const accessToken = headers[HEADER.AUTHORIZATION];
-    console.log(profileHash, accessToken);
     if (!profileHash || !accessToken)
       throw new UnauthorizedError("Invalid request");
     const keyStore = await KeyTokenService.findUserById(profileHash);
@@ -185,6 +184,7 @@ class AccessService {
           throw new UnauthorizedError("JWT invalid");
         }
         if (err) {
+          console.log(err);
           throw new UnauthorizedError("Invalid request");
         }
         return user;

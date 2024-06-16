@@ -58,13 +58,22 @@ const block = async (req, res,next) => {
     });
     response.send(res);
 };
+const checkFriendRequest = async (req, res, next) => {
+    const { targetID } = req.params;
+    const sourceID = req.user.userId;
+    const response = new OK({
+        message: "friend request status checked",
+        metadata: await addFriendService.checkFriendRequest(sourceID, targetID)
+    });
+    response.send(res);
 
-
+}
 module.exports = {
     sendFriendRequest,
     acceptFriendRequest,
     declineFriendRequest,
     getAllFriendRequests,
     unFriend,
-    block
+    block,
+    checkFriendRequest
 }

@@ -8,12 +8,7 @@ router.get('/getReport/:id',asyncHandler(reportController.getAReport));
 
 router.get('/getAllReports', asyncHandler(reportController.getAllReport));
 
-
-
 router.use(authentication);
-router.use(authentication);
-
-
 
 router.post('/createReport', asyncHandler(reportController.newReport));
 

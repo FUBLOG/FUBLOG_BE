@@ -31,9 +31,7 @@ const getMessageFromConversation = async ({ senderId, userToChatId }) => {
         $all: [senderId, userToChatId],
       },
     })
-    .populate("messages", {
-      sort: { createdAt: -1 },
-    })
+    .populate("messages", [], null, { sort: { createdAt: -1 } })
     .lean();
 };
 

@@ -20,4 +20,7 @@ router.get('/getAll', asyncHandler(addFriendController.getAllFriendRequests));
 
 router.post('/block', asyncHandler(addFriendController.block));
 
+router.get('/checkRequest', asyncHandler(addFriendController.checkFriendRequest));
+
+
 module.exports = router;

@@ -4,6 +4,7 @@ const addFriend = require("../model/addFriend.model")
 class addFriendRepo {
     async findRequest(sourceID, targetID) {
         return await addFriend.findOne({ sourceID, targetID });
+        
     }
 
     async createRequest(sourceID, targetID) {
