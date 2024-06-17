@@ -1,11 +1,14 @@
 "use strict";
 const userInfoModel = require("../model/userInfo.model");
 const postService = require("../services/post.service");
+const { convertToObjectId } = require("../utils");
+
 const createDefaultUserInfo = async ({ userId }) => {
   return await userInfoModel.create({
     user_id: userId,
   });
 };
+
 const updateUserAvatar = async (id, fileData) => {
   // Move old avatar to avatarlist
   const oldAvatar = await userInfoModel.findById(id).avatar;
@@ -17,6 +20,7 @@ const updateUserAvatar = async (id, fileData) => {
     avatarList: arrayOfAvatar.push(oldAvatar),
   });
 };
+
 const updateUserCVPhoto = async (id, fileData) => {
   // Clear old avatar
   const oldCVPhoto = userInfoModel.findById(id).cover_photo;
@@ -29,41 +33,125 @@ const updateUserCVPhoto = async (id, fileData) => {
     coverList: arrayOfCVPhoto.push(oldCVPhoto),
   });
 };
+
 //  View all Photos Post
 const viewAllPhotos = async (userid) => {
   const posts = postService.findPostByUserId(userid);
   const arrayOfImage = posts.map((image) => image.postLinkToImages) || [];
   return arrayOfImage;
 };
+
 //  View old Avatar
 const viewAvatars = async (_id) => {
   const usersInfo = userInfoModel.find({ user_id: _id });
   const arrayOfAvatars = usersInfo.map((user) => user.avatarList) || [];
   return arrayOfAvatars;
 };
+
 // View old cover photos
 const viewCvPhotos = async (_id) => {
   const usersInfo = userInfoModel.find({ user_id: _id });
   const arrayOfCvPhotos = usersInfo.map((user) => user.coverList) || [];
   return arrayOfCvPhotos;
 };
+
 const findUserInfoById = async (userId, unselect = []) => {
-  return await userInfoModel
-    .findOne({ user_id: userId })
-    .select(unselect)
-    .lean();
+  return await userInfoModel.findOne({ user_id: userId }).select(unselect);
 };
+
 const getFriendsList = async (userId) => {
   return await userInfoModel
     .findOne({ user_id: userId })
     .select("friends")
     .lean();
 };
+
 const updateUserInfo = async (userId, data) => {
   return await userInfoModel.findOneAndUpdate({ user_id: userId }, data, {
     new: true,
   });
 };
+
+const updateFriendList = async (userId, friend) => {
+  console.log("friend", friend);
+  return await userInfoModel.findOneAndUpdate(
+    {
+      user_id: userId,
+    },
+    {
+      $push: {
+        friendList: friend,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+};
+
+const updateBlockList = async (userId, friend) => {
+  return await userInfoModel.findOneAndUpdate(
+    {
+      user_id: userId,
+    },
+    {
+      $push: {
+        blockList: friend,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+};
+
+const unfriend = async (userId, friendId) => {
+  return await userInfoModel.findOneAndUpdate(
+    {
+      user_id: userId,
+    },
+    {
+      $pull: {
+        friendList: {
+          friend_id: friendId,
+        },
+      },
+    },
+    {
+      new: true,
+    }
+  );
+};
+
+const unBlock = async (userId, friendId) => {
+  return await userInfoModel.findOneAndUpdate(
+    {
+      user_id: userId,
+    },
+    {
+      $pull: {
+        blockList: {
+          friend_id: friendId,
+        },
+      },
+    },
+    {
+      new: true,
+    }
+  );
+};
+
+const checkFriend = async (userId, friendId) => {
+  return await userInfoModel.findOne({
+    user_id: userId,
+    friendList: {
+      $elemMatch: {
+        friend_id: friendId,
+      },
+    },
+  });
+};
+
 module.exports = {
   createDefaultUserInfo,
   updateUserAvatar,
@@ -73,5 +161,10 @@ module.exports = {
   viewCvPhotos,
   findUserInfoById,
   getFriendsList,
-  updateUserInfo
+  updateUserInfo,
+  updateFriendList,
+  unfriend,
+  updateBlockList,
+  unBlock,
+  checkFriend,
 };
