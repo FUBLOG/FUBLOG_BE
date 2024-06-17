@@ -95,7 +95,7 @@ class FriendService {
       link: sourceID,
       user_id: targetID,
     });
-    return await deleteRequest(sourceID, targetID);
+    return await deleteRequest(targetID, sourceID);
   };
 
   static getAllFriendRequests = async (userID = "") => {
@@ -113,7 +113,7 @@ class FriendService {
       throw new NotFoundError("Friend request not found");
     }
 
-    return await deleteRequest(sourceID, targetID);
+    return await deleteRequest(targetID, sourceID);
   };
 
   static handleUnfriend = async (userId, friendId) => {
