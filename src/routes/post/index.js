@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { authentication } = require("../../auth/authentication");
 const asyncHandler = require("express-async-handler");
-const postController = require("../../controller/postController");
+const postController = require("../../controller/post.controller");
 const uploadCloud = require("../../config/multer.config");
 
 router.get("/:id", asyncHandler(postController.searchPostsByTag));

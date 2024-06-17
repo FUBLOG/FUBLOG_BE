@@ -6,6 +6,7 @@ class Validator {
     return validator.isEmail(email);
   };
   isEmpty = async (data) => {
+    data = data.trim();
     return validator.isEmpty(data);
   };
   isDate = async (date) => {
@@ -30,5 +31,6 @@ class Validator {
     const isEmptyImage = filesData.length === 0;
     return !(isEmptyContent && isEmptyImage);
   };
+
 }
 module.exports = new Validator();

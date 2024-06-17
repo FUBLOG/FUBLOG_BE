@@ -14,15 +14,15 @@ const friendSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: "", 
-  }, 
+    default: "",
+  },
   displayName: {
     type: String,
     required: true,
     default: "",
   },
 });
-var userInfoSchema = new mongoose.Schema(
+const userInfoSchemas = new mongoose.Schema(
   {
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -83,6 +83,5 @@ var userInfoSchema = new mongoose.Schema(
   }
 );
 
-
 //Export the model
-module.exports = mongoose.model(DOCUMENT_NAME, userInfoSchema);
+module.exports = mongoose.model(DOCUMENT_NAME, userInfoSchemas);

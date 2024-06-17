@@ -1,4 +1,4 @@
-const searchService = require("../services/searchUser.service");
+const searchService = require("../services/search.service");
 const { OK } = require('../core/response/success.response');
 
 const searchUser = async (req, res, next) => {

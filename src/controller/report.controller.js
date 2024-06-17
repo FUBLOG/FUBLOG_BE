@@ -1,5 +1,5 @@
 const express = require("express");
-const postTagController = require("./postTagController");
+const postTagController = require("./post.tag.controller");
 const reportService = require("../services/report.service");
 const { OK } = require("../core/response/success.response");
 
