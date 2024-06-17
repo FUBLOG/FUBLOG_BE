@@ -60,7 +60,6 @@ const findUserHasConversation = async ({ userId }) => {
     .sort({ updatedAt: -1 })
     .limit(10)
     .lean();
-
   await Promise.all(
     allConversation.map(async (conversation) => {
       conversation.participants = conversation.participants.filter(

@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const postModel = require("./post.model");
-const { random } = require("lodash");
 const DOCUMENT_NAME = "NewFeed";
 const COLLECTION_NAME = "NewFeeds";
 const newFeedSchemas = mongoose.Schema(

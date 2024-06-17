@@ -2,8 +2,20 @@
 
 const notificationModel = require("../model/notification.model");
 
-const createNewNotification = async ({ user_id, message, link, type }) => {
-  return await notificationModel.create({ user_id, message, link, type });
+const createNewNotification = async ({
+  user_id,
+  message,
+  link,
+  type,
+  image,
+}) => {
+  return await notificationModel.create({
+    user_id,
+    message,
+    link,
+    type,
+    image,
+  });
 };
 
 const updateStatusRead = async ({ notificationId }) => {

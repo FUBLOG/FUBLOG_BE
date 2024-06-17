@@ -1,9 +1,7 @@
 "use strict";
-
-const { create } = require("lodash");
 const { model, Schema } = require("mongoose");
-const DOCUMENT_NAME = "otp_log";
-const COLLECTION_NAME = "otp_logs";
+const DOCUMENT_NAME = "OTP";
+const COLLECTION_NAME = "OTPs";
 const otpSchema = new Schema(
   {
     otp_token: {
