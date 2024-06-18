@@ -4,6 +4,7 @@ const { CREATED, OK } = require("../core/response/success.response");
 const { HEADER } = require("../core/constans/header.constant");
 class AccessController {
   login = async (req, res, next) => {
+
     const response = new OK({
       message: "Login successfully",
       metadata: await accessService.login(req.body),

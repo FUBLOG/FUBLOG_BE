@@ -25,12 +25,37 @@ const updateStatusRead = async ({ notificationId }) => {
   );
 };
 
-const getAllNotification = async ({ user_id, limit = 10 }) => {
-  return await notificationModel.find({ user_id }).limit(limit).lean();
+const getAllNotification = async ({ user_id, limit, page }) => {
+  const offset = page * limit;
+  return await notificationModel
+    .find({ user_id })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip(offset)
+    .lean();
 };
 
+const getNotificationSocket = async ({ notificationId }) => {
+  return await notificationModel
+    .find({ _id: notificationId })
+    .populate({
+      path: "user_id",
+      select: "displayName",
+      populate: {
+        path: "userInfo",
+        select: "avatar",
+      },
+    })
+    .lean();
+};
+
+const updateStatusReadAll = async ({ user_id }) => {
+  return await notificationModel.updateMany({ user_id }, { isRead: true });
+};
 module.exports = {
   createNewNotification,
   updateStatusRead,
   getAllNotification,
+  getNotificationSocket,
+  updateStatusReadAll,
 };

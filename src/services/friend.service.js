@@ -21,7 +21,7 @@ const {
   unBlock,
   checkFriend,
 } = require("../repository/userInfo.repo");
-const { getReceiverSocketId } = require("../config/socket.config");
+const { getReceiverSocketId, io } = require("../config/socket.config");
 const notificationService = require("./notification.service");
 const { isEmpty } = require("../core/validator/index");
 const { isMongoId } = require("validator");
@@ -65,8 +65,8 @@ class FriendService {
     if (check) throw new UnprocessableEntityError("Missing targetID");
     if (!isMongoId(sourceID) || !isMongoId(targetID))
       throw new UnprocessableEntityError("Invalid userID");
-
     const existingRequest = await findRequest(targetID, sourceID);
+
     if (!existingRequest) {
       throw new NotFoundError("Friend request not found");
     }
@@ -109,7 +109,6 @@ class FriendService {
     if (!isMongoId(sourceID) || !isMongoId(targetID))
       throw new UnprocessableEntityError("Invalid userID");
     const existingRequest = await findRequest(targetID, sourceID);
-
     if (!existingRequest) {
       throw new NotFoundError("Friend request not found");
     }

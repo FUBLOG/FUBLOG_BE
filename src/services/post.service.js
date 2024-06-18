@@ -1,23 +1,25 @@
 const post = require("../model/post.model");
-const { NotFoundError } = require("../core/response/error.response");
 const {
-  createNewPost,
-  deleteimage,
-  deleteOldImage,
-  updatePost,
-  deletePost,
-} = require("../repository/post.repo");
+  NotFoundError,
+  UnprocessableEntityError,
+} = require("../core/response/error.response");
+const { createNewPost, updatePost } = require("../repository/post.repo");
 const { BadRequestError } = require("../core/response/error.response");
 const deleteImage = require("../helpers/deleteImage");
 const validator = require("../core/validator");
 const { HEADER } = require("../core/constans/header.constant");
-const RedisService = require("./redis.service");
 const NewFeedsService = require("./newfeeds.service");
 
 class PostService {
   createPost = async ({ userId, post = {}, filesData = [], traceId }) => {
     const isValidPost = await validator.validatePost(post, filesData);
-    if (!isValidPost) throw new BadRequestError("Missing content and image");
+    if (!isValidPost) {
+      for (const file of filesData) {
+        await deleteImage(file?.path);
+      }
+
+      throw new UnprocessableEntityError("Missing content and image");
+    }
     const newPost = await createNewPost(post, filesData, userId);
     if (newPost.postStatus === "public") {
       NewFeedsService.pushPublicNewFeed({
