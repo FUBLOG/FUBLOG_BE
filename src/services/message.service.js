@@ -48,19 +48,19 @@ class MessageService {
       }
       return newMessage;
     }
-    getMessage = async (req) => {
-      const { id: userToChatId } = req.params;
-      const senderId = req.user.userId;
-      const conversation = await getMessageFromConversation({
-        senderId,
-        userToChatId,
-      });
-      if (!conversation) return [];
-      return conversation.messages;
-    };
-    getListConversation = async (req) => {
-      return await findUserHasConversation({ userId: req.user.userId });
-    };
+  };
+  getMessage = async (req) => {
+    const { id: userToChatId } = req.params;
+    const senderId = req.user.userId;
+    const conversation = await getMessageFromConversation({
+      senderId,
+      userToChatId,
+    });
+    if (!conversation) return [];
+    return conversation.messages;
+  };
+  getListConversation = async (req) => {
+    return await findUserHasConversation({ userId: req.user.userId });
   };
 }
 
