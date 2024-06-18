@@ -8,6 +8,6 @@ const {authentication} = require("../../auth/authentication")
 router.use(authentication);
 router.post("/like",asyncHandler(likeController.like))
 router.post("/unlike",asyncHandler(likeController.unlike))
-router.get("/getLiked",asyncHandler(likeController.get))
+router.get("/getLiked",asyncHandler(likeController.getLiked))
 
 module.exports = router;

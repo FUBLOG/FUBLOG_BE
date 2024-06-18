@@ -4,7 +4,7 @@ const {OK} = require("../core/response/success.response")
 
 const like = async(req,res,next) => {
    const {postID} = req.body;
-   const userID = req.user.userID;
+   const userID = req.user.userId;
    const response = new OK({
       message:"liked",
       metadata: await likeService.like(postID,userID)

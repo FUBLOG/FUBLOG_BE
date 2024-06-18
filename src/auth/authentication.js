@@ -7,6 +7,7 @@ const {
   NotFoundError,
   UnauthorizedError,
 } = require("../core/response/error.response");
+const { error } = require("winston");
 
 /*
       1 - check profileHash missing
@@ -27,6 +28,7 @@ const authentication = asyncHandler(async (req, res, next) => {
   } else {
     let decodeUser = {};
     const jwt = accessToken.split(" ")[1];
+
     decodeUser = await CryptoService.verifyToken(
       jwt,
       keyStore.publicKey,
@@ -35,6 +37,7 @@ const authentication = asyncHandler(async (req, res, next) => {
           throw new UnauthorizedError("JWT invalid");
         }
         if (err) {
+          console.log(err)
           throw new UnauthorizedError("Invalid request");
         }
         return user;
