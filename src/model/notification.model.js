@@ -15,6 +15,10 @@ const notificationSchemas = mongoose.Schema(
     link: {
       type: String,
     },
+    image: {
+      type: [String],
+      default: [],
+    },
     isRead: {
       type: Boolean,
       required: true,

@@ -3,10 +3,7 @@ const commentService = require("../services/comment.service")
 
 // create cmt
 const addComment = async (req, res) => {
-<<<<<<< HEAD
-  console.log(req.query);
-=======
->>>>>>> 69a181d6a4344f04bc012c09af9a6f764af2ed89
+
   const response = new OK({
     message:"...",
     metadata: await commentService.addComment(req.body)

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const asyncHandler = require('express-async-handler');
-const postTagController = require('../../controller/postTagController');
+const postTagController = require('../../controller/post.tag.controller');
 
 
 router.post('/createTag', asyncHandler(postTagController.newTag));
