@@ -23,5 +23,14 @@ class NotificationController {
     });
     response.send(res);
   };
+
+  updateStatusReadAll = async (req, res) => {
+    const { userId } = req.user;
+    await notificationService.updateStatusReadAll({ userId });
+    const response = new NO_CONTENT({
+      message: "Update status read all successfully",
+    });
+    response.send(res);
+  };
 }
 module.exports = new NotificationController();

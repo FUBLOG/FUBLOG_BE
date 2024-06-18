@@ -1,6 +1,5 @@
 "use strict";
 const newfeedModel = require("../model/newfeeds.model");
-const userInfoModel = require("../model/userInfo.model");
 
 const createNewFeed = async ({ userId, friendId, content }) => {
   return await newfeedModel.create({ userId, friendId, post: content });
@@ -27,6 +26,7 @@ const getPublicNewFeeds = async ({ page, limit }) => {
     .lean();
   return feeds;
 };
+
 const getFriendNewFeeds = async ({ userId, page, limit }) => {
   const offset = page * limit;
   const feeds = await newfeedModel
@@ -49,6 +49,7 @@ const getFriendNewFeeds = async ({ userId, page, limit }) => {
   deleteNewFeed(feeds.map((feed) => feed._id));
   return feeds;
 };
+
 const deleteNewFeed = async (feeds) => {
   newfeedModel.deleteMany({ _id: { $in: feeds } });
 };

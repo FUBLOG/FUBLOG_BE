@@ -69,9 +69,13 @@ const findUserHasConversation = async ({ userId }) => {
         user_id: conversation.participants[0]._id,
       });
       conversation.participants[0].avatar =
-        user.avatar === ""
-          ? "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-          : user.avatar;
+        user.avatar === "" ? "" : user.avatar;
+      //get last message
+      if (conversation.messages.length > 0) {
+        conversation.lastMessage = await findMessageById(
+          conversation?.messages[0]?._id
+        );
+      }
     })
   );
   return allConversation;

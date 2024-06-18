@@ -62,7 +62,7 @@ const findUserInfoById = async (userId, unselect = []) => {
 const getFriendsList = async (userId) => {
   return await userInfoModel
     .findOne({ user_id: userId })
-    .select("friends")
+    .select("friendList")
     .lean();
 };
 
