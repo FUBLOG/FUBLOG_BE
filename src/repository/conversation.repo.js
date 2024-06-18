@@ -3,6 +3,7 @@
 const conversationModel = require("../model/conversation.model");
 const { convertToObjectId } = require("../utils");
 const userInfoModel = require("../model/userInfo.model");
+const { findMessageById } = require("./message.repo");
 const findConversationById = async ({ senderId, receiverId }) => {
   senderId = convertToObjectId(senderId);
   receiverId = convertToObjectId(receiverId);
