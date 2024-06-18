@@ -65,6 +65,7 @@ class MessageService {
   
   getListConversation = async (req) => {
     return await findUserHasConversation({ userId: req.user.userId });
+
   };
 }
 
