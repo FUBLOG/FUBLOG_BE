@@ -21,7 +21,7 @@ const {
   unBlock,
   checkFriend,
 } = require("../repository/userInfo.repo");
-const { getReceiverSocketId } = require("../config/socket.config");
+const { getReceiverSocketId, io } = require("../config/socket.config");
 const notificationService = require("./notification.service");
 const { isEmpty } = require("../core/validator/index");
 const { isMongoId } = require("validator");

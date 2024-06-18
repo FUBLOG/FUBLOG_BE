@@ -21,8 +21,12 @@ app.use(express.urlencoded({ extended: true }));
 require("./dbs/init.mongodb");
 const Redis = require("./dbs/init.redis");
 Redis.initRedis();
+const session = require("./config/session.config");
 //init cron-job
 require("./cron-job/index");
+
+app.set("trust proxy", 1);
+app.use(session);
 //Set traceId
 app.use((req, res, next) => {
   const traceId = req.headers["x-trace-id"] || uuidv4();
