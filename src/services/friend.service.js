@@ -65,7 +65,7 @@ class FriendService {
     if (check) throw new UnprocessableEntityError("Missing targetID");
     if (!isMongoId(sourceID) || !isMongoId(targetID))
       throw new UnprocessableEntityError("Invalid userID");
-
+    
     const existingRequest = await findRequest(targetID, sourceID);
 
     if (!existingRequest) {
@@ -110,7 +110,7 @@ class FriendService {
     if (!isMongoId(sourceID) || !isMongoId(targetID))
       throw new UnprocessableEntityError("Invalid userID");
     const existingRequest = await findRequest(targetID, sourceID);
-
+    
     if (!existingRequest) {
       throw new NotFoundError("Friend request not found");
     }
