@@ -73,8 +73,9 @@ const findUserHasConversation = async ({ userId }) => {
         user.avatar === "" ? "" : user.avatar;
       //get last message
       if (conversation.messages.length > 0) {
+        const lastIndex = conversation?.messages?.length - 1;
         conversation.lastMessage = await findMessageById(
-          conversation?.messages[0]?._id
+          conversation?.messages[lastIndex]?._id
         );
       }
     })
