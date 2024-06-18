@@ -43,6 +43,10 @@ class FriendService {
     if (existingRequest) {
       throw new ConflictRequestError("Friend request already sent");
     }
+    const request = await findRequest(targetID, sourceID);
+    if (request) {
+      return this.acceptFriendRequest({ sourceID, targetID });
+    }
 
     const createdRequest = await createRequest(sourceID, targetID);
 
@@ -61,8 +65,8 @@ class FriendService {
     if (check) throw new UnprocessableEntityError("Missing targetID");
     if (!isMongoId(sourceID) || !isMongoId(targetID))
       throw new UnprocessableEntityError("Invalid userID");
-    const existingRequest = await findRequest(sourceID, targetID);
 
+    const existingRequest = await findRequest(targetID, sourceID);
     if (!existingRequest) {
       throw new NotFoundError("Friend request not found");
     }
@@ -91,7 +95,7 @@ class FriendService {
       link: sourceID,
       user_id: targetID,
     });
-    return await deleteRequest(sourceID, targetID);
+    return await deleteRequest(targetID, sourceID);
   };
 
   static getAllFriendRequests = async (userID = "") => {
@@ -104,12 +108,13 @@ class FriendService {
     if (check) throw new UnprocessableEntityError("Missing targetID");
     if (!isMongoId(sourceID) || !isMongoId(targetID))
       throw new UnprocessableEntityError("Invalid userID");
-    const existingRequest = await findRequest(sourceID, targetID);
+    const existingRequest = await findRequest(targetID, sourceID);
+
     if (!existingRequest) {
       throw new NotFoundError("Friend request not found");
     }
 
-    return await deleteRequest(sourceID, targetID);
+    return await deleteRequest(targetID, sourceID);
   };
 
   static handleUnfriend = async (userId, friendId) => {

@@ -32,6 +32,7 @@ const findAllRequests = async (userID) => {
         select: "avatar",
       },
     })
+    .sort({ createdAt: -1 })
     .lean();
 };
 const findForSocket = async (sourceID, targetID) => {
