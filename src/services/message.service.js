@@ -48,6 +48,7 @@ class MessageService {
       }
       return newMessage;
     }
+
   };
   getMessage = async (req) => {
     const { id: userToChatId } = req.params;
@@ -61,6 +62,7 @@ class MessageService {
   };
   getListConversation = async (req) => {
     return await findUserHasConversation({ userId: req.user.userId });
+
   };
 }
 
