@@ -24,39 +24,43 @@ class MessageService {
     });
     if (!conversation) {
       conversation = await createConversation({ senderId, receiverId });
-    }
-    const newMessage = await createNewMessage({
-      message,
-      senderId,
-      receiverId,
-    });
-    if (newMessage) {
-      await pushMessageToConversation({
-        conversationId: conversation._id,
-        messageId: newMessage._id,
+    } else {
+      const newMessage = await createNewMessage({
+        message,
+        senderId,
+        receiverId,
       });
-    }
+      if (newMessage) {
+        await pushMessageToConversation({
+          conversationId: conversation._id,
+          messageId: newMessage._id,
+        });
+      }
 
-    const receiverSocketId = getReceiverSocketId(receiverId);
+      const receiverSocketId = getReceiverSocketId(receiverId);
 
-    if (receiverSocketId) {
-      // io.to(<socket_id>).emit() used to send events to specific client
-      io.to(receiverSocketId).emit("newMessage", newMessage);
+      if (receiverSocketId) {
+        // io.to(<socket_id>).emit() used to send events to specific client
+        io.to(receiverSocketId).emit("newMessage", newMessage);
+        if (conversation?.messages.length === 0) {
+          io.to(receiverSocketId).emit("newConversation", conversation);
+        }
+      }
+      return newMessage;
     }
-    return newMessage;
-  };
-  getMessage = async (req) => {
-    const { id: userToChatId } = req.params;
-    const senderId = req.user.userId;
-    const conversation = await getMessageFromConversation({
-      senderId,
-      userToChatId,
-    });
-    if (!conversation) return [];
-    return conversation.messages;
-  };
-  getListConversation = async (req) => {
-    return await findUserHasConversation({ userId: req.user.userId });
+    getMessage = async (req) => {
+      const { id: userToChatId } = req.params;
+      const senderId = req.user.userId;
+      const conversation = await getMessageFromConversation({
+        senderId,
+        userToChatId,
+      });
+      if (!conversation) return [];
+      return conversation.messages;
+    };
+    getListConversation = async (req) => {
+      return await findUserHasConversation({ userId: req.user.userId });
+    };
   };
 }
 

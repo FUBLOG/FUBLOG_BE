@@ -11,26 +11,23 @@ const { v4: uuidv4 } = require("uuid");
 app.use(cors(corsOptions)); //config cors
 
 //int middlewares
+app.set("trust proxy", 1);
 app.use(morgan("dev")); //config request return
 app.use(helmet()); //config security request
 app.use(compression()); // data compression
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 //init db
 require("./dbs/init.mongodb");
-const Redis = require("./dbs/init.redis");
-Redis.initRedis();
-const session = require("./config/session.config");
+
 //init cron-job
 require("./cron-job/index");
 
-app.set("trust proxy", 1);
-app.use(session);
 //Set traceId
 app.use((req, res, next) => {
   const traceId = req.headers["x-trace-id"] || uuidv4();
   if (traceId) {
+    console.log(req.session);
     req.traceId = traceId;
     req.now = Date.now();
   }
@@ -44,6 +41,7 @@ app.use((req, res, next) => {
 
 //init routes
 app.use("/v1/api", require("./routes"));
+
 
 //handle Error
 app.use((req, res, next) => {
