@@ -63,6 +63,14 @@ const getFriendsList = async (userId) => {
   return await userInfoModel
     .findOne({ user_id: userId })
     .select("friendList")
+    .populate({
+      path: "friendList",
+      select: "displayName profileHash",
+      populate: {
+        path: "userInfo",
+        select: "avatar",
+      },
+    })
     .lean();
 };
 
@@ -72,15 +80,14 @@ const updateUserInfo = async (userId, data) => {
   });
 };
 
-const updateFriendList = async (userId, friend) => {
-  console.log("friend", friend);
+const updateFriendList = async (userId, friendId) => {
   return await userInfoModel.findOneAndUpdate(
     {
       user_id: userId,
     },
     {
       $push: {
-        friendList: friend,
+        friendList: friendId,
       },
     },
     {
@@ -89,14 +96,14 @@ const updateFriendList = async (userId, friend) => {
   );
 };
 
-const updateBlockList = async (userId, friend) => {
+const updateBlockList = async (userId, friendId) => {
   return await userInfoModel.findOneAndUpdate(
     {
       user_id: userId,
     },
     {
       $push: {
-        blockList: friend,
+        blockList: friendId,
       },
     },
     {
@@ -112,9 +119,7 @@ const unfriend = async (userId, friendId) => {
     },
     {
       $pull: {
-        friendList: {
-          friend_id: friendId,
-        },
+        friendList: friendId,
       },
     },
     {
@@ -130,9 +135,7 @@ const unBlock = async (userId, friendId) => {
     },
     {
       $pull: {
-        blockList: {
-          friend_id: friendId,
-        },
+        blockList: friendId,
       },
     },
     {
@@ -145,13 +148,25 @@ const checkFriend = async (userId, friendId) => {
   return await userInfoModel.findOne({
     user_id: userId,
     friendList: {
-      $elemMatch: {
-        friend_id: friendId,
-      },
+      $in: [convertToObjectId(friendId)],
     },
   });
 };
 
+const getBlockedUsers = async (userId) => {
+  return await userInfoModel
+    .findOne({ user_id: userId })
+    .select("blockList")
+    .populate({
+      path: "blockList",
+      select: "displayName profileHash",
+      populate: {
+        path: "userInfo",
+        select: "avatar",
+      },
+    })
+    .lean();
+};
 module.exports = {
   createDefaultUserInfo,
   updateUserAvatar,
@@ -167,4 +182,5 @@ module.exports = {
   updateBlockList,
   unBlock,
   checkFriend,
+  getBlockedUsers
 };

@@ -50,7 +50,6 @@ class MessageService {
     }
   };
 
-
   getMessage = async (req) => {
     const { id: userToChatId } = req.params;
     const senderId = req.user.userId;
@@ -62,9 +61,20 @@ class MessageService {
     return conversation.messages;
   };
 
-  
   getListConversation = async (req) => {
     return await findUserHasConversation({ userId: req.user.userId });
+
+  };
+
+  getConversation = async ({ userId = "", friendId = "" }) => {
+    const conversation = await findConversationById({
+      senderId: userId,
+      receiverId: friendId,
+    });
+    if (!conversation) {
+      return null;
+    }
+    return conversation;
 
   };
 }

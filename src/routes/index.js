@@ -13,4 +13,5 @@ router.use("/message", require("./message"));
 router.use("/search", require("./search"));
 router.use("/notification", require("./notification"));
 router.use("/friend", require("./friend"));
+router.use("/conversation", require("./conversation"));
 module.exports = router;

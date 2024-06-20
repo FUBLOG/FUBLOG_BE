@@ -5,7 +5,7 @@ const {
   ConflictRequestError,
   UnprocessableEntityError,
 } = require("../core/response/error.response");
-const { findUserById, findUserDetailById } = require("../repository/user.repo");
+const { findUserById } = require("../repository/user.repo");
 const {
   findRequest,
   createRequest,
@@ -19,7 +19,9 @@ const {
   unfriend,
   updateBlockList,
   unBlock,
+  getFriendsList,
   checkFriend,
+  getBlockedUsers,
 } = require("../repository/userInfo.repo");
 const { getReceiverSocketId, io } = require("../config/socket.config");
 const notificationService = require("./notification.service");
@@ -71,24 +73,8 @@ class FriendService {
       throw new NotFoundError("Friend request not found");
     }
 
-    const sender = await findUserDetailById({ _id: sourceID });
-    const receiver = (await findUserDetailById({ _id: targetID })) || {};
-
-    const friendSender = {
-      friend_id: targetID,
-      displayName: receiver?.displayName,
-      avatar: receiver?.userInfo?.avatar,
-      profileHash: receiver?.profileHash,
-    };
-    await updateFriendList(sourceID, friendSender);
-
-    const friendReceiver = {
-      friend_id: sourceID,
-      displayName: sender?.displayName,
-      avatar: sender?.userInfo?.avatar,
-      profileHash: sender?.profileHash,
-    };
-    await updateFriendList(targetID, friendReceiver);
+    await updateFriendList(sourceID, targetID);
+    await updateFriendList(targetID, sourceID);
     //send notification
     notificationService.sendNotification({
       type: "friend",
@@ -116,9 +102,9 @@ class FriendService {
     return await deleteRequest(targetID, sourceID);
   };
 
-  static handleUnfriend = async (userId, friendId) => {
-    await unfriend(userId, friendId);
-    await unfriend(friendId, userId);
+  static handleUnfriend = async (sourceID, targetID) => {
+    await unfriend(sourceID, targetID);
+    await unfriend(targetID, sourceID);
   };
 
   static unFriend = async ({ sourceID = "", targetID = "" }) => {
@@ -141,17 +127,13 @@ class FriendService {
     if (!isMongoId(sourceID) || !isMongoId(targetID))
       throw new UnprocessableEntityError("Invalid userID");
 
-    await this.handleUnfriend(sourceID, targetID);
+    const isFriend = await checkFriend(sourceID, targetID);
 
-    const receiver = await findUserDetailById({ _id: targetID });
+    if (isFriend) {
+      await this.handleUnfriend(sourceID, targetID);
+    }
 
-    const friendSender = {
-      friend_id: targetID,
-      displayName: receiver?.displayName,
-      avatar: receiver?.userInfo?.avatar,
-      profileHash: receiver?.profileHash,
-    };
-    await updateBlockList(sourceID, friendSender);
+    await updateBlockList(sourceID, targetID);
     return null;
   };
 
@@ -165,15 +147,11 @@ class FriendService {
   };
 
   static getFriends = async (userId) => {
-    const userInfo = await findUserInfoById(userId);
-    const friendList = userInfo?.friendList || [];
-    return friendList;
+    return await getFriendsList(userId);
   };
 
   static getBlockedUsers = async (userId) => {
-    const userInfo = await findUserInfoById(userId);
-    const blockList = userInfo?.blockList || [];
-    return blockList;
+    return await getBlockedUsers(userId);
   };
 
   static getFriendRequest = async ({ sourceID = "", targetID = "" }) => {
@@ -190,6 +168,10 @@ class FriendService {
       return otherRequest;
     }
     return existingRequest;
+  };
+
+  static deleteRequestFriend = async ({ sourceID = "", targetID = "" }) => {
+    return await deleteRequest(sourceID, targetID);
   };
 }
 

@@ -120,6 +120,17 @@ const getRequestFriend = async (req, res, next) => {
   response.send(res);
 };
 
+const deleteRequest = async (req, res, next) => {
+  const sourceID = req.user.userId;
+  const { targetID } = req.body;
+  const response = new NO_CONTENT({
+    message: "request deleted",
+    metadata: await friendService.deleteRequestFriend({sourceID, targetID}),
+  });
+  response.send(res);
+
+}
+
 module.exports = {
   sendFriendRequest,
   acceptFriendRequest,
@@ -131,4 +142,5 @@ module.exports = {
   getBlockedUsers,
   getFriends,
   getRequestFriend,
+  deleteRequest
 };
