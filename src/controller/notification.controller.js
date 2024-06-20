@@ -4,13 +4,13 @@ const notificationService = require("../services/notification.service");
 class NotificationController {
   getAllNotifications = async (req, res) => {
     const { userId } = req.user;
-    const { limit, offset } = req.query;
+    const { limit = 10, page = 0 } = req.query;
     const response = new OK({
       message: "Get all notifications",
       metadata: await notificationService.getAllNotifications({
         userId,
         limit,
-        offset,
+        page,
       }),
     });
     response.send(res);
