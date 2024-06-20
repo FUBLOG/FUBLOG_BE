@@ -7,7 +7,7 @@ class NotificationController {
     const { limit, offset } = req.query;
     const response = new OK({
       message: "Get all notifications",
-      metadata: notificationService.getAllNotifications({
+      metadata: await notificationService.getAllNotifications({
         userId,
         limit,
         offset,
