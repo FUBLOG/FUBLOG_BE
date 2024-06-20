@@ -14,5 +14,4 @@ router.use("/search", require("./search"));
 router.use("/notification", require("./notification"));
 router.use("/friend", require("./friend"));
 router.use("/likePost",require("./like"))
-router.use("/searchMess",require("./seachMess"))
 module.exports = router;
