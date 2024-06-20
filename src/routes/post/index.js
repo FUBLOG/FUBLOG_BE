@@ -12,7 +12,6 @@ router.get("/user/:id", asyncHandler(postController.searchPostsByUserId));
 router.get("/:id", asyncHandler(postController.getAPost));
 
 router.get("", asyncHandler(postController.getPosts));
-//router.get('/getallpost', asyncHandler(postcontroller.getAllPost));
 
 // Authen
 router.use(authentication);
@@ -29,5 +28,7 @@ router.patch(
 );
 
 router.delete("/:id", asyncHandler(postController.deletePost));
+
+router.get("/all", asyncHandler(postController.getAllPost));
 
 module.exports = router;

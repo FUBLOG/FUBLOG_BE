@@ -3,9 +3,8 @@
 const conversationModel = require("../model/conversation.model");
 const { convertToObjectId } = require("../utils");
 const userInfoModel = require("../model/userInfo.model");
+const { findMessageById } = require("./message.repo");
 const findConversationById = async ({ senderId, receiverId }) => {
-  senderId = convertToObjectId(senderId);
-  receiverId = convertToObjectId(receiverId);
   return conversationModel
     .findOne({
       participants: {
@@ -72,8 +71,9 @@ const findUserHasConversation = async ({ userId }) => {
         user.avatar === "" ? "" : user.avatar;
       //get last message
       if (conversation.messages.length > 0) {
+        const lastIndex = conversation?.messages?.length - 1;
         conversation.lastMessage = await findMessageById(
-          conversation?.messages[0]?._id
+          conversation?.messages[lastIndex]?._id
         );
       }
     })

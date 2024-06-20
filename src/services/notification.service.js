@@ -19,8 +19,12 @@ class NotificationService {
       like: this.sendNotificationWithTypeLike,
     };
   }
-  getAllNotifications = async ({ userId, limit = 10, offset = 0 }) => {
-    const notifications = await getAllNotification({ user_id: userId });
+  getAllNotifications = async ({ userId, limit = 10, page = 0 }) => {
+    const notifications = await getAllNotification(
+      { user_id: userId },
+      limit,
+      page
+    );
     if (notifications.length === 0) {
       return [];
     }
