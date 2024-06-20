@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const asyncHandler = require ("express-async-handler");
-const searchMess = require("../../controller/searchMess.controller") 
+const asyncHandler = require("express-async-handler");
+const searchController = require("../../controller/searchMess.controller");
 
-router.get("/searchMess",asyncHandler(searchMess.searchMess))
+router.post("/search", asyncHandler(searchController.searchUser));
 
 module.exports = router;

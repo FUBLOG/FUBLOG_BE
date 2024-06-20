@@ -1,11 +1,11 @@
 "user strict";
 const likeService = require("../services/like.service")
-const {OK} = require("../core/response/success.response")
+const {OK,NO_CONTENT} = require("../core/response/success.response")
 
 const like = async(req,res,next) => {
    const {postID} = req.body;
    const userID = req.user.userId;
-   const response = new OK({
+   const response = new NO_CONTENT({
       message:"liked",
       metadata: await likeService.like(postID,userID)
    });
@@ -15,8 +15,8 @@ const like = async(req,res,next) => {
 
 const unlike = async (req,res,next) =>{
    const {postID} = req.body;
-   const userID = req.user.userID;
-   const response = new OK({
+   const userID = req.user.userId;
+   const response = new NO_CONTENT({
       message:"unliked",
       metadata: await likeService.unlike(postID,userID)
    });
@@ -25,7 +25,7 @@ const unlike = async (req,res,next) =>{
 
 const getLiked = async(req,res,next)=>{
    const {postID} = req.body;
-   const userID = req.user.userID;
+   const userID = req.user.userId;
    const response = new OK({
       message:"listed liked",
       metadata:await likeService.getLiked(userID,postID)
