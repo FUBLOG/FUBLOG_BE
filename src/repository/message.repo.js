@@ -10,6 +10,11 @@ const createNewMessage = async ({ message, senderId, receiverId }) => {
   });
 };
 
+const findMessageById = async (messageId) => {
+  return await messageModel.findOne({ _id: messageId }).lean();
+};
+
 module.exports = {
   createNewMessage,
+  findMessageById,
 };

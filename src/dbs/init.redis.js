@@ -1,6 +1,5 @@
 "use strict";
 const redis = require("redis");
-const { logger } = require("../logger/log.system");
 const connectRedis = {
   socket: {
     host: process.env.REDIS_HOST,
@@ -36,11 +35,11 @@ const initRedis = async () => {
   console.log("Redis init");
   const instance = redis.createClient(connectRedis);
   handleErrors({ instance });
-  await instance.connect();
-  client.instance = instance;
+  client.instance = await instance.connect().catch(console.error);
+  return client.instance;
 };
 
-const getRedis = () => client.instance;
+const getRedis = async () => client.instance;
 
 const closeRedis = () => {
   client.instance.quit();

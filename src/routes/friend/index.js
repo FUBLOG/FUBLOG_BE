@@ -26,6 +26,13 @@ router.get("/block", asyncHandler(friendController.getBlockedUsers));
 
 router.get("", asyncHandler(friendController.getFriends));
 
-router.get("/request/:targetID", asyncHandler(friendController.getRequestFriend));
+router.get(
+  "/request/:targetID",
+  asyncHandler(friendController.getRequestFriend)
+);
 
+router.delete(
+  "/request",
+  asyncHandler(friendController.deleteRequest)
+);
 module.exports = router;

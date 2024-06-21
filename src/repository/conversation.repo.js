@@ -3,9 +3,8 @@
 const conversationModel = require("../model/conversation.model");
 const { convertToObjectId } = require("../utils");
 const userInfoModel = require("../model/userInfo.model");
+const { findMessageById } = require("./message.repo");
 const findConversationById = async ({ senderId, receiverId }) => {
-  senderId = convertToObjectId(senderId);
-  receiverId = convertToObjectId(receiverId);
   return conversationModel
     .findOne({
       participants: {
@@ -69,9 +68,14 @@ const findUserHasConversation = async ({ userId }) => {
         user_id: conversation.participants[0]._id,
       });
       conversation.participants[0].avatar =
-        user.avatar === ""
-          ? "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-          : user.avatar;
+        user.avatar === "" ? "" : user.avatar;
+      //get last message
+      if (conversation.messages.length > 0) {
+        const lastIndex = conversation?.messages?.length - 1;
+        conversation.lastMessage = await findMessageById(
+          conversation?.messages[lastIndex]?._id
+        );
+      }
     })
   );
   return allConversation;

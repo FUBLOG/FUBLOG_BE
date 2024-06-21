@@ -1,10 +1,8 @@
-"use strict";
-
 const { NotFoundError } = require("../core/response/error.response");
 const Comment = require("../model/comment.model");
-const updateCommentCount = require("../repository/comment.repo");
+const commentRepo = require("../repository/comment.repo");
 const { convertToObjectId } = require("../utils");
-const Post = require("../model/post.model")
+const Post = require("../model/post.model");
 
 class CommentService {
   static async addComment({
@@ -59,9 +57,11 @@ class CommentService {
     comment.comment_right = rightValue + 1;
     await comment.save();
 
-    await updateCommentCount(comment_postID, 1);
+    await commentRepo.updateCommentCount(comment_postID, 1);
+    await commentRepo.updatePostScore(comment_postID, 10); // Tăng score của post lên 10 khi thêm comment
     return comment;
   }
+
   static async getComments({
     parent_CommentID,
     limit = 10,
@@ -107,7 +107,7 @@ class CommentService {
     }
   }
 
-   static async updateComment({ 
+  static async updateComment({ 
     parent_CommentID, 
     comment_content 
   }) {
@@ -122,9 +122,10 @@ class CommentService {
 
     return comment;
   }
- 
-  static async deleteComment({ parent_CommentID ,comment_postID}) {
+
+  static async deleteComment({ parent_CommentID ,comment_postID }) {
     const comment = await Comment.findById(parent_CommentID);
+    console.log(comment);
     if (!comment) {
       throw new NotFoundError("Comment not found");
     }
@@ -152,7 +153,9 @@ class CommentService {
       { comment_left: { $gt: rightValue } },
       { $inc: { comment_left: -width } }
     );
-    await updateCommentCount(comment_postID, -1);
+
+    await commentRepo.updateCommentCount(comment_postID, -1);
+    await commentRepo.updatePostScore(comment_postID, -10); // Giảm score của post đi 10 khi xóa comment
     return commentsToDelete;
   }
 
@@ -164,7 +167,7 @@ class CommentService {
     if (!postID) {
       throw new NotFoundError("postID not found");
     }
-  
+
     const comments = await Comment.find({
       comment_postID: convertToObjectId(postID),
       parent_CommentID: null, 
@@ -179,10 +182,9 @@ class CommentService {
       })
       .sort({ comment_left: 1 })
       .lean();
-  
+
     return comments;
   }
-  
-  }
+}
 
 module.exports = CommentService;

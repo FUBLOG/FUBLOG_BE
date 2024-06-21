@@ -11,5 +11,5 @@ router.get(
   "/:notificationId",
   asyncHandler(notificationController.updateStatusRead)
 );
-
+router.patch("", asyncHandler(notificationController.updateStatusReadAll));
 module.exports = router;

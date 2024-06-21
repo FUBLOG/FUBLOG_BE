@@ -33,20 +33,11 @@ const updateComment = async (req, res) => {
   response.send(res);
 };
 
-//delete cmt
-// const deleteComment = async (req, res) => {
-//   const { parent_CommentID, comment_postID } = req.query;
-//   const response = new OK({
-//     message: "Comment deleted",
-//     metadata: await commentService.deleteComment({ parent_CommentID, comment_postID }),
-//   });
-//   response.send(res);
-// };
 const deleteComment = async (req, res) => {
-  const { parent_CommentID } = req.query;
+  const { parent_CommentID,comment_postID } = req.body;
   const response = new OK({
     message: "Comment deleted",
-    metadata: await commentService.deleteComment({ parent_CommentID }),
+    metadata: await commentService.deleteComment({ parent_CommentID,comment_postID }),
   });
   response.send(res);
 };

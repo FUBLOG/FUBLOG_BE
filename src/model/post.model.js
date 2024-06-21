@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
+const newFeed = require("./newfeeds.model");
+const { NotFoundError } = require("../core/response/error.response");
+
 const DOCUMENT_NAME = "Post";
 const COLLECTION_NAME = "Posts";
-const newFeed = require("./newfeeds.model");
-const postSchemas = mongoose.Schema(
+
+const postSchema = new mongoose.Schema(
   {
     UserID: {
       type: String,
@@ -49,40 +52,46 @@ const postSchemas = mongoose.Schema(
     timestamps: true,
   }
 );
+
 let oldScore;
 
-postSchemas.pre("findOneAndUpdate", function (next) {
-  this.findOne({}, function (err, doc) {
-    if (err) {
-      console.error(err);
-    } else {
-      oldScore = doc.score;
+postSchema.pre("findOneAndUpdate", async function (next) {
+  try {
+    const doc = await this.model.findOne(this.getQuery());
+    if (!doc) {
+      throw new NotFoundError("Post not found");
     }
+    oldScore = doc.score;
     next();
-  });
+  } catch (error) {
+    next(error);
+  }
 });
 
-postSchemas.post("findOneAndUpdate", function (next) {
+postSchema.post("findOneAndUpdate", async function (doc, next) {
+  if (!doc) return next();
+
   if (!doc.isModified("score")) return next();
+  
   const scoreChange = doc.score - oldScore;
-  newFeed.findOneAndUpdate(
-    { postId: doc._id },
-    {
-      $set: {
-        rank: {
-          inc: scoreChange,
+  try {
+    await newFeed.findOneAndUpdate(
+      { postId: doc._id },
+      {
+        $set: {
+          rank: {
+            inc: scoreChange,
+          },
         },
       },
-    },
-    { new: true },
-    function (err, result) {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log("Updated rank in NewFeed");
-      }
-      next();
-    }
-  );
+      { new: true }
+    );
+    console.log("Updated rank in NewFeed");
+    next();
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
-module.exports = mongoose.model(DOCUMENT_NAME, postSchemas);
+
+module.exports = mongoose.model(DOCUMENT_NAME, postSchema);

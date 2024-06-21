@@ -4,13 +4,13 @@ const notificationService = require("../services/notification.service");
 class NotificationController {
   getAllNotifications = async (req, res) => {
     const { userId } = req.user;
-    const { limit, offset } = req.query;
+    const { limit = 10, page = 0 } = req.query;
     const response = new OK({
       message: "Get all notifications",
-      metadata: notificationService.getAllNotifications({
+      metadata: await notificationService.getAllNotifications({
         userId,
         limit,
-        offset,
+        page,
       }),
     });
     response.send(res);
@@ -20,6 +20,15 @@ class NotificationController {
     await notificationService.updateStatusRead({ notificationId });
     const response = new OK({
       message: "Update status read successfully",
+    });
+    response.send(res);
+  };
+
+  updateStatusReadAll = async (req, res) => {
+    const { userId } = req.user;
+    await notificationService.updateStatusReadAll({ userId });
+    const response = new NO_CONTENT({
+      message: "Update status read all successfully",
     });
     response.send(res);
   };
