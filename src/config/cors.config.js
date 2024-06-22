@@ -20,7 +20,8 @@ const corsOptions = {
 
   // Some legacy browsers (IE11, various SmartTVs) choke on 204
   optionsSuccessStatus: 200,
-
+  //methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
   // CORS sẽ cho phép nhận cookies từ request,
   credentials: true,
 };
