@@ -17,7 +17,7 @@ class NotificationController {
   };
   updateStatusRead = async (req, res) => {
     const { notificationId } = req.params;
-    await notificationService.updateStatusRead({ notificationId });
+    await notificationService.updateNotificationStatusRead({ notificationId });
     const response = new OK({
       message: "Update status read successfully",
     });
@@ -26,7 +26,7 @@ class NotificationController {
 
   updateStatusReadAll = async (req, res) => {
     const { userId } = req.user;
-    await notificationService.updateStatusReadAll({ userId });
+    await notificationService.updateNotificationStatusReadAll({ userId });
     const response = new NO_CONTENT({
       message: "Update status read all successfully",
     });

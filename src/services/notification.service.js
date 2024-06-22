@@ -7,6 +7,7 @@ const {
   updateStatusRead,
   getAllNotification,
   getNotificationSocket,
+  updateStatusReadAll,
 } = require("../repository/notification.repo");
 const { findUserById, findUserDetailById } = require("../repository/user.repo");
 
@@ -95,6 +96,10 @@ class NotificationService {
 
   updateNotificationStatusRead = async ({ notificationId }) => {
     return await updateStatusRead({ notificationId });
+  };
+
+  updateNotificationStatusReadAll = async ({ userId }) => {
+    return await updateStatusReadAll({ userId });
   };
 }
 module.exports = new NotificationService();
