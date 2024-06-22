@@ -1,18 +1,20 @@
+const Post = require("../model/post.model");
+const { NotFoundError } = require("../core/response/error.response");
 
-const post = require("../model/post.model");
 class commentRepo {
   async updateCommentCount(postID, increment) {
-    const post = await post.findById(postID);
+    const post = await Post.findById(postID);
     if (!post) {
       throw new NotFoundError("Post not found");
     }
 
-    await post.findOneAndUpdate(
+    await Post.findOneAndUpdate(
       { _id: postID },
-      { $inc: { commentCount: increment } }
+      { $inc: { commentCount: increment, score: increment * 10 } }
     );
 
     return { success: true };
-}}
+  }
+}
 
 module.exports = new commentRepo();

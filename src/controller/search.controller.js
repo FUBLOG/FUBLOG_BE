@@ -1,20 +1,29 @@
 const searchService = require("../services/search.service");
-const { OK } = require('../core/response/success.response');
+const { OK } = require("../core/response/success.response");
 
 const searchUser = async (req, res, next) => {
-  try {
-    const { displayName } = req.body;
-    const metadata = await searchService.search(displayName);
+  const { displayName,profileHash } = req.body;
+    const metadata = await searchService.searchUser(displayName,profileHash);
     const response = new OK({
       message: "Search results",
       metadata
     });
     response.send(res);
-  } catch (error) {
-    next(error);
   }
+  
+  const searchMess = async (req, res, next) => {
+    const { displayName, profileHash } = req.body;  
+    console.log(displayName); 
+    const metadata = await searchService.searchMess(displayName, profileHash); 
+    const response = new OK({
+      message: "Search results",
+      metadata
+    });
+    response.send(res);
+  };
+module.exports = {
+  searchUser,
+  searchMess
 };
 
-module.exports = {
-  searchUser
-};
+

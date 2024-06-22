@@ -8,8 +8,6 @@ router.get('/getReport/:id',asyncHandler(reportController.getAReport));
 
 router.get('/getAllReports', asyncHandler(reportController.getAllReport));
 
-
-
 router.use(authentication);
 
 
@@ -20,4 +18,5 @@ router.patch('/updateReport/:id', asyncHandler(reportController.updateReport));
 
 router.delete('/deleteReport/:id', asyncHandler(reportController.deleteReport));
 
+module.exports = router
 module.exports = router

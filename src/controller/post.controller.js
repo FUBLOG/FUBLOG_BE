@@ -16,6 +16,7 @@ class PostController {
     });
     result.send(res);
   };
+  
   getAllPost = async (req, res, next) => {
     const result = new OK({
       message: " View posts Sucess",
