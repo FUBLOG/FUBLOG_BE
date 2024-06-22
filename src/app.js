@@ -10,24 +10,7 @@ const { v4: uuidv4 } = require("uuid");
 const session = require("express-session");
 const Redis = require("./dbs/init.redis");
 const { default: RedisStore } = require("connect-redis");
-class App {
-  setup = async () => {
-    const client = await Redis.initRedis();
-    //init session
-    app.use(
-      session({
-        genid: (req) => uuidv4(),
-        secret: "keyboard cat",
-        store: new RedisStore({ client }),
-        resave: false,
-        saveUninitialized: true,
-        cookie: {
-          maxAge: 1000 * 60 * 60 * 24,
-        },
-      })
-    );
-  };
-}
+
 //config cors
 app.use(cors(corsOptions)); //config cors
 
@@ -38,10 +21,25 @@ app.use(helmet()); //config security request
 app.use(compression()); // data compression
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+setup = async () => {
+  const client = await Redis.initRedis();
+  //init session
+  app.use(
+    session({
+      genid: (req) => uuidv4(),
+      secret: "keyboard cat",
+      store: new RedisStore({ client }),
+      resave: false,
+      saveUninitialized: true,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24,
+      },
+    })
+  );
+};
+setup();
 //init db
 require("./dbs/init.mongodb");
-const appSetup = new App();
-appSetup.setup();
 //init cron-job
 require("./cron-job/index");
 

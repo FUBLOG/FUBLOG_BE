@@ -1,3 +1,4 @@
+'use strict';
 const cron = require("node-cron");
 const newFeedsModel = require("../model/newFeeds.model");
 cron.schedule(
