@@ -29,15 +29,17 @@ const conversationSchema = new Schema(
   }
 );
 let oldScore;
-conversationSchema.pre("findOneAndUpdate", function (next) {
-  this.findOne({}, function (err, doc) {
-    if (err) {
-      console.error(err);
-    } else {
-      oldScore = doc.score;
+conversationSchema.pre("findOneAndUpdate", async function (next) {
+  try {
+    const doc = await this.model.findOne(this.getQuery());
+    if (!doc) {
+      throw new NotFoundError("Conversation not found");
     }
-  });
-  next();
+    oldScore = doc.score;
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 conversationSchema.post("findOneAndUpdate", function (doc) {
