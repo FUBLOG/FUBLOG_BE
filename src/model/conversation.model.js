@@ -42,7 +42,7 @@ conversationSchema.pre("findOneAndUpdate", async function (next) {
   }
 });
 
-conversationSchema.post("findOneAndUpdate", function (doc) {
+conversationSchema.post("findOneAndUpdate", function (doc,next) {
   if (!doc.isModified("score")) return next();
   const scoreChange = doc.score - oldScore;
   newFeedsModel.updateMany(
