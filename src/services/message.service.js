@@ -44,7 +44,11 @@ class MessageService {
     if (receiverSocketId) {
       // io.to(<socket_id>).emit() used to send events to specific client
       io.to(receiverSocketId).emit("newMessage", newMessage);
-      io.to(receiverSocketId).emit("newConversation", conversation);
+      const socketConversation = await findConversationById({
+        senderId,
+        receiverId,
+      });
+      io.to(receiverSocketId).emit("newConversation", socketConversation);
     }
     return newMessage;
   };
