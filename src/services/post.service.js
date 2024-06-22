@@ -75,13 +75,13 @@ class PostService {
     const newLimit = limit / 2;
     const publicPosts = await NewFeedsService.getPublicNewFeeds({
       page,
-      newLimit,
+      limit: newLimit,
       seenIds,
     });
     const friendPosts = await NewFeedsService.getFriendNewFeeds({
       userId,
       page,
-      newLimit,
+      limit: newLimit,
     });
     const posts = publicPosts.concat(friendPosts).sort((a, b) => {
       return b.createdAt - a.createdAt;
