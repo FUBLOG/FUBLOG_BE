@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
+const newFeedsModel = require("./newfeeds.model");
 const DOCUMENT_NAME = "Post";
 const COLLECTION_NAME = "Posts";
-const newfeedsModel = require("./newFeeds.model");
 const postSchemas = mongoose.Schema(
   {
     UserID: {
@@ -65,7 +65,7 @@ postSchemas.pre("findOneAndUpdate", function (next) {
 postSchemas.post("findOneAndUpdate", function (next) {
   if (!doc.isModified("score")) return next();
   const scoreChange = doc.score - oldScore;
-  newfeedsModel.updateMany(
+  newFeedsModel.updateMany(
     { postId: doc._id },
     {
       rank: {

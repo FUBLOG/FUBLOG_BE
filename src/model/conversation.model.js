@@ -1,6 +1,6 @@
 "use strict";
 const { model, Schema, default: mongoose } = require("mongoose");
-const newfeedsModel = require("./newFeeds.model");
+const newFeedsModel = require("./newfeeds.model");
 const DOCUMENT_NAME = "Conversation";
 const COLLECTION_NAME = "Conversations";
 const conversationSchema = new Schema(
@@ -43,7 +43,7 @@ conversationSchema.pre("findOneAndUpdate", function (next) {
 conversationSchema.post("findOneAndUpdate", function (doc) {
   if (!doc.isModified("score")) return next();
   const scoreChange = doc.score - oldScore;
-  newfeedsModel.updateMany(
+  newFeedsModel.updateMany(
     {
       userId: { $in: doc.participants },
       friendId: { $in: doc.participants },

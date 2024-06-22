@@ -1,6 +1,7 @@
 "use strict";
 
-const newFeedsModel = require("../model/newFeeds.model");
+const newFeedsModel = require("../model/newfeeds.model");
+
 
 const createNewFeed = async ({ userId, friendId, content }) => {
   return await newfeedModel.create({ userId, friendId, post: content });
