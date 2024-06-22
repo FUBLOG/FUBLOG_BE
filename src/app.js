@@ -7,25 +7,45 @@ const cors = require("cors");
 const { corsOptions } = require("./config/cors.config");
 const logger = require("./logger/log.system");
 const { v4: uuidv4 } = require("uuid");
+const session = require("express-session");
+const Redis = require("./dbs/init.redis");
+const { default: RedisStore } = require("connect-redis");
 //config cors
 app.use(cors(corsOptions)); //config cors
 
 //int middlewares
+app.set("trust proxy", 1);
 app.use(morgan("dev")); //config request return
 app.use(helmet()); //config security request
 app.use(compression()); // data compression
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+setup = async () => {
+  const client = await Redis.initRedis();
+  //init session
+  app.use(
+    session({
+      genid: (req) => uuidv4(),
+      secret: "keyboard cat",
+      store: new RedisStore({ client }),
+      resave: false,
+      saveUninitialized: true,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24,
+      },
+    })
+  );
+};
+setup();
 //init db
 require("./dbs/init.mongodb");
-const Redis = require("./dbs/init.redis");
-Redis.initRedis();
 //init cron-job
 require("./cron-job/index");
+
 //Set traceId
 app.use((req, res, next) => {
   const traceId = req.headers["x-trace-id"] || uuidv4();
+  console.log(req.session);
   if (traceId) {
     req.traceId = traceId;
     req.now = Date.now();
@@ -37,7 +57,6 @@ app.use((req, res, next) => {
   ]);
   next();
 });
-
 //init routes
 app.use("/v1/api", require("./routes"));
 
@@ -73,3 +92,4 @@ app.use((error, req, res, next) => {
 });
 
 module.exports = app;
+

@@ -3,9 +3,8 @@
 const conversationModel = require("../model/conversation.model");
 const { convertToObjectId } = require("../utils");
 const userInfoModel = require("../model/userInfo.model");
+const { findMessageById } = require("./message.repo");
 const findConversationById = async ({ senderId, receiverId }) => {
-  senderId = convertToObjectId(senderId);
-  receiverId = convertToObjectId(receiverId);
   return conversationModel
     .findOne({
       participants: {
@@ -31,9 +30,7 @@ const getMessageFromConversation = async ({ senderId, userToChatId }) => {
         $all: [senderId, userToChatId],
       },
     })
-    .populate("messages", {
-      sort: { createdAt: -1 },
-    })
+    .populate("messages", [], null, { sort: { createdAt: -1 } })
     .lean();
 };
 
@@ -43,6 +40,9 @@ const pushMessageToConversation = async ({ conversationId, messageId }) => {
   return conversationModel.findByIdAndUpdate(conversationId, {
     $push: {
       messages: messageId,
+    },
+    $inc: {
+      score: 1,
     },
   });
 };
@@ -62,19 +62,23 @@ const findUserHasConversation = async ({ userId }) => {
     .sort({ updatedAt: -1 })
     .limit(10)
     .lean();
-
   await Promise.all(
-    allConversation.map(async (conversation, index) => {
+    allConversation.map(async (conversation) => {
       conversation.participants = conversation.participants.filter(
         (participant) => participant._id.toString() !== userId.toString()
       );
       let user = await userInfoModel.findOne({
-        user_id: conversation.participants[index]._id,
+        user_id: conversation.participants[0]._id,
       });
-      conversation.participants[index].avatar =
-        user.avatar === ""
-          ? "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-          : user.avatar;
+      conversation.participants[0].avatar =
+        user.avatar === "" ? "" : user.avatar;
+      //get last message
+      if (conversation.messages.length > 0) {
+        const lastIndex = conversation?.messages?.length - 1;
+        conversation.lastMessage = await findMessageById(
+          conversation?.messages[lastIndex]?._id
+        );
+      }
     })
   );
   return allConversation;

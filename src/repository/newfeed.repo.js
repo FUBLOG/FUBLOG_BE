@@ -1,15 +1,15 @@
 "use strict";
-const newfeedModel = require("../model/newfeeds.model");
-const userInfoModel = require("../model/userInfo.model");
+
+const newFeedsModel = require("../model/newFeeds.model");
 
 const createNewFeed = async ({ userId, friendId, content }) => {
   return await newfeedModel.create({ userId, friendId, post: content });
 };
 
-const getPublicNewFeeds = async ({ page, limit }) => {
+const getPublicNewFeeds = async ({ page, limit, seenIds }) => {
   const offset = page * limit;
-  const feeds = await newfeedModel
-    .find({ friendId: null })
+  const feeds = await newFeedsModel
+    .find({ friendId: null, _id: { $nin: seenIds } })
     .sort({ createdAt: -1, rank: 1 })
     .skip(offset)
     .limit(limit)
@@ -27,6 +27,7 @@ const getPublicNewFeeds = async ({ page, limit }) => {
     .lean();
   return feeds;
 };
+
 const getFriendNewFeeds = async ({ userId, page, limit }) => {
   const offset = page * limit;
   const feeds = await newfeedModel
@@ -49,6 +50,7 @@ const getFriendNewFeeds = async ({ userId, page, limit }) => {
   deleteNewFeed(feeds.map((feed) => feed._id));
   return feeds;
 };
+
 const deleteNewFeed = async (feeds) => {
   newfeedModel.deleteMany({ _id: { $in: feeds } });
 };
