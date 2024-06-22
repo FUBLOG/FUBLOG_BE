@@ -4,14 +4,35 @@ const conversationModel = require("../model/conversation.model");
 const { convertToObjectId } = require("../utils");
 const userInfoModel = require("../model/userInfo.model");
 const { findMessageById } = require("./message.repo");
+const { path } = require("../app");
 const findConversationById = async ({ senderId, receiverId }) => {
-  return conversationModel
+  const conversation = await conversationModel
     .findOne({
       participants: {
         $all: [senderId, receiverId],
       },
     })
+    .populate({
+      path: "participants",
+      select: "displayName",
+    })
     .lean();
+  if (!conversation) return null;
+  conversation.participants = conversation.participants.filter(
+    (participant) => participant._id.toString() !== senderId.toString()
+  );
+  let user = await userInfoModel.findOne({
+    user_id: conversation.participants[0]._id,
+  });
+  conversation.participants[0].avatar = user.avatar;
+  //get last message
+  if (conversation.messages.length > 0) {
+    const lastIndex = conversation?.messages?.length - 1;
+    conversation.lastMessage = await findMessageById(
+      conversation?.messages[lastIndex]?._id
+    );
+  }
+  return conversation;
 };
 const createConversation = async ({ senderId, receiverId }) => {
   senderId = convertToObjectId(senderId);

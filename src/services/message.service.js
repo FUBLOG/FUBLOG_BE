@@ -69,9 +69,6 @@ class MessageService {
       senderId: userId,
       receiverId: friendId,
     });
-    if (!conversation) {
-      return null;
-    }
     return conversation;
   };
 }
