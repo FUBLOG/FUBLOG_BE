@@ -1,5 +1,6 @@
 "use strict";
 const redis = require("redis");
+const { promisify } = require('util');
 const connectRedis = {
   socket: {
     host: process.env.REDIS_HOST,
@@ -38,7 +39,8 @@ const initRedis = async () => {
   console.log("Redis init");
   client = redis.createClient(connectRedis);
   handleErrors({ instance: client });
-  return await client.connect().catch(console.error);
+  client  = await client.connect();
+  return client;
 };
 
 const getRedis = async () => client;
