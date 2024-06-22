@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require("express")
 const router = express.Router();
 const asyncHandler = require('express-async-handler');
 const searchCtrl = require("../../controller/search.controller");

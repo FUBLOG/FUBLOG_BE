@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const DOCUMENT_NAME = "NewFeed";
 const COLLECTION_NAME = "NewFeeds";
-const newFeedSchemas = mongoose.Schema(
+
+const newFeedSchemas = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -33,11 +34,17 @@ const newFeedSchemas = mongoose.Schema(
     timestamps: true,
   }
 );
-newFeedSchemas.post("findOneAndUpdate", async function (doc) {
+
+newFeedSchemas.post("findOneAndUpdate", async function (doc, next) {
   if (doc.isModified("timeDecay")) {
     doc.rank = doc.rank - 10;
-    await post.save();
+    await doc.save();
   }
   next();
 });
-module.exports = mongoose.model(DOCUMENT_NAME, newFeedSchemas);
+
+if (!mongoose.models[DOCUMENT_NAME]) {
+  mongoose.model(DOCUMENT_NAME, newFeedSchemas);
+}
+
+module.exports = mongoose.models[DOCUMENT_NAME];
