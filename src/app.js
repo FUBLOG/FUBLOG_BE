@@ -90,10 +90,10 @@ class App {
         message: error.message || "Internal Server Error",
       });
     });
-
     return app;
   };
 }
 const appSetup = new App();
 const appAll = appSetup.setup();
 module.exports = appAll;
+
