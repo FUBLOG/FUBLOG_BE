@@ -1,6 +1,8 @@
 "use strict";
 
+const { path } = require("../app");
 const newFeedsModel = require("../model/newfeeds.model");
+const { populate } = require("../model/otp.model");
 
 
 const createNewFeed = async ({ userId, friendId, content }) => {
@@ -24,7 +26,14 @@ const getPublicNewFeeds = async ({ page, limit, seenIds }) => {
         select: "avatar -_id -user_id",
       },
     })
-    .populate("post")
+    .populate({
+      path: "post",
+      model: "Post",
+      populate: {
+        path: "postTagID",
+        model: "Tag",
+      }
+    })
     .lean();
   return feeds;
 };
@@ -46,7 +55,14 @@ const getFriendNewFeeds = async ({ userId, page, limit }) => {
         select: "avatar -_id -user_id",
       },
     })
-    .populate("post")
+    .populate({
+      path: "post",
+      model: "Post",
+      populate: {
+        path: "postTagID",
+        model: "Tag",
+      }
+    })
     .lean();
   deleteNewFeed(feeds.map((feed) => feed._id));
   return feeds;
