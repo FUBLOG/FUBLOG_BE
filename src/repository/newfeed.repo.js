@@ -1,17 +1,16 @@
 "use strict";
 
 const { path } = require("../app");
-const newFeedsModel = require("../model/newfeeds.model");
-const { populate } = require("../model/otp.model");
+const newfeedsModel = require("../model/newfeeds.model");
 
 
 const createNewFeed = async ({ userId, friendId, content }) => {
-  return await newfeedModel.create({ userId, friendId, post: content });
+  return await newfeedsModel.create({ userId, friendId, post: content });
 };
 
 const getPublicNewFeeds = async ({ page, limit, seenIds }) => {
   const offset = page * limit;
-  const feeds = await newFeedsModel
+  const feeds = await newfeedsModel
     .find({ friendId: null, _id: { $nin: seenIds } })
     .sort({ createdAt: -1, rank: 1 })
     .skip(offset)
@@ -40,7 +39,7 @@ const getPublicNewFeeds = async ({ page, limit, seenIds }) => {
 
 const getFriendNewFeeds = async ({ userId, page, limit }) => {
   const offset = page * limit;
-  const feeds = await newfeedModel
+  const feeds = await newfeedsModel
     .find({ friendId: userId })
     .sort({ createdAt: -1, rank: 1 })
     .skip(offset)
@@ -69,7 +68,7 @@ const getFriendNewFeeds = async ({ userId, page, limit }) => {
 };
 
 const deleteNewFeed = async (feeds) => {
-  newfeedModel.deleteMany({ _id: { $in: feeds } });
+  newfeedsModel.deleteMany({ _id: { $in: feeds } });
 };
 module.exports = {
   createNewFeed,
