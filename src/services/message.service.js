@@ -24,30 +24,31 @@ class MessageService {
     });
     if (!conversation) {
       conversation = await createConversation({ senderId, receiverId });
-    } else {
-      const newMessage = await createNewMessage({
-        message,
-        senderId,
-        receiverId,
-      });
-      if (newMessage) {
-        await pushMessageToConversation({
-          conversationId: conversation._id,
-          messageId: newMessage._id,
-        });
-      }
-
-      const receiverSocketId = getReceiverSocketId(receiverId);
-
-      if (receiverSocketId) {
-        // io.to(<socket_id>).emit() used to send events to specific client
-        io.to(receiverSocketId).emit("newMessage", newMessage);
-        if (conversation?.messages.length === 0) {
-          io.to(receiverSocketId).emit("newConversation", conversation);
-        }
-      }
-      return newMessage;
     }
+
+    const newMessage = await createNewMessage({
+      message,
+      senderId,
+      receiverId,
+    });
+    
+    if (newMessage) {
+      await pushMessageToConversation({
+        conversationId: conversation._id,
+        messageId: newMessage._id,
+      });
+    }
+
+    const receiverSocketId = getReceiverSocketId(receiverId);
+
+    if (receiverSocketId) {
+      // io.to(<socket_id>).emit() used to send events to specific client
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+      if (conversation?.messages.length === 0) {
+        io.to(receiverSocketId).emit("newConversation", conversation);
+      }
+    }
+    return newMessage;
   };
 
   getMessage = async (req) => {
@@ -63,7 +64,6 @@ class MessageService {
 
   getListConversation = async (req) => {
     return await findUserHasConversation({ userId: req.user.userId });
-
   };
 
   getConversation = async ({ userId = "", friendId = "" }) => {

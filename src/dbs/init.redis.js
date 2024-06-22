@@ -30,19 +30,21 @@ const handleErrors = ({ instance }) => {
   instance.on(statusConnectRedis.RECONNECTING, () => {
     console.log("Redis reconnecting");
   });
+  instance.on("disconnect", () => {
+    console.log("Redis disconnect");
+  });
 };
 const initRedis = async () => {
   console.log("Redis init");
-  const instance = redis.createClient(connectRedis);
-  handleErrors({ instance });
-  client.instance = await instance.connect().catch(console.error);
-  return client.instance;
+  client = redis.createClient(connectRedis);
+  handleErrors({ instance: client });
+  return await client.connect().catch(console.error);
 };
 
-const getRedis = async () => client.instance;
+const getRedis = async () => client;
 
 const closeRedis = () => {
-  client.instance.quit();
+  client.quit();
 };
 
 module.exports = {

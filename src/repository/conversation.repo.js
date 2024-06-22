@@ -41,6 +41,9 @@ const pushMessageToConversation = async ({ conversationId, messageId }) => {
     $push: {
       messages: messageId,
     },
+    $inc: {
+      score: 1,
+    },
   });
 };
 //find user has conversation with user
