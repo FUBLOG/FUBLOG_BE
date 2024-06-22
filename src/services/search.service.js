@@ -1,7 +1,7 @@
 const logSystem = require("../logger/log.system");
 const User = require("../model/user.model");
 const UserInfo = require("../model/userInfo.model");
-const {BadRequestError,NotFoundError} = require ("../core/response/error.response")
+const {BadRequestError} = require ("../core/response/error.response")
 const { removeAccents } = require("../utils");
 
 class searchService{
