@@ -106,8 +106,6 @@ class CommentService {
         .skip(offset)
         .sort({ comment_left: 1 })
         .lean();
-        .sort({ comment_left: 1 })
-        .lean();
       return comments;
     }
   }
