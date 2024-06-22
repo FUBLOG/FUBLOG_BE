@@ -29,8 +29,7 @@ const getComments = async (req, res) => {
 
 // update cmt
 const updateComment = async (req, res) => {
-  const { parent_CommentID } = req.query;
-  const { comment_content } = req.body;
+  const { comment_content, parent_CommentID = null } = req.body;
   const response = new OK({
     message: "Comment updated",
     metadata: await commentService.updateComment({
@@ -42,10 +41,13 @@ const updateComment = async (req, res) => {
 };
 
 const deleteComment = async (req, res) => {
-  const { parent_CommentID,comment_postID } = req.body;
+  const { parent_CommentID, comment_postID } = req.body;
   const response = new OK({
     message: "Comment deleted",
-    metadata: await commentService.deleteComment({ parent_CommentID,comment_postID }),
+    metadata: await commentService.deleteComment({
+      parent_CommentID,
+      comment_postID,
+    }),
   });
   response.send(res);
 };
