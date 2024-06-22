@@ -8,8 +8,8 @@ const {
 const { getFriendsList } = require("../repository/userInfo.repo");
 
 class NewFeedsService {
-  static async getPublicNewFeeds({ page, limit }) {
-    return await getPublicNewFeeds({ page, limit });
+  static async getPublicNewFeeds({ page, limit, seenIds }) {
+    return await getPublicNewFeeds({ page, limit, seenIds });
   }
   static async getFriendNewFeeds({ userId, page, limit }) {
     return await getFriendNewFeeds({ userId, page, limit });

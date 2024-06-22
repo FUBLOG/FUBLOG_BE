@@ -11,7 +11,7 @@ router.get("/user/:id", asyncHandler(postController.searchPostsByUserId));
 
 router.get("/:id", asyncHandler(postController.getAPost));
 
-router.get("", asyncHandler(postController.getPosts));
+
 
 // Authen
 router.use(authentication);
