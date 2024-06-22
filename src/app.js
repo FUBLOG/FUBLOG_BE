@@ -10,7 +10,6 @@ const { v4: uuidv4 } = require("uuid");
 const session = require("express-session");
 const Redis = require("./dbs/init.redis");
 const { default: RedisStore } = require("connect-redis");
-
 //config cors
 app.use(cors(corsOptions)); //config cors
 
@@ -93,3 +92,4 @@ app.use((error, req, res, next) => {
 });
 
 module.exports = app;
+
