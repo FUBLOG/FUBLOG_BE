@@ -168,9 +168,11 @@ class CommentService {
       .populate({
         path: "comment_userId",
         model: "User",
+        select: "displayName profileHash",
         populate: {
           path: "userInfo",
           model: "UserInfo",
+          select: "avatar",
         },
       })
       .limit(limit)
