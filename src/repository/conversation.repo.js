@@ -4,7 +4,7 @@ const conversationModel = require("../model/conversation.model");
 const { convertToObjectId } = require("../utils");
 const userInfoModel = require("../model/userInfo.model");
 const { findMessageById } = require("./message.repo");
-const { path } = require("../app");
+
 const findConversationById = async ({ senderId, receiverId }) => {
   const conversation = await conversationModel
     .findOne({
@@ -34,6 +34,7 @@ const findConversationById = async ({ senderId, receiverId }) => {
   }
   return conversation;
 };
+
 const createConversation = async ({ senderId, receiverId }) => {
   senderId = convertToObjectId(senderId);
   receiverId = convertToObjectId(receiverId);
@@ -64,9 +65,12 @@ const pushMessageToConversation = async ({ conversationId, messageId }) => {
     },
     $inc: {
       score: 1,
+      unReadCount: 1,
     },
+    lastMessage: messageId,
   });
 };
+
 //find user has conversation with user
 const findUserHasConversation = async ({ userId }) => {
   userId = convertToObjectId(userId);
@@ -80,6 +84,7 @@ const findUserHasConversation = async ({ userId }) => {
       path: "participants",
       select: "displayName",
     })
+    .populate("lastMessage")
     .sort({ updatedAt: -1 })
     .limit(10)
     .lean();
@@ -93,17 +98,11 @@ const findUserHasConversation = async ({ userId }) => {
       });
       conversation.participants[0].avatar =
         user.avatar === "" ? "" : user.avatar;
-      //get last message
-      if (conversation.messages.length > 0) {
-        const lastIndex = conversation?.messages?.length - 1;
-        conversation.lastMessage = await findMessageById(
-          conversation?.messages[lastIndex]?._id
-        );
-      }
     })
   );
   return allConversation;
 };
+
 const getAllAvatar = async (conversation) => {
   return conversation.forEach(async (conversation, index) => {
     const user = await userInfoModel.findOne({
@@ -115,6 +114,21 @@ const getAllAvatar = async (conversation) => {
         : user.avatar;
   });
 };
+
+const setReadedMessage = async ({ conversationId }) => {
+  conversationId = convertToObjectId(conversationId);
+  return conversationModel.findByIdAndUpdate(
+    {
+      _id: conversationId,
+    },
+    {
+      $set: {
+        unReadCount: 0,
+      },
+    }
+  );
+};
+
 module.exports = {
   findConversationById,
   createConversation,
@@ -122,4 +136,5 @@ module.exports = {
   pushMessageToConversation,
   findUserHasConversation,
   getAllAvatar,
+  setReadedMessage,
 };

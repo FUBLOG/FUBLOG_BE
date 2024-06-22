@@ -22,6 +22,14 @@ const conversationSchema = new Schema(
       type: Number,
       default: 0,
     },
+    unReadCount: {
+      type: Number,
+      default: 0,
+    },
+    lastMessage: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+    },
   },
   {
     collection: COLLECTION_NAME,
@@ -42,7 +50,7 @@ conversationSchema.pre("findOneAndUpdate", async function (next) {
   }
 });
 
-conversationSchema.post("findOneAndUpdate", function (doc,next) {
+conversationSchema.post("findOneAndUpdate", function (doc, next) {
   if (!doc.isModified("score")) return next();
   const scoreChange = doc.score - oldScore;
   newFeedsModel.updateMany(

@@ -48,7 +48,6 @@ class MessageService {
         senderId: receiverId,
         receiverId: senderId,
       });
-      console.log(socketConversation);
       io.to(receiverSocketId).emit("newConversation", socketConversation);
     }
     return newMessage;
