@@ -15,6 +15,7 @@ class commentRepo {
 
     return { success: true };
   }
+  
 
   async updatePostScore(postID, scoreChange) {
     const post = await Post.findById(postID);

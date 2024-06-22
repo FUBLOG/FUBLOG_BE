@@ -4,8 +4,13 @@ const { NotFoundError } = require("../core/response/error.response");
 
 const DOCUMENT_NAME = "Post";
 const COLLECTION_NAME = "Posts";
+<<<<<<< HEAD
 
 const postSchema = new mongoose.Schema(
+=======
+const newfeedsModel = require("./newFeeds.model");
+const postSchemas = mongoose.Schema(
+>>>>>>> 9f585e20e3c57242eb95672bf5622f8f37f7f004
   {
     UserID: {
       type: String,
@@ -74,6 +79,7 @@ postSchema.post("findOneAndUpdate", async function (doc, next) {
   if (!doc.isModified("score")) return next();
   
   const scoreChange = doc.score - oldScore;
+<<<<<<< HEAD
   try {
     await newFeed.findOneAndUpdate(
       { postId: doc._id },
@@ -83,6 +89,13 @@ postSchema.post("findOneAndUpdate", async function (doc, next) {
             inc: scoreChange,
           },
         },
+=======
+  newfeedsModel.updateMany(
+    { postId: doc._id },
+    {
+      rank: {
+        inc: scoreChange,
+>>>>>>> 9f585e20e3c57242eb95672bf5622f8f37f7f004
       },
       { new: true }
     );

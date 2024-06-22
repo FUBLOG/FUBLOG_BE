@@ -57,8 +57,8 @@ class CommentService {
     comment.comment_right = rightValue + 1;
     await comment.save();
 
-    await commentRepo.updateCommentCount(comment_postID, 1);
-    await commentRepo.updatePostScore(comment_postID, 10); // Tăng score của post lên 10 khi thêm comment
+    await commentRepo.count(comment_postID);
+   // await commentRepo.updatePostScore(comment_postID, 10); 
     return comment;
   }
 
@@ -155,7 +155,7 @@ class CommentService {
     );
 
     await commentRepo.updateCommentCount(comment_postID, -1);
-    await commentRepo.updatePostScore(comment_postID, -10); // Giảm score của post đi 10 khi xóa comment
+    await commentRepo.updatePostScore(comment_postID, -10); 
     return commentsToDelete;
   }
 

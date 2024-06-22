@@ -5,7 +5,7 @@ const {BadRequestError,NotFoundError} = require ("../core/response/error.respons
 const { removeAccents } = require("../utils");
 
 class searchService{
-  static searchUser = async (keywords, userProfileHash) => {
+  static searchUser = async (keywords) => {
   
     if (!keywords) {
       throw new BadRequestError("Empty search string");
@@ -40,14 +40,14 @@ class searchService{
         console.log(e);
       });
     
-      users = users.filter(user => user.profileHash !== userProfileHash);
+    //  users = users.filter(user => user.profileHash !== userProfileHash);
       if(users.length == 0){
-        throw new NotFoundError("User not found")
+        return []
       }
       return users;
     };
 
-    static searchMess = async (keywords,userProfileHash) => {
+    static searchMess = async (keywords) => {
       const search = removeAccents(keywords).trim(); 
     
       if (!search) {
@@ -95,9 +95,9 @@ class searchService{
         return acc;
       }, []);
     
-      users = users.filter(user => user.profileHash !== userProfileHash);
+     // users = users.filter(user => user.profileHash !== userProfileHash);
       if(users.length == 0){
-        throw new NotFoundError("User not found")
+        return []
       }
       return users;
     };

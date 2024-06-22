@@ -20,28 +20,28 @@ class PostController {
   getAllPost = async (req, res, next) => {
     const result = new OK({
       message: " View posts Sucess",
-      metadata: await postService.viewpost(),
+      metadata: await postService.ViewPost(),
     });
     result.send(res);
   };
   getAPost = async (req, res, next) => {
     const result = new OK({
       message: " View a post Sucess",
-      metadata: await postService.findpost(req.params.id),
+      metadata: await postService.findPost(req.params.id),
     });
     result.send(res);
   };
   updatePost = async (req, res, next) => {
     const result = new OK({
       message: " Update a post Success",
-      metadata: await postService.updatepost(req.params, req.body, req.files),
+      metadata: await postService.updatePost(req.params, req.body, req.files),
     });
     result.send(res);
   };
   deletePost = async (req, res, next) => {
     const result = new OK({
       message: " Update a post Sucess",
-      metadata: await postService.deletepost(req.params),
+      metadata: await postService.deletePost(req.params),
     });
     result.send(res);
   };
@@ -60,10 +60,32 @@ class PostController {
     });
     result.send(res);
   };
-  getPosts = async (req, res, next) => {
+  getPostForGuest = async (req, res, next) => {
+    const { page = 0, limit = 10 } = req.query;
+    const seenIds = req.session.seenIds || [];
+    const posts = await postService.getPostsForGuest({ page, limit, seenIds });
+    req.session.seenIds = seenIds.concat(posts.map((post) => post._id));
     const result = new OK({
       message: "Get post was successful",
-      metadata: await postService.getPosts(req),
+      metadata: posts,
+    });
+    result.send(res);
+  };
+
+  getPostForUser = async (req, res, next) => {
+    const { page = 0, limit = 10 } = req.query;
+    const seenIds = req.session.seenIds || [];
+    const userId = req.user.userId;
+    const { posts, seen } = await postService.getPostsForUser({
+      userId,
+      page,
+      limit,
+      seenIds,
+    });
+    req.session.seenIds = seenIds.concat(seen);
+    const result = new OK({
+      message: "Get post was successful",
+      metadata: posts,
     });
     result.send(res);
   };

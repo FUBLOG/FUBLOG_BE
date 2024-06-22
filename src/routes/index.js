@@ -13,5 +13,10 @@ router.use("/message", require("./message"));
 router.use("/search", require("./search"));
 router.use("/notification", require("./notification"));
 router.use("/friend", require("./friend"));
+<<<<<<< HEAD
 router.use("/likePost",require("./like"))
+=======
+router.use("/conversation", require("./conversation"));
+router.use("/newfeed", require("./newfeed"));
+>>>>>>> 9f585e20e3c57242eb95672bf5622f8f37f7f004
 module.exports = router;
