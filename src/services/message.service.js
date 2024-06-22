@@ -31,7 +31,7 @@ class MessageService {
       senderId,
       receiverId,
     });
-    
+
     if (newMessage) {
       await pushMessageToConversation({
         conversationId: conversation._id,
@@ -44,9 +44,7 @@ class MessageService {
     if (receiverSocketId) {
       // io.to(<socket_id>).emit() used to send events to specific client
       io.to(receiverSocketId).emit("newMessage", newMessage);
-      if (conversation?.messages.length === 0) {
-        io.to(receiverSocketId).emit("newConversation", conversation);
-      }
+      io.to(receiverSocketId).emit("newConversation", conversation);
     }
     return newMessage;
   };
@@ -75,7 +73,6 @@ class MessageService {
       return null;
     }
     return conversation;
-
   };
 }
 

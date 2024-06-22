@@ -13,7 +13,6 @@ const searchUser = async (req, res, next) => {
   
   const searchMess = async (req, res, next) => {
     const { displayName } = req.body;  
-    console.log(displayName); 
     const metadata = await searchService.searchMess (displayName); 
     const response = new OK({
       message: "Search results",
