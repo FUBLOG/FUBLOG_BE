@@ -8,6 +8,7 @@ const {
   getMessageFromConversation,
   pushMessageToConversation,
   findUserHasConversation,
+  readMessageFromConversation,
 } = require("../repository/conversation.repo");
 const { createNewMessage } = require("../repository/message.repo");
 class MessageService {
@@ -74,6 +75,10 @@ class MessageService {
       receiverId: friendId,
     });
     return conversation;
+  };
+
+  setReadMessage = async (conversationId) => {
+    return await readMessageFromConversation({ conversationId });
   };
 }
 

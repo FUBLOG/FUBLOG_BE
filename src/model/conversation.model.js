@@ -40,6 +40,8 @@ let oldScore;
 conversationSchema.pre("findOneAndUpdate", async function (next) {
   try {
     const doc = await this.model.findOne(this.getQuery());
+    console.log(doc);
+    console.log("query",this.getQuery());
     if (!doc) {
       throw new NotFoundError("Conversation not found");
     }
@@ -51,6 +53,7 @@ conversationSchema.pre("findOneAndUpdate", async function (next) {
 });
 
 conversationSchema.post("findOneAndUpdate", function (doc, next) {
+  console.log(doc);
   if (!doc.isModified("score")) return next();
   const scoreChange = doc.score - oldScore;
   newFeedsModel.updateMany(

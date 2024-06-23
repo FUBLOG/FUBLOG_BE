@@ -1,6 +1,5 @@
 "use strict";
 
-const { model } = require("mongoose");
 const { OK, CREATED } = require("../core/response/success.response");
 const messageService = require("../services/message.service");
 

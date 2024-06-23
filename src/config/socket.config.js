@@ -1,6 +1,7 @@
 const { Server } = require("socket.io");
 const http = require("http");
 const express = require("express");
+const messageService = require("../services/message.service");
 
 const app = express();
 const server = http.createServer(app);
@@ -34,6 +35,10 @@ io.on("connection", (socket) => {
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("typing", true);
     }
+  });
+
+  socket.on("ping", async (conversationId) => {
+    await messageService.setReadMessage(conversationId);
   });
 });
 

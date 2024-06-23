@@ -53,6 +53,7 @@ const getMessageFromConversation = async ({ senderId, userToChatId }) => {
       },
     })
     .populate("messages", [], null, { sort: { createdAt: -1 } })
+    .populate("lastMessage")
     .lean();
 };
 
@@ -129,6 +130,19 @@ const setReadedMessage = async ({ conversationId }) => {
   );
 };
 
+const readMessageFromConversation = async ({ conversationId }) => {
+  conversationId = convertToObjectId(conversationId);
+  return conversationModel.findByIdAndUpdate(
+    {
+      _id: conversationId,
+    },
+    {
+      $set: {
+        unReadCount: 0,
+      },
+    }
+  );
+}
 module.exports = {
   findConversationById,
   createConversation,
@@ -137,4 +151,5 @@ module.exports = {
   findUserHasConversation,
   getAllAvatar,
   setReadedMessage,
+  readMessageFromConversation
 };
