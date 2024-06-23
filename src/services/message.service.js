@@ -77,9 +77,6 @@ class MessageService {
     return conversation;
   };
 
-  setReadMessage = async (conversationId) => {
-    return await readMessageFromConversation({ conversationId });
-  };
 }
 
 module.exports = new MessageService();

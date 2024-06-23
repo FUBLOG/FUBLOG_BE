@@ -1,7 +1,7 @@
 const { Server } = require("socket.io");
 const http = require("http");
 const express = require("express");
-const messageService = require("../services/message.service");
+const { readMessageFromConversation } = require("../repository/conversation.repo");
 
 const app = express();
 const server = http.createServer(app);
@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ping", async (conversationId) => {
-    await messageService.setReadMessage(conversationId);
+    await readMessageFromConversation({conversationId})
   });
 });
 

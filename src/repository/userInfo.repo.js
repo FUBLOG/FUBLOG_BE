@@ -1,6 +1,5 @@
 "use strict";
 const userInfoModel = require("../model/userInfo.model");
-const postService = require("../services/post.service");
 const { convertToObjectId } = require("../utils");
 
 const createDefaultUserInfo = async ({ userId }) => {
@@ -35,11 +34,11 @@ const updateUserCVPhoto = async (id, fileData) => {
 };
 
 //  View all Photos Post
-const viewAllPhotos = async (userid) => {
-  const posts = postService.findPostByUserId(userid);
-  const arrayOfImage = posts.map((image) => image.postLinkToImages) || [];
-  return arrayOfImage;
-};
+// const viewAllPhotos = async (userid) => {
+//   const posts = postService.findPostByUserId(userid);
+//   const arrayOfImage = posts.map((image) => image.postLinkToImages) || [];
+//   return arrayOfImage;
+// };
 
 //  View old Avatar
 const viewAvatars = async (_id) => {
@@ -171,7 +170,6 @@ module.exports = {
   createDefaultUserInfo,
   updateUserAvatar,
   updateUserCVPhoto,
-  viewAllPhotos,
   viewAvatars,
   viewCvPhotos,
   findUserInfoById,
