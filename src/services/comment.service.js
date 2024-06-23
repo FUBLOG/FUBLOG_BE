@@ -57,8 +57,7 @@ class CommentService {
     comment.comment_right = rightValue + 1;
     await comment.save();
 
-    await commentRepo.count(comment_postID);
-   // await commentRepo.updatePostScore(comment_postID, 10); 
+    await commentRepo.rank(comment_postID, {commentCount:1,score:10});
     return comment;
   }
 
@@ -154,8 +153,9 @@ class CommentService {
       { $inc: { comment_left: -width } }
     );
 
-    await commentRepo.updateCommentCount(comment_postID, -1);
-    await commentRepo.updatePostScore(comment_postID, -10); 
+    //await commentRepo.rank(comment_postID, {commentCount:-1,score:-10});
+    await commentRepo.rank(comment_postID, { commentCount: -commentsToDelete.length, score: -10 * commentsToDelete.length });
+
     return commentsToDelete;
   }
 

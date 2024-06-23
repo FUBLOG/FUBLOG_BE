@@ -1,7 +1,5 @@
 const Post = require('../model/post.model');
-const UserInfo = require('../model/userInfo.model');
 const { NotFoundError, ConflictRequestError, UnprocessableEntityError } = require("../core/response/error.response");
-const { findUserInfoById } = require("../repository/userInfo.repo");
 const { getAllLiked } = require("../repository/like.repo");
 
 class LikeService {

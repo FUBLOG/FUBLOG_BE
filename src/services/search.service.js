@@ -1,4 +1,3 @@
-const logSystem = require("../logger/log.system");
 const User = require("../model/user.model");
 const UserInfo = require("../model/userInfo.model");
 const {BadRequestError} = require ("../core/response/error.response")

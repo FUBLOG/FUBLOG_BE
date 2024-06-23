@@ -3,7 +3,7 @@
 const newFeedsModel = require("../model/newFeeds.model");
 
 const createNewFeed = async ({ userId, friendId, content }) => {
-  return await newfeedModel.create({ userId, friendId, post: content });
+  return await newFeedsModel.create({ userId, friendId, post: content });
 };
 
 const getPublicNewFeeds = async ({ page, limit, seenIds }) => {

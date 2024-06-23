@@ -1,4 +1,4 @@
-const { OK } = require("../core/response/success.response");
+const { OK, CREATED} = require("../core/response/success.response");
 const commentService = require("../services/comment.service")
 
 // create cmt
@@ -35,7 +35,7 @@ const updateComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   const { parent_CommentID,comment_postID } = req.body;
-  const response = new OK({
+  const response = new CREATED({
     message: "Comment deleted",
     metadata: await commentService.deleteComment({ parent_CommentID,comment_postID }),
   });
