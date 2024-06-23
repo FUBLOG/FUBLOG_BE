@@ -46,6 +46,12 @@ class FriendService {
     if (existingRequest) {
       throw new ConflictRequestError("Friend request already sent");
     }
+
+    const isFriend = await checkFriend(sourceID, targetID);
+    if (isFriend) {
+      throw new ConflictRequestError("User is already friend");
+    }
+
     const request = await findRequest(targetID, sourceID);
     if (request) {
       return this.acceptFriendRequest({ sourceID, targetID });
