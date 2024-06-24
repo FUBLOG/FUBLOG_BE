@@ -35,11 +35,13 @@ io.on("connection", (socket) => {
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("typing", true);
     }
+    
   });
 
   socket.on("ping", async (conversationId) => {
     await readMessageFromConversation({conversationId})
   });
+
 });
 
 module.exports = { app, io, server, getReceiverSocketId };

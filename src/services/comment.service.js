@@ -73,14 +73,18 @@ class CommentService {
         comment_left: { $gt: parent.comment_left },
         comment_right: { $lt: parent.comment_right },
       })
+        .populate({
+          path: "comment_userId",
+          model: "User",
+          select: "displayName profileHash",
+          populate: {
+            path: "userInfo",
+            model: "UserInfo",
+            select: "avatar",
+          },
+        })
         .limit(limit)
         .skip(offset)
-        .select({
-          comment_content: 1,
-          comment_parentId: 1,
-          comment_left: 1,
-          comment_right: 1,
-        })
         .sort({ comment_left: 1 })
         .lean();
       return comments;
@@ -89,8 +93,6 @@ class CommentService {
         comment_postID: convertToObjectId(parent.comment_postID),
         comment_parentId: null,
       })
-        .limit(limit)
-        .skip(offset)
         .populate({
           path: "comment_userId",
           model: "User",

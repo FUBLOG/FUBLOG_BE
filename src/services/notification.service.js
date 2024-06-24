@@ -49,7 +49,7 @@ class NotificationService {
     const notification = await createNewNotification({
       user_id,
       message,
-      link: `https://has.io.vn/profile/${friend.profileHash}`,
+      link: `/profile/${friend.profileHash}`,
       type: "friend",
       image: friend?.userInfo?.avatar,
     });
