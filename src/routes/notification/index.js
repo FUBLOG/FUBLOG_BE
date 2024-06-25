@@ -7,9 +7,9 @@ const notificationController = require("../../controller/notification.controller
 
 router.use(authentication);
 router.get("", asyncHandler(notificationController.getAllNotifications));
+router.patch("", asyncHandler(notificationController.updateStatusReadAll));
 router.get(
   "/:notificationId",
   asyncHandler(notificationController.updateStatusRead)
 );
-router.patch("", asyncHandler(notificationController.updateStatusReadAll));
 module.exports = router;

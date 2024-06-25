@@ -50,8 +50,11 @@ const getNotificationSocket = async ({ notificationId }) => {
     .lean();
 };
 
-const updateStatusReadAll = async ({ user_id }) => {
-  return await notificationModel.updateMany({ user_id }, { isRead: true });
+const updateStatusReadAll = async ({ userId }) => {
+  return await notificationModel.updateMany(
+    { user_id: userId },
+    { isRead: true }
+  );
 };
 module.exports = {
   createNewNotification,
