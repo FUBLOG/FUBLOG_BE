@@ -49,45 +49,4 @@ const postSchemas = mongoose.Schema(
     timestamps: true,
   }
 );
-
-let oldScore;
-
-postSchemas.pre("findOneAndUpdate", async function (next) {
-  try {
-    const doc = await this.model.findOne(this.getQuery());
-    if (!doc) {
-      throw new NotFoundError("Post not found");
-    }
-    oldScore = doc.score;
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
-postSchemas.post("findOneAndUpdate", async function (doc, next) {
-  if (!doc) return next();
-
-  if (!doc.isModified("score")) return next();
-  
-  const scoreChange = doc.score - oldScore;
-  newFeedsModel.updateMany(
-    { postId: doc._id },
-    {
-      rank: {
-        inc: scoreChange,
-      },
-    },
-    { new: true },
-    function (err, result) {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log("Updated rank in NewFeed");
-      }
-      next();
-    }
-  );
-});
-
 module.exports = mongoose.model(DOCUMENT_NAME, postSchemas);

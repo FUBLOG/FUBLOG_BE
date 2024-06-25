@@ -9,7 +9,6 @@ class ErrorResponse extends Error {
   constructor(message, status) {
     super(message);
     this.status = status;
-    
   }
 }
 // code 400
@@ -70,6 +69,16 @@ class UnprocessableEntityError extends ErrorResponse {
     super(message, statusCode);
   }
 }
+
+//429
+class TooManyRequestsError extends ErrorResponse {
+  constructor(
+    message = ReasonPhrases.TOO_MANY_REQUESTS,
+    statusCode = StatusCodes.TOO_MANY_REQUESTS
+  ) {
+    super(message, statusCode);
+  }
+}
 // code 500
 
 class InternalServerError extends ErrorResponse {
@@ -126,4 +135,5 @@ module.exports = {
   ServiceUnavailable,
   GatewayTimeout,
   UnprocessableEntityError,
+  TooManyRequestsError,
 };

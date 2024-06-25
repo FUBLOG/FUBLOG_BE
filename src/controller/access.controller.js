@@ -4,7 +4,6 @@ const { CREATED, OK } = require("../core/response/success.response");
 const { HEADER } = require("../core/constans/header.constant");
 class AccessController {
   login = async (req, res, next) => {
-
     const response = new OK({
       message: "Login successfully",
       metadata: await accessService.login(req.body),
@@ -48,21 +47,37 @@ class AccessController {
     const email = req.body.email;
     const response = new OK({
       message: "Send email forgot password successfully",
-      metadata: await accessService.forgotPassword(email),
+      metadata: await accessService.forgotPassword({ email }),
     });
     response.send(res);
   };
 
   resetPassword = async (req, res, next) => {
+    const { password = "", confirmPassword = "", otp = "" } = req.body;
     const response = new OK({
       message: "Reset password successfully",
-      metadata: await accessService.resetPassword(req.body),
+      metadata: await accessService.resetPassword({
+        password,
+        confirmPassword,
+        token: otp,
+      }),
     });
     response.send(res);
   };
 
   changePassword = async (req, res, next) => {
-    res.send("Change Password");
+    const { password = "", confirmPassword = "", oldPassword = "" } = req.body;
+    const userId = req.user.userId;
+    const response = new OK({
+      message: "Change password successfully",
+      metadata: await accessService.changePassword({
+        password,
+        confirmPassword,
+        oldPassword,
+        userId,
+      }),
+    });
+    response.send(res);
   };
 
   checkToken = async (req, res, next) => {

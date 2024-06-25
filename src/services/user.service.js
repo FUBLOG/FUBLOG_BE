@@ -74,6 +74,7 @@ class UserService {
     sex,
   }) => {
     const profileHash = extractUserProfileFromEmail(email);
+    
     const newUser = await createNewUser({
       email,
       password,

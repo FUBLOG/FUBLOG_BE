@@ -4,13 +4,14 @@ const {
   UnauthorizedError,
   BadRequestError,
   UnprocessableEntityError,
+  ConflictRequestError,
 } = require("../core/response/error.response");
 const {
   findByToken,
   findAndDeleteOTP,
   createOTP,
 } = require("../repository/otp.repo");
-const { isEmailExists } = require("../repository/user.repo");
+const { isEmailExists, findUserById } = require("../repository/user.repo");
 const CryptoService = require("./crypto.service");
 const userService = require("./user.service");
 const KeyTokenService = require("./keytoken.service");
@@ -83,8 +84,6 @@ class AccessService {
         return user;
       }
     );
-    //delete token
-    console.log(data);
     await findAndDeleteOTP({ token });
     await userService.createNewUser(data);
     io.emit(`${data.email}`, "Signup successfully");
@@ -98,19 +97,15 @@ class AccessService {
     if (!isEmail) throw new UnprocessableEntityError("Invalid email");
     const existUser = await isEmailExists({ email });
     if (!existUser) throw new NotFoundError("User not found");
-    const otp = await CryptoService.generateRandomString(10);
-    const token = await CryptoService.generateToken({ email }, otp);
-    await createOTP({ email, otp, sign: token });
+    const otp = await otpService.generateTokenRandom();
+    const sign = await CryptoService.generateToken({ email }, otp);
+    await createOTP({ email, token: otp, sign });
     // Send email
     await emailService.sendEmailForgotPassword({ email, otp });
     return null;
   };
 
-  resetPassword = async ({
-    password = "",
-    token = "",
-    confirmPassword = "",
-  }) => {
+  resetPassword = async ({ password, token, confirmPassword }) => {
     const result = await validator.isEmptyObject({
       password,
       token,
@@ -120,13 +115,37 @@ class AccessService {
       throw new UnprocessableEntityError(`Missing ${result}`);
     if (password !== confirmPassword)
       throw new UnprocessableEntityError("Password not match");
+
     const data = await this.validateToken({ token });
     await userService.updatePassword(data.email, password);
+    io.emit(`${data.email}`, "Reset password successfully");
     return null;
   };
 
-  changePassword = async (req, res, next) => {
-    res.send("Change Password");
+  changePassword = async ({
+    password,
+    confirmPassword,
+    oldPassword,
+    userId,
+  }) => {
+    const result = await validator.isEmptyObject({
+      password,
+      confirmPassword,
+      oldPassword,
+    });
+    if (result.length > 0)
+      throw new UnprocessableEntityError(`Missing ${result}`);
+    if (password !== confirmPassword)
+      throw new UnprocessableEntityError("New Password not match");
+    const user = await findUserById(userId);
+    if (!user) throw new NotFoundError("User not found");
+    const matchPassword = await CryptoService.comparePassword(
+      oldPassword,
+      user.password
+    );
+    if (!matchPassword) throw new ConflictRequestError("Authentication failed");
+    await userService.updatePassword(user.email, password);
+    return null;
   };
 
   handleRefreshToken = async (headers) => {
@@ -159,12 +178,20 @@ class AccessService {
   };
 
   validateToken = async ({ token = "" }) => {
-    const isEmpty = await validator.isEmpty(token);
-    if (isEmpty) throw new UnprocessableEntityError(`Missing ${result}`);
-    const otp = await otpService.findByToken({ token });
+    const otp = await findByToken({ token });
     if (!otp) throw new NotFoundError("Token is not found");
-    const data = await CryptoService.verifyToken(otp.otp_sign, otp.otp_token);
+    const data = await CryptoService.verifyToken(
+      otp.otp_sign,
+      otp.otp_token,
+      (err, user) => {
+        if (err) {
+          throw new BadRequestError("Something went wrong");
+        }
+        return user;
+      }
+    );
     await findAndDeleteOTP({ token });
+    console.log(data);
     return data;
   };
 

@@ -24,10 +24,8 @@ class EmailService {
 
     try {
       const result = await this.sendMail(options);
-      console.log(result);
       return result;
     } catch (error) {
-      console.log(error);
       throw new BadRequestError("Send email failed");
     }
   };
@@ -43,7 +41,7 @@ class EmailService {
       action_url: `has.io.vn/reset-password?token=${otp}`,
     });
     const options = {
-      from: `"Has Team" <kaidophan37@gmail.com>`,
+      from: `"Has Team" <hasteam@has.io.vn>`,
       to: email,
       subject: template.template_subject,
       html: content,

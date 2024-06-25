@@ -1,5 +1,5 @@
 "use strict";
-const { OK } = require("../core/response/success.response");
+const { OK, NO_CONTENT } = require("../core/response/success.response");
 const notificationService = require("../services/notification.service");
 class NotificationController {
   getAllNotifications = async (req, res) => {
@@ -18,7 +18,7 @@ class NotificationController {
   updateStatusRead = async (req, res) => {
     const { notificationId } = req.params;
     await notificationService.updateNotificationStatusRead({ notificationId });
-    const response = new OK({
+    const response = new NO_CONTENT({
       message: "Update status read successfully",
     });
     response.send(res);

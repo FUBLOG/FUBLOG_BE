@@ -10,6 +10,7 @@ const { v4: uuidv4 } = require("uuid");
 const session = require("express-session");
 const Redis = require("./dbs/init.redis");
 const { default: RedisStore } = require("connect-redis");
+const { limiter } = require("./config/request.config");
 class App {
   setup = async () => {
     //config cors
@@ -32,7 +33,7 @@ class App {
         secret: "keyboard cat",
         store: new RedisStore({ client }),
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         cookie: {
           maxAge: 1000 * 60 * 60 * 24,
           secure: "auto",
@@ -42,7 +43,7 @@ class App {
     );
     //init cron-job
     require("./cron-job/index");
-
+    app.use(limiter); //config rate limit
     //Set traceId
     app.use((req, res, next) => {
       const traceId = req.headers["x-trace-id"] || uuidv4();
