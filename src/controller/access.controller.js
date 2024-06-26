@@ -39,7 +39,7 @@ class AccessController {
     const { token = "" } = req.query;
     const response = new OK({
       message: "Token is valid",
-      metadata: await accessService.validateToken({ token }),
+      metadata: await accessService.checkOtp({ token }),
     });
     response.send(res);
   };
