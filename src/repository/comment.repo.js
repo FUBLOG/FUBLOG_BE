@@ -7,7 +7,7 @@ class commentRepo {
     if (!post) {
       throw new NotFoundError("Post not found");
     }
-
+    
     await Post.findOneAndUpdate(
       { _id: postID },
       { $inc: { commentCount: increment, score: increment * 10 } }

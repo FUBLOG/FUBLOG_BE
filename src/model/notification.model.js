@@ -12,8 +12,9 @@ const notificationSchemas = mongoose.Schema(
       type: String,
       required: true,
     },
-    link: {
-      type: String,
+    payload: {
+      type: mongoose.Schema.Types.Mixed,
+      required: true,
     },
     image: {
       type: [String],

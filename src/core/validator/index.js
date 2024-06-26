@@ -6,7 +6,6 @@ class Validator {
     return validator.isEmail(email);
   };
   isEmpty = async (data) => {
-    data = data.trim();
     return validator.isEmpty(data);
   };
   isDate = async (date) => {

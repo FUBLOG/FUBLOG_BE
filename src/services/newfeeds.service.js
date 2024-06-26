@@ -15,9 +15,9 @@ class NewFeedsService {
     return await getFriendNewFeeds({ userId, page, limit });
   }
   static async pushNewFeed({ userId, post }) {
-    const friendsList = await getFriendsList(userId);
-    if (friendsList.length === 0) return;
-    friendsList.forEach((friend) => {
+    const user = await getFriendsList(userId);
+    if (user?.friendList?.length === 0) return;
+    user?.friendList?.forEach((friend) => {
       createNewFeed({
         userId: userId,
         friendId: friend,

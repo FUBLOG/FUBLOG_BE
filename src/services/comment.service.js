@@ -5,6 +5,7 @@ const { convertToObjectId } = require("../utils");
 const Post = require("../model/post.model");
 const { path } = require("../app");
 const commentRepo = require("../repository/comment.repo");
+const notificationService = require("./notification.service");
 
 class CommentService {
   static async addComment({
@@ -58,7 +59,14 @@ class CommentService {
     comment.comment_left = rightValue;
     comment.comment_right = rightValue + 1;
     await comment.save();
-
+    notificationService.sendNotification({
+      type: "comment",
+      payload: {
+        commenterId: comment_userId,
+        commentId: comment._id,
+        postId: comment_postID,
+      },
+    });
     await commentRepo.updateCommentCount(comment_postID, 1);
     return comment;
   }

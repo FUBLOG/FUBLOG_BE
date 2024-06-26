@@ -30,7 +30,7 @@ class AccessService {
       throw new UnprocessableEntityError(`Missing ${result}`);
     const isEmail = await validator.isEmail(email);
     if (!isEmail) throw new UnprocessableEntityError("Invalid email");
-    const existUser = await isEmailExists({ email });
+    const existUser = await isEmailExists({ email:email.toLowerCase() });
     // Check if user exists
     if (!existUser) throw new NotFoundError("Authentication failed");
     // Check if password is correct
@@ -180,19 +180,7 @@ class AccessService {
   validateToken = async ({ token = "" }) => {
     const otp = await findByToken({ token });
     if (!otp) throw new NotFoundError("Token is not found");
-    const data = await CryptoService.verifyToken(
-      otp.otp_sign,
-      otp.otp_token,
-      (err, user) => {
-        if (err) {
-          throw new BadRequestError("Something went wrong");
-        }
-        return user;
-      }
-    );
-    await findAndDeleteOTP({ token });
-    console.log(data);
-    return data;
+    return true;
   };
 
   checkToken = async (headers) => {

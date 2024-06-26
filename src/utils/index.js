@@ -1,5 +1,8 @@
 const _ = require("lodash");
 const { default: mongoose } = require("mongoose");
+const { isExisProfileHash } = require("../repository/userInfo.repo");
+const { v4: uuidv4 } = require("uuid");
+
 const replacePlaceholders = async (template, params) => {
   Object.keys(params).forEach((key) => {
     const placeHolder = `{{${key}}}`;
@@ -48,10 +51,16 @@ const convertToObjectId = (string) => {
   return new mongoose.Types.ObjectId(string);
 };
 
-const extractUserProfileFromEmail = (email) => {
+const extractUserProfileFromEmail = async (email) => {
   const atIndex = email.indexOf("@");
   if (atIndex !== -1) {
-    return email.substring(0, atIndex);
+    const hash = email.substring(0, atIndex);
+    const exist = await isExisProfileHash(hash);
+    if (!exist) {
+      return hash;
+    } else {
+      return `${hash}${Math.floor(Math.random() * 1000)}`;
+    }
   } else {
     return null; // Invalid email format
   }
@@ -59,6 +68,10 @@ const extractUserProfileFromEmail = (email) => {
 
 function removeAccents(str) {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function genUUID() {
+  return uuidv4();
 }
 module.exports = {
   replacePlaceholders,
@@ -70,4 +83,5 @@ module.exports = {
   convertToObjectId,
   extractUserProfileFromEmail,
   removeAccents,
+  genUUID,
 };

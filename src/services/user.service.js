@@ -38,14 +38,16 @@ class UserService {
       throw new UnprocessableEntityError(`Missing ${result}`);
     const isEmail = await validator.isEmail(email);
     if (!isEmail) throw new UnprocessableEntityError("Invalid email");
+    email = email.toLowerCase();
     const emailExists = await isEmailExists({ email });
     if (emailExists) throw new ConflictRequestError("Email already exists");
     const otp = await otpService.generateTokenRandom();
     //hash data
     const passwordHash = await CryptoService.hashPassword(password);
+
     const sign = await CryptoService.generateToken(
       {
-        email,
+        email: email,
         password: passwordHash,
         firstName,
         lastName,
@@ -73,8 +75,8 @@ class UserService {
     dateOfBirth,
     sex,
   }) => {
-    const profileHash = extractUserProfileFromEmail(email);
-    
+    const profileHash =await extractUserProfileFromEmail(email);
+
     const newUser = await createNewUser({
       email,
       password,

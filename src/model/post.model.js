@@ -5,7 +5,8 @@ const COLLECTION_NAME = "Posts";
 const postSchemas = mongoose.Schema(
   {
     UserID: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     postTagID: {
@@ -49,4 +50,7 @@ const postSchemas = mongoose.Schema(
     timestamps: true,
   }
 );
+
+
+
 module.exports = mongoose.model(DOCUMENT_NAME, postSchemas);

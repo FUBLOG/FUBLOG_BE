@@ -5,14 +5,14 @@ const notificationModel = require("../model/notification.model");
 const createNewNotification = async ({
   user_id,
   message,
-  link,
+  payload,
   type,
   image,
 }) => {
   return await notificationModel.create({
     user_id,
     message,
-    link,
+    payload,
     type,
     image,
   });
@@ -56,10 +56,28 @@ const updateStatusReadAll = async ({ userId }) => {
     { isRead: true }
   );
 };
+
+const isExistNotification = async (filter) => {
+  return await notificationModel.findOne(filter);
+};
+
+const updateNotification = async ({ notificationId, data }) => {
+  return await notificationModel.findOneAndUpdate(
+    { _id: notificationId },
+    {
+      ...data,
+      isRead: false,
+    },
+    { new: true }
+  );
+};
+
 module.exports = {
   createNewNotification,
   updateStatusRead,
   getAllNotification,
   getNotificationSocket,
   updateStatusReadAll,
+  isExistNotification,
+  updateNotification,
 };

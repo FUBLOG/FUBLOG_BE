@@ -8,7 +8,10 @@ const {
   getAllNotification,
   getNotificationSocket,
   updateStatusReadAll,
+  isExistNotification,
+  updateNotification,
 } = require("../repository/notification.repo");
+const { findUserByPostID } = require("../repository/post.repo");
 const { findUserById, findUserDetailById } = require("../repository/user.repo");
 
 class NotificationService {
@@ -33,23 +36,24 @@ class NotificationService {
     return notifications;
   };
 
-  sendNotification = async ({ type = "system", link = "", user_id = "" }) => {
+  sendNotification = async ({ type = "system", payload }) => {
     // check type
     if (!["comment", "system", "friend", "like"].includes(type)) {
       throw new NotFoundError("Invalid notification type");
     }
     // send notification
-    await this.notificationMethod[type]({ link, user_id });
+    await this.notificationMethod[type](payload);
   };
 
-  sendNotificationWithTypeFriend = async ({ link = "", user_id = "" }) => {
-    const friendId = link;
+  sendNotificationWithTypeFriend = async ({ friendId = "", user_id = "" }) => {
     const friend = await findUserDetailById(friendId);
     const message = `Bạn và ${friend.displayName} Đã trở thành bạn bè`;
     const notification = await createNewNotification({
       user_id,
       message,
-      link: `/profile/${friend.profileHash}`,
+      payload: {
+        profileHash: friend?.profileHash,
+      },
       type: "friend",
       image: friend?.userInfo?.avatar,
     });
@@ -58,15 +62,57 @@ class NotificationService {
 
   sendNotificationWithTypeSystem = async ({ link = "", user_id = "" }) => {};
 
-  sendNotificationWithTypeComment = async ({ link = "", user_id = "" }) => {
-    const message = `Someone commented on your post`;
-    const path = `https://has.io.vn/posts/${link}`;
-    const notification = await createNewNotification({
-      user_id,
-      message,
-      link: path,
+  sendNotificationWithTypeComment = async ({
+    commenterId = "",
+    commentId = "",
+    postId = "",
+  }) => {
+    const post = await findUserByPostID(postId);
+    console.log("post",post);
+    const userComment = await findUserDetailById(commenterId);
+    
+    let notification = await isExistNotification({
+      user_id: post?.UserID?._id,
+      payload: {
+        postId,
+      },
       type: "comment",
     });
+    if (notification) {
+      if (notification?.payload?.lastComment === commentId) {
+        await updateNotification(
+          { notificationId: notification?._id },
+          {
+            payload: {
+              ...notification?.payload,
+              commentId,
+            },
+          }
+        );
+      } else {
+        const message = `${userComment?.displayName}và những người khác đã bình luận vào bài viết của bạn`;
+        await updateNotification(notification?._id, {
+          message,
+          payload: {
+            ...notification?.payload,
+            lastComment: userComment?._id,
+            commentId: commentId,
+          },
+        });
+      }
+    } else {
+      const message = `${userComment?.displayName} đã bình luận vào bài viết của bạn`;
+      notification = await createNewNotification({
+        user_id: post?.UserID?._id,
+        message,
+        payload: {
+          commentId,
+          postId,
+          lastComment: userComment?._id,
+        },
+        type: "comment",
+      });
+    }
     await this.sendSocketNotification(notification);
   };
 

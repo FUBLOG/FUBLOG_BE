@@ -1,8 +1,5 @@
 "use strict";
-
-const { path } = require("../app");
 const newfeedsModel = require("../model/newfeeds.model");
-
 
 const createNewFeed = async ({ userId, friendId, content }) => {
   return await newfeedsModel.create({ userId, friendId, post: content });
@@ -31,7 +28,7 @@ const getPublicNewFeeds = async ({ page, limit, seenIds }) => {
       populate: {
         path: "postTagID",
         model: "Tag",
-      }
+      },
     })
     .lean();
   return feeds;
@@ -60,7 +57,7 @@ const getFriendNewFeeds = async ({ userId, page, limit }) => {
       populate: {
         path: "postTagID",
         model: "Tag",
-      }
+      },
     })
     .lean();
   deleteNewFeed(feeds.map((feed) => feed._id));
@@ -70,8 +67,21 @@ const getFriendNewFeeds = async ({ userId, page, limit }) => {
 const deleteNewFeed = async (feeds) => {
   newfeedsModel.deleteMany({ _id: { $in: feeds } });
 };
+
+const updateRankMessage = async(conversation, icr) => {
+   await newfeedsModel.updateMany(
+    {
+      userId: { $in: conversation.participants },
+      friendId: { $in: conversation.participants },
+    },
+    {
+      $inc: { rank: icr },
+    }
+  );
+};
 module.exports = {
   createNewFeed,
   getPublicNewFeeds,
   getFriendNewFeeds,
+  updateRankMessage,
 };

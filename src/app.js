@@ -86,12 +86,20 @@ class App {
       } else {
         logger.warn("warn", options);
       }
-      return res.status(statusCode).json({
-        status: "error",
-        code: statusCode,
-        stack: error.stack,
-        message: error.message || "Internal Server Error",
-      });
+      if (process.env.NODE_ENV === "pro") {
+        return res.status(statusCode).json({
+          status: "error",
+          code: statusCode,
+          message: error.message || "Internal Server Error",
+        });
+      } else {
+        return res.status(statusCode).json({
+          status: "error",
+          code: statusCode,
+          stack: error.stack,
+          message: error.message,
+        });
+      }
     });
   };
 }

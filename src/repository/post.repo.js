@@ -1,23 +1,24 @@
 "use strict";
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require("cloudinary").v2;
 
+const { model } = require("mongoose");
+const cloudinaryTask = require("../core/cloudinary");
+const postModel = require("../model/post.model");
+const { convertToObjectId } = require("../utils");
 
-const cloudinaryTask = require('../core/cloudinary')
-const postModel = require('../model/post.model');
-
-const deleteimage = async(filesdata) =>{
-    for(const file of filesdata){
-        cloudinaryTask.deleteImagecloudinary(file.filename)
-    }
+const deleteimage = async (filesdata) => {
+  for (const file of filesdata) {
+    cloudinaryTask.deleteImagecloudinary(file.filename);
+  }
 };
-const deleteOldImage = async(imagelinks)=>{
-    for(const path of imagelinks){
-        cloudinaryTask.deleteImagecloudinary(path)
-    }
-}
-const findPostByUserID = async(id) =>{
-    const posts = postModel.find({UserID : id})
-}
+const deleteOldImage = async (imagelinks) => {
+  for (const path of imagelinks) {
+    cloudinaryTask.deleteImagecloudinary(path);
+  }
+};
+const findPostByUserID = async (id) => {
+  const posts = postModel.find({ UserID: id });
+};
 const createNewPost = async (
   { tagId, content, status = "public" },
   filesData,
@@ -30,36 +31,51 @@ const createNewPost = async (
   return await postModel.create({
     UserID: uid,
     postTagID: tagId,
-    postContent : content,
+    postContent: content,
     postLinkToImages: finalImagePaths,
     postStatus: status,
   });
 };
-const updatePost = async(id,{
-    UserID ,
+const updatePost = async (
+  id,
+  {
+    UserID,
     postTagID,
     postContent,
     postLinkToImages: filepath,
     postStatus,
-    likes
-},filesdata)=>{
-    const urls = filesdata.map(file => {
-        const pID = file.filename;
-        return cloudinary.url(pID, { width: 750, height: 500, crop: 'fill' });
-    });
-    return await postModel.findByIdAndUpdate(id,{
-        UserID,
-        postTagID,
-        postContent,
-        postLinkToImages: urls,
-        postStatus,
-        likes
-    }) 
-}
+    likes,
+  },
+  filesdata
+) => {
+  const urls = filesdata.map((file) => {
+    const pID = file.filename;
+    return cloudinary.url(pID, { width: 750, height: 500, crop: "fill" });
+  });
+  return await postModel.findByIdAndUpdate(id, {
+    UserID,
+    postTagID,
+    postContent,
+    postLinkToImages: urls,
+    postStatus,
+    likes,
+  });
+};
+
+const findUserByPostID = async (postId) => {
+  const post = await postModel.findOne({ _id: convertToObjectId(postId) }).populate({
+    path: "UserID",
+    model: "User",
+    select: "displayName",
+  });
+  return post;
+};
+
 module.exports = {
-    createNewPost,
-    deleteimage,
-    deleteOldImage,
-    updatePost,
-    findPostByUserID
-}
+  createNewPost,
+  deleteimage,
+  deleteOldImage,
+  updatePost,
+  findPostByUserID,
+  findUserByPostID,
+};

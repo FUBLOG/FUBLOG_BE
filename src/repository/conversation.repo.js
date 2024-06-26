@@ -4,6 +4,7 @@ const conversationModel = require("../model/conversation.model");
 const { convertToObjectId } = require("../utils");
 const userInfoModel = require("../model/userInfo.model");
 const { findMessageById } = require("./message.repo");
+const { updateRankMessage } = require("./newfeed.repo");
 
 const findConversationById = async ({ senderId, receiverId }) => {
   const conversation = await conversationModel
@@ -60,16 +61,23 @@ const getMessageFromConversation = async ({ senderId, userToChatId }) => {
 const pushMessageToConversation = async ({ conversationId, messageId }) => {
   conversationId = convertToObjectId(conversationId);
   messageId = convertToObjectId(messageId);
-  return conversationModel.findByIdAndUpdate(conversationId, {
-    $push: {
-      messages: messageId,
+
+  const c = await conversationModel.findByIdAndUpdate(
+    conversationId,
+    {
+      $push: {
+        messages: messageId,
+      },
+      $inc: {
+        score: 1,
+        unReadCount: 1,
+      },
+      lastMessage: messageId,
     },
-    $inc: {
-      score: 1,
-      unReadCount: 1,
-    },
-    lastMessage: messageId,
-  });
+    { new: true }
+  );
+  await updateRankMessage(c, 1);
+  return c;
 };
 
 //find user has conversation with user
@@ -142,7 +150,7 @@ const readMessageFromConversation = async ({ conversationId }) => {
       },
     }
   );
-}
+};
 module.exports = {
   findConversationById,
   createConversation,
@@ -151,5 +159,5 @@ module.exports = {
   findUserHasConversation,
   getAllAvatar,
   setReadedMessage,
-  readMessageFromConversation
+  readMessageFromConversation,
 };

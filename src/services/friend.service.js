@@ -76,7 +76,6 @@ class FriendService {
       throw new UnprocessableEntityError("Invalid userID");
 
     const existingRequest = await findRequest(targetID, sourceID);
-    console.log(existingRequest);
     if (!existingRequest) {
       throw new NotFoundError("Friend request not found");
     }
@@ -86,8 +85,10 @@ class FriendService {
     //send notification
     notificationService.sendNotification({
       type: "friend",
-      link: sourceID,
-      user_id: targetID,
+      payload: {
+        friendId: sourceID,
+        user_id: targetID,
+      },
     });
     return await deleteRequest(targetID, sourceID);
   };
