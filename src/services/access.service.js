@@ -140,18 +140,17 @@ class AccessService {
       throw new UnprocessableEntityError("New Password not match");
     const user = await findUserById(userId);
     if (!user) throw new NotFoundError("User not found");
-    const dupicatePassword = await CryptoService.comparePassword(
-      password,
-      user.password
-    );
-    if (dupicatePassword)
-      throw new ConflictRequestError("Duplicate password");
-
     const matchPassword = await CryptoService.comparePassword(
       oldPassword,
       user.password
     );
-    if (!matchPassword) throw new ConflictRequestError("Authentication failed");
+    if (!matchPassword) throw new ConflictRequestError("Wrong password");
+    const dupicatePassword = await CryptoService.comparePassword(
+      password,
+      user.password
+    );
+    if (dupicatePassword) throw new ConflictRequestError("Duplicate password");
+
     await userService.updatePassword(user.email, password);
     return null;
   };
