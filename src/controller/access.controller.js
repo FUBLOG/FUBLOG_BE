@@ -36,9 +36,10 @@ class AccessController {
   };
 
   validateToken = async (req, res, next) => {
+    const { token = "" } = req.query;
     const response = new OK({
       message: "Token is valid",
-      metadata: await accessService.validateToken(req.query.token),
+      metadata: await accessService.validateToken({ token }),
     });
     response.send(res);
   };

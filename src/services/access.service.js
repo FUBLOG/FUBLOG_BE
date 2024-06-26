@@ -30,7 +30,7 @@ class AccessService {
       throw new UnprocessableEntityError(`Missing ${result}`);
     const isEmail = await validator.isEmail(email);
     if (!isEmail) throw new UnprocessableEntityError("Invalid email");
-    const existUser = await isEmailExists({ email:email.toLowerCase() });
+    const existUser = await isEmailExists({ email: email.toLowerCase() });
     // Check if user exists
     if (!existUser) throw new NotFoundError("Authentication failed");
     // Check if password is correct
@@ -91,6 +91,7 @@ class AccessService {
   };
 
   forgotPassword = async ({ email = "" }) => {
+    email = email.toLowerCase();
     const isEmpty = await validator.isEmpty(email);
     if (isEmpty) throw new UnprocessableEntityError(`Missing ${result}`);
     const isEmail = await validator.isEmail(email);
@@ -139,6 +140,13 @@ class AccessService {
       throw new UnprocessableEntityError("New Password not match");
     const user = await findUserById(userId);
     if (!user) throw new NotFoundError("User not found");
+    const dupicatePassword = await CryptoService.comparePassword(
+      password,
+      user.password
+    );
+    if (dupicatePassword)
+      throw new ConflictRequestError("Duplicate password");
+
     const matchPassword = await CryptoService.comparePassword(
       oldPassword,
       user.password
@@ -180,7 +188,7 @@ class AccessService {
   validateToken = async ({ token = "" }) => {
     const otp = await findByToken({ token });
     if (!otp) throw new NotFoundError("Token is not found");
-    return true;
+    return null;
   };
 
   checkToken = async (headers) => {
