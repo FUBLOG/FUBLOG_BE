@@ -18,7 +18,7 @@ class App {
 
     //int middlewares
     app.set("trust proxy", 1);
-    app.use(morgan("dev")); //config request return
+    app.use(morgan("combined")); //config request return
     app.use(helmet()); //config security request
     app.use(compression()); // data compression
     app.use(express.json());

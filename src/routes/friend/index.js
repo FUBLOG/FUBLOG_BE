@@ -6,6 +6,8 @@ const friendController = require("../../controller/friend.controller");
 const asyncHandler = require("express-async-handler");
 const { authentication } = require("../../auth/authentication");
 
+router.get(":profileHash",asyncHandler(friendController.getFriendProfile));
+
 router.use(authentication);
 
 router.post("/send", asyncHandler(friendController.sendFriendRequest));

@@ -22,6 +22,7 @@ const {
   getFriendsList,
   checkFriend,
   getBlockedUsers,
+  getFriendListByProfileHash,
 } = require("../repository/userInfo.repo");
 const { getReceiverSocketId, io } = require("../config/socket.config");
 const notificationService = require("./notification.service");
@@ -179,6 +180,14 @@ class FriendService {
 
   static deleteRequestFriend = async ({ sourceID = "", targetID = "" }) => {
     return await deleteRequest(sourceID, targetID);
+  };
+
+  static getFriendProfile = async (profileHash) => {
+    const isEmpty = await isEmpty(profileHash);
+    if (isEmpty) throw new UnprocessableEntityError("Missing profileHash");
+    const friendList = await getFriendListByProfileHash(profileHash);
+    if (!friendList) throw new NotFoundError("User not found");
+    return friendList;
   };
 }
 

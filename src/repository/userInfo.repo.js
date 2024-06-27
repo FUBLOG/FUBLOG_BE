@@ -1,4 +1,5 @@
 "use strict";
+const { path } = require("../app");
 const userInfoModel = require("../model/userInfo.model");
 const { convertToObjectId } = require("../utils");
 const createDefaultUserInfo = async ({ userId }) => {
@@ -146,7 +147,7 @@ const unBlock = async (userId, friendId) => {
 };
 
 const checkFriend = async (userId, friendId) => {
-  const objectId =  convertToObjectId(friendId)
+  const objectId = convertToObjectId(friendId);
   return await userInfoModel.findOne({
     user_id: userId,
     friendList: {
@@ -173,6 +174,20 @@ const getBlockedUsers = async (userId) => {
 const isExisProfileHash = async (profileHash) => {
   return await userInfoModel.findOne({ profileHash });
 };
+
+const getFriendListByProfileHash = async (profileHash) => {
+  return await userInfoModel
+    .findOne({ profileHash })
+    .select("friendList")
+    .populate({
+      path: "friendList",
+      select: "displayName profileHash",
+      populate: {
+        path: "userInfo",
+        select: "avatar",
+      },
+    });
+};
 module.exports = {
   createDefaultUserInfo,
   updateUserAvatar,
@@ -190,4 +205,5 @@ module.exports = {
   getBlockedUsers,
   isExisProfileHash,
   getFriendListId,
+  getFriendListByProfileHash
 };

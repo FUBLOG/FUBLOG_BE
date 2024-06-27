@@ -125,11 +125,19 @@ const deleteRequest = async (req, res, next) => {
   const { targetID } = req.body;
   const response = new NO_CONTENT({
     message: "request deleted",
-    metadata: await friendService.deleteRequestFriend({sourceID, targetID}),
+    metadata: await friendService.deleteRequestFriend({ sourceID, targetID }),
   });
   response.send(res);
+};
 
-}
+const getFriendProfile = async (req, res, next) => {
+  const { profileHash ="" } = req.params;
+  const response = new OK({
+    message: "View friend profile",
+    metadata: await friendService.getFriendProfile(profileHash),
+  });
+  response.send(res);
+};
 
 module.exports = {
   sendFriendRequest,
@@ -142,5 +150,6 @@ module.exports = {
   getBlockedUsers,
   getFriends,
   getRequestFriend,
-  deleteRequest
+  deleteRequest,
+  getFriendProfile
 };
