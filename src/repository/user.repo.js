@@ -1,7 +1,9 @@
 "use strict";
 
+const { path } = require("../app");
 const userModel = require("../model/user.model");
 const { removeAccents } = require("../utils");
+const { getFriendsList } = require("./userInfo.repo");
 
 const isEmailExists = async ({ email = null }) => {
   return await userModel.findOne({ email }).lean();
@@ -58,6 +60,12 @@ const findUserDetailById = async (userId) => {
     })
     .lean();
 };
+const getFriendListByProfileHash = async (profileHash) => {
+  const user = await userModel.findOne({ profileHash });
+  const friend =  await getFriendsList(user._id);
+  return friend?.friendList;
+};
+
 module.exports = {
   isEmailExists,
   createNewUser,
@@ -66,4 +74,5 @@ module.exports = {
   findUserById,
   findUserByProfileHash,
   findUserDetailById,
+  getFriendListByProfileHash,
 };

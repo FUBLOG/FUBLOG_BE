@@ -5,7 +5,7 @@ const {
   ConflictRequestError,
   UnprocessableEntityError,
 } = require("../core/response/error.response");
-const { findUserById } = require("../repository/user.repo");
+const { findUserById, getFriendListByProfileHash } = require("../repository/user.repo");
 const {
   findRequest,
   createRequest,
@@ -22,7 +22,6 @@ const {
   getFriendsList,
   checkFriend,
   getBlockedUsers,
-  getFriendListByProfileHash,
 } = require("../repository/userInfo.repo");
 const { getReceiverSocketId, io } = require("../config/socket.config");
 const notificationService = require("./notification.service");
@@ -183,8 +182,9 @@ class FriendService {
   };
 
   static getFriendProfile = async (profileHash) => {
-    const isEmpty = await isEmpty(profileHash);
-    if (isEmpty) throw new UnprocessableEntityError("Missing profileHash");
+    console.log("profileHash", profileHash);
+    const isValid = await isEmpty(profileHash);
+    if (isValid) throw new UnprocessableEntityError("Missing profileHash");
     const friendList = await getFriendListByProfileHash(profileHash);
     if (!friendList) throw new NotFoundError("User not found");
     return friendList;

@@ -175,19 +175,7 @@ const isExisProfileHash = async (profileHash) => {
   return await userInfoModel.findOne({ profileHash });
 };
 
-const getFriendListByProfileHash = async (profileHash) => {
-  return await userInfoModel
-    .findOne({ profileHash })
-    .select("friendList")
-    .populate({
-      path: "friendList",
-      select: "displayName profileHash",
-      populate: {
-        path: "userInfo",
-        select: "avatar",
-      },
-    });
-};
+
 module.exports = {
   createDefaultUserInfo,
   updateUserAvatar,
@@ -205,5 +193,4 @@ module.exports = {
   getBlockedUsers,
   isExisProfileHash,
   getFriendListId,
-  getFriendListByProfileHash
 };
