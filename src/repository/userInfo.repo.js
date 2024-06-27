@@ -62,6 +62,14 @@ const getFriendsList = async (userId) => {
   return await userInfoModel
     .findOne({ user_id: userId })
     .select("friendList")
+    .populate({
+      path: "friendList",
+      select: "displayName profileHash",
+      populate: {
+        path: "userInfo",
+        select: "avatar",
+      },
+    })
     .lean();
 };
 
