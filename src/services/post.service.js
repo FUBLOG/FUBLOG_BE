@@ -12,7 +12,6 @@ const NewFeedsService = require("./newfeeds.service");
 
 class PostService {
   createPost = async ({ userId, post = {}, filesData = [], traceId }) => {
-    console.log(filesData);
     const isValidPost = await validator.validatePost(post, filesData);
     if (!isValidPost) {
       for (const file of filesData) {

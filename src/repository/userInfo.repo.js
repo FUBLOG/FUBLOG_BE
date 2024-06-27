@@ -72,6 +72,9 @@ const getFriendsList = async (userId) => {
     })
     .lean();
 };
+const getFriendListId = async (userId) => {
+  return await userInfoModel.findOne({ user_id: userId }).select("friendList");
+};
 
 const updateUserInfo = async (userId, data) => {
   return await userInfoModel.findOneAndUpdate({ user_id: userId }, data, {
@@ -144,10 +147,11 @@ const unBlock = async (userId, friendId) => {
 };
 
 const checkFriend = async (userId, friendId) => {
+  const objectId = convertToObjectId(friendId);
   return await userInfoModel.findOne({
     user_id: userId,
     friendList: {
-      $in: [convertToObjectId(friendId)],
+      $in: [objectId],
     },
   });
 };
@@ -186,4 +190,5 @@ module.exports = {
   checkFriend,
   getBlockedUsers,
   isExisProfileHash,
+  getFriendListId,
 };
