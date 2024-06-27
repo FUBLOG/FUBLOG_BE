@@ -14,7 +14,10 @@ const emailService = require("./email.service");
 const CryptoService = require("./crypto.service");
 const otpService = require("./otp.service");
 const { extractUserProfileFromEmail } = require("../utils");
-const { createDefaultUserInfo } = require("../repository/userInfo.repo");
+const {
+  createDefaultUserInfo,
+  isExisProfileHash,
+} = require("../repository/userInfo.repo");
 const validator = require("../core/validator");
 class UserService {
   createUserToken = async ({
@@ -75,8 +78,11 @@ class UserService {
     dateOfBirth,
     sex,
   }) => {
-    const profileHash =await extractUserProfileFromEmail(email);
-
+    let profileHash = await extractUserProfileFromEmail(email);
+    const exist = await isExisProfileHash(profileHash);
+    if (exist) {
+      profileHash = `${profileHash}${Math.floor(Math.random() * 1000)}`;
+    }
     const newUser = await createNewUser({
       email,
       password,

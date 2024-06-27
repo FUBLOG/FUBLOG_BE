@@ -1,6 +1,5 @@
 const _ = require("lodash");
 const { default: mongoose } = require("mongoose");
-const { isExisProfileHash } = require("../repository/userInfo.repo");
 const { v4: uuidv4 } = require("uuid");
 
 const replacePlaceholders = async (template, params) => {
@@ -53,17 +52,7 @@ const convertToObjectId = (string) => {
 
 const extractUserProfileFromEmail = async (email) => {
   const atIndex = email.indexOf("@");
-  if (atIndex !== -1) {
-    const hash = email.substring(0, atIndex);
-    const exist = await isExisProfileHash(hash);
-    if (!exist) {
-      return hash;
-    } else {
-      return `${hash}${Math.floor(Math.random() * 1000)}`;
-    }
-  } else {
-    return null; // Invalid email format
-  }
+  return email.slice(0, atIndex);
 };
 
 function removeAccents(str) {

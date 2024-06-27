@@ -1,7 +1,6 @@
 "use strict";
 const userInfoModel = require("../model/userInfo.model");
 const { convertToObjectId } = require("../utils");
-
 const createDefaultUserInfo = async ({ userId }) => {
   return await userInfoModel.create({
     user_id: userId,
@@ -147,7 +146,7 @@ const unBlock = async (userId, friendId) => {
 };
 
 const checkFriend = async (userId, friendId) => {
-  const objectId = convertToObjectId(friendId);
+  const objectId =  convertToObjectId(friendId)
   return await userInfoModel.findOne({
     user_id: userId,
     friendList: {
