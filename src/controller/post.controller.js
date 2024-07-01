@@ -62,7 +62,7 @@ class PostController {
   };
   getPostForGuest = async (req, res, next) => {
     const { page = 0, limit = 10 } = req.query;
-    const seenIds =  [];
+    const seenIds =  req.session.seenIds || [];
     const posts = await postService.getPostsForGuest({ page, limit, seenIds });
     req.session.seenIds = seenIds.concat(posts.map((post) => post._id));
     const result = new OK({

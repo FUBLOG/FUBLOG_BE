@@ -47,6 +47,7 @@ class App {
     //Set traceId
     app.use((req, res, next) => {
       const traceId = req.headers["x-trace-id"] || uuidv4();
+      console.log(req.session)
       if (traceId) {
         req.traceId = traceId;
         req.now = Date.now();
