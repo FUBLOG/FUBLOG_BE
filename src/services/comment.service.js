@@ -134,7 +134,6 @@ class CommentService {
 
   static async deleteComment({ parent_CommentID, comment_postID }) {
     const comment = await Comment.findById(parent_CommentID);
-    console.log(comment);
     if (!comment) {
       throw new NotFoundError("Comment not found");
     }

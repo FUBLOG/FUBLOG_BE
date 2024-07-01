@@ -26,7 +26,6 @@ const updateStatusRead = async ({ notificationId }) => {
 };
 
 const getAllNotification = async ({ user_id, limit, page }) => {
-  console.log(limit, page);
   const offset = page * limit;
   return await notificationModel
     .find({ user_id })

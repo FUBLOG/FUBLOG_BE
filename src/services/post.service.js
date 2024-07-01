@@ -60,28 +60,27 @@ class PostService {
 
   findPostByTag = async ({ id }) => {
     const findPostsByTag = await post.find({ postTagID: id });
-    console.log(findPostsByTag);
     if (!findPostsByTag) throw new NotFoundError();
     return findPostsByTag;
   };
 
   findPostByUserId = async ({ id }) => {
     const findPostsByUser = await post.find({ UserID: id });
-    console.log(findPostsByUser);
     if (!findPostsByUser) throw new NotFoundError();
     return findPostsByUser;
   };
   getPostsForUser = async ({ userId, page, limit, seenIds }) => {
-    const newLimit = limit / 2;
+    const friendPosts = await NewFeedsService.getFriendNewFeeds({
+      userId,
+      page,
+      limit: limit / 2,
+    });
+
+    const newLimit =   friendPosts?.length > 0 ? limit - friendPosts?.length : limit;
     const publicPosts = await NewFeedsService.getPublicNewFeeds({
       page,
       limit: newLimit,
       seenIds,
-    });
-    const friendPosts = await NewFeedsService.getFriendNewFeeds({
-      userId,
-      page,
-      limit: newLimit,
     });
     const posts = publicPosts.concat(friendPosts).sort((a, b) => {
       return b.createdAt - a.createdAt;

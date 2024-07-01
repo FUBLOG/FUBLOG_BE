@@ -17,7 +17,6 @@ class Database {
   }
   connect(type = "mongodb") {
     mongoose.set("debug", { shell: true , color: true });
-    console.log(connectString);
     mongoose
       .connect(connectString)
       .then((_) => {

@@ -182,7 +182,6 @@ class FriendService {
   };
 
   static getFriendProfile = async (profileHash) => {
-    console.log("profileHash", profileHash);
     const isValid = await isEmpty(profileHash);
     if (isValid) throw new UnprocessableEntityError("Missing profileHash");
     const friendList = await getFriendListByProfileHash(profileHash);

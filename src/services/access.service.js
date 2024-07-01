@@ -216,7 +216,6 @@ class AccessService {
           throw new UnauthorizedError("JWT invalid");
         }
         if (err) {
-          console.log(err);
           throw new UnauthorizedError("Invalid request");
         }
         return user;

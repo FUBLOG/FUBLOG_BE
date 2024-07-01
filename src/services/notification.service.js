@@ -68,7 +68,6 @@ class NotificationService {
     postId = "",
   }) => {
     const post = await findUserByPostID(postId);
-    console.log("post",post);
     const userComment = await findUserDetailById(commenterId);
     
     let notification = await isExistNotification({
