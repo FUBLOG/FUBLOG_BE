@@ -5,16 +5,13 @@ const asyncHandler = require("express-async-handler");
 const postController = require("../../controller/post.controller");
 const uploadCloud = require("../../config/multer.config");
 
-router.get("/:id", asyncHandler(postController.searchPostsByTag));
 
 router.get("/user/:id", asyncHandler(postController.searchPostsByUserId));
 
 router.get("/:id", asyncHandler(postController.getAPost));
 
-
-
-// Authen
 router.use(authentication);
+
 router.post(
   "",
   uploadCloud.array("image"),

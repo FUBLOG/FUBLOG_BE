@@ -3,11 +3,9 @@ const {
   NotFoundError,
   UnprocessableEntityError,
 } = require("../core/response/error.response");
-const { createNewPost, updatePost } = require("../repository/post.repo");
-const { BadRequestError } = require("../core/response/error.response");
+const { createNewPost, updatePost, findPost } = require("../repository/post.repo");
 const deleteImage = require("../helpers/deleteImage");
 const validator = require("../core/validator");
-const { HEADER } = require("../core/constans/header.constant");
 const NewFeedsService = require("./newfeeds.service");
 
 class PostService {
@@ -42,9 +40,9 @@ class PostService {
   };
 
   findPost = async (id) => {
-    const viewApost = await post.findById(id);
-    if (viewApost.length > 0) throw new NotFoundError("Cannot Find Post Id");
-    return viewApost;
+    const post = await findPost(id);
+    if (!post) throw new NotFoundError("Cannot Find Post Id");
+    return post;
   };
 
   updatePost = async ({ id }, data, filesData) => {
@@ -76,7 +74,8 @@ class PostService {
       limit: limit / 2,
     });
 
-    const newLimit =   friendPosts?.length > 0 ? limit - friendPosts?.length : limit;
+    const newLimit =
+      friendPosts?.length > 0 ? limit - friendPosts?.length : limit;
     const publicPosts = await NewFeedsService.getPublicNewFeeds({
       page,
       limit: newLimit,

@@ -63,12 +63,22 @@ const updatePost = async (
 };
 
 const findUserByPostID = async (postId) => {
-  const post = await postModel.findOne({ _id: convertToObjectId(postId) }).populate({
-    path: "UserID",
-    model: "User",
-    select: "displayName",
-  });
+  const post = await postModel
+    .findOne({ _id: convertToObjectId(postId) })
+    .populate({
+      path: "UserID",
+      model: "User",
+      select: "displayName",
+    });
   return post;
+};
+
+const findPost = async (id) => {
+  return await postModel
+    .findOne({
+      _id: id,
+    })
+    .lean();
 };
 
 module.exports = {
@@ -78,4 +88,5 @@ module.exports = {
   updatePost,
   findPostByUserID,
   findUserByPostID,
+  findPost
 };
