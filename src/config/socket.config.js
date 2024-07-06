@@ -1,7 +1,9 @@
 const { Server } = require("socket.io");
 const http = require("http");
 const express = require("express");
-const { readMessageFromConversation } = require("../repository/conversation.repo");
+const {
+  readMessageFromConversation,
+} = require("../repository/conversation.repo");
 
 const app = express();
 const server = http.createServer(app);
@@ -18,9 +20,15 @@ const getReceiverSocketId = (receiverId) => {
 const userSocketMap = {};
 
 io.on("connection", (socket) => {
-
   const userId = socket.handshake.query.userId;
-  if (userId != "undefined") userSocketMap[userId] = socket.id;
+  if (userId != "undefined") {
+    const existingUser = userSocketMap[userId];
+    if (existingUser) {
+      io.to(existingUser).emit("forceDisconnect");
+      delete userSocketMap[userId];
+    }
+    userSocketMap[userId] = socket.id;
+  }
   // io.emit() is used to send events to all the connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
   // socket.on() is used to listen to the events. can be used both on client and server side
@@ -33,13 +41,11 @@ io.on("connection", (socket) => {
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("typing", true);
     }
-    
   });
 
   socket.on("ping", async (conversationId) => {
-    await readMessageFromConversation({conversationId})
+    await readMessageFromConversation({ conversationId });
   });
-
 });
 
 module.exports = { app, io, server, getReceiverSocketId };
