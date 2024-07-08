@@ -3,7 +3,12 @@ const {
   NotFoundError,
   UnprocessableEntityError,
 } = require("../core/response/error.response");
-const { createNewPost, updatePost, findPost } = require("../repository/post.repo");
+const {
+  createNewPost,
+  updatePost,
+  findPost,
+  findAllPostOfUser,
+} = require("../repository/post.repo");
 const deleteImage = require("../helpers/deleteImage");
 const validator = require("../core/validator");
 const NewFeedsService = require("./newfeeds.service");
@@ -63,7 +68,7 @@ class PostService {
   };
 
   findPostByUserId = async ({ id }) => {
-    const findPostsByUser = await post.find({ UserID: id });
+    const findPostsByUser = await findAllPostOfUser(id);
     if (!findPostsByUser) throw new NotFoundError();
     return findPostsByUser;
   };

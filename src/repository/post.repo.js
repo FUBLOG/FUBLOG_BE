@@ -1,7 +1,6 @@
 "use strict";
 const cloudinary = require("cloudinary").v2;
 
-const { model } = require("mongoose");
 const cloudinaryTask = require("../core/cloudinary");
 const postModel = require("../model/post.model");
 const { convertToObjectId } = require("../utils");
@@ -69,7 +68,8 @@ const findUserByPostID = async (postId) => {
       path: "UserID",
       model: "User",
       select: "displayName",
-    });
+    })
+    .lean();
   return post;
 };
 
@@ -78,8 +78,38 @@ const findPost = async (id) => {
     .findOne({
       _id: id,
     })
+    .populate({
+      path: "UserID",
+      model: "User",
+      select: "displayName",
+      populate: {
+        path: "userInfo",
+        select: "avatar",
+      },
+    })
+    .populate({
+      path: "postTagID",
+      model: "Tag", 
+    })
     .lean();
 };
+
+const findAllPostOfUser = async (id) => {
+  return await postModel.find({ UserID: id }).populate({
+    path: "UserID",
+    model: "User",
+    select: "displayName",
+    populate: {
+      path: "userInfo",
+      select: "avatar",
+    },
+  })
+  .populate({
+    path: "postTagID",
+    model: "Tag", 
+  })
+  .lean();;
+}
 
 module.exports = {
   createNewPost,
@@ -88,5 +118,6 @@ module.exports = {
   updatePost,
   findPostByUserID,
   findUserByPostID,
-  findPost
+  findPost,
+  findAllPostOfUser
 };

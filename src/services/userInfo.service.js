@@ -8,13 +8,14 @@ const {
 const {
   isUserIDExist,
   findUserByProfileHash,
+  updateUserProfile,
 } = require("../repository/user.repo");
 const {
   updateUserAvatar,
   findUserInfoById,
   updateUserInfo,
 } = require("../repository/userInfo.repo");
-const { unGetSelectData } = require("../utils");
+const { unGetSelectData, removeAccents } = require("../utils");
 
 class UserInfoService {
   getInfoUser = async (profileHash) => {
@@ -45,7 +46,26 @@ class UserInfoService {
   };
 
   updateUserInfo = async (userId, data) => {
-    return await updateUserInfo(userId, data);
+    const {
+      displayName = "",
+      dateOfBirth = "",
+      sex = "",
+      relationship = "",
+      education = "",
+      bio = "",
+    } = data;
+    const searchable = removeAccents(displayName);
+    await updateUserProfile(userId, {
+      displayName,
+      dateOfBirth,
+      sex,
+      searchable,
+    });
+    return await updateUserInfo(userId, {
+      relationship,
+      education,
+      bio,
+    });
   };
 
   updateAvatar = async (userId, filedata) => {

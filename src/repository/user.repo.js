@@ -62,8 +62,12 @@ const findUserDetailById = async (userId) => {
 };
 const getFriendListByProfileHash = async (profileHash) => {
   const user = await userModel.findOne({ profileHash });
-  const friend =  await getFriendsList(user._id);
+  const friend = await getFriendsList(user._id);
   return friend?.friendList;
+};
+
+const updateUserProfile = async (userId, data) => {
+  return await userModel.findOneAndUpdate({ _id: userId }, data);
 };
 
 module.exports = {
@@ -75,4 +79,5 @@ module.exports = {
   findUserByProfileHash,
   findUserDetailById,
   getFriendListByProfileHash,
+  updateUserProfile,
 };

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose"); // Erase if already required
-const { profile } = require("winston");
 const DOCUMENT_NAME = "User";
 const COLLECTION_NAME = "Users";
 // Declare the Schema of the Mongo model
@@ -9,13 +8,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-
     },
     displayName: {
       type: String,
       required: true,
     },
-    searchable:{
+    searchable: {
       type: String,
     },
     firstName: {
@@ -59,7 +57,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 userSchema.index({ profileHash: 1 });
-userSchema.index({ displayName: "text", firstName:"text",lastName:"text" });
+userSchema.index({ displayName: "text", firstName: "text", lastName: "text" });
 userSchema.virtual("userInfo", {
   ref: "UserInfo",
   localField: "_id",

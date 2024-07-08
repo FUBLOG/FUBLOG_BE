@@ -69,36 +69,18 @@ class NotificationService {
   }) => {
     const post = await findUserByPostID(postId);
     const userComment = await findUserDetailById(commenterId);
-    
+
     let notification = await isExistNotification({
       user_id: post?.UserID?._id,
-      payload: {
-        postId,
-      },
+      "payload.postId": postId,
       type: "comment",
     });
     if (notification) {
-      if (notification?.payload?.lastComment === commentId) {
-        await updateNotification(
-          { notificationId: notification?._id },
-          {
-            payload: {
-              ...notification?.payload,
-              commentId,
-            },
-          }
-        );
-      } else {
-        const message = `${userComment?.displayName}và những người khác đã bình luận vào bài viết của bạn`;
-        await updateNotification(notification?._id, {
-          message,
-          payload: {
-            ...notification?.payload,
-            lastComment: userComment?._id,
-            commentId: commentId,
-          },
-        });
-      }
+      await this.handleCommentNotificationExist({
+        notification,
+        commentId,
+        userComment,
+      });
     } else {
       const message = `${userComment?.displayName} đã bình luận vào bài viết của bạn`;
       notification = await createNewNotification({
@@ -108,7 +90,9 @@ class NotificationService {
           commentId,
           postId,
           lastComment: userComment?._id,
+          commentList: [userComment?._id],
         },
+        image: [userComment?.userInfo?.avatar],
         type: "comment",
       });
     }
@@ -145,6 +129,54 @@ class NotificationService {
 
   updateNotificationStatusReadAll = async ({ userId }) => {
     return await updateStatusReadAll({ userId });
+  };
+
+  handleCommentNotificationExist = async ({
+    notification,
+    commentId,
+    userComment,
+  }) => {
+    const isCommented = await this.checkIsCommented({
+      notification,
+      userComment,
+    });
+    if (isCommented) {
+      //move image to top
+      const index = notification.image.indexOf(userComment?.userInfo?.avatar);
+      const newImage = notification.image.splice(index, 1);
+      newImage.push(userComment?.userInfo?.avatar);
+      await updateNotification(notification?._id, {
+        image: newImage,
+      });
+    } else {
+      notification.image.push(userComment?.userInfo?.avatar);
+      notification = await updateNotification(notification?._id, {
+        image: notification.image,
+        "payload.commentList": [
+          ...notification.payload.commentList,
+          userComment?._id,
+        ],
+      });
+    }
+    const message = `${userComment?.displayName} và những người khác đã bình luận vào bài viết của bạn`;
+    await updateNotification(notification?._id, {
+      message,
+      payload: {
+        ...notification?.payload,
+        lastComment: userComment?._id,
+        commentId: commentId,
+      },
+    });
+  };
+
+  checkIsCommented = async ({ notification, userComment }) => {
+    const list = notification?.payload?.commentList;
+    for (const item of list) {
+      if (item.toString() === userComment?._id.toString()) {
+        return true; // This will now correctly return from checkIsCommented
+      }
+    }
+    return false; // Returns false if no match is found
   };
 }
 module.exports = new NotificationService();

@@ -60,7 +60,7 @@ const isExistNotification = async (filter) => {
   return await notificationModel.findOne(filter);
 };
 
-const updateNotification = async ({ notificationId, data }) => {
+const updateNotification = async (notificationId, data) => {
   return await notificationModel.findOneAndUpdate(
     { _id: notificationId },
     {

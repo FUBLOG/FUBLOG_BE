@@ -62,7 +62,6 @@ class App {
 
     //init routes
     app.use("/v1/api", require("./routes"));
-
     //handle Error
     app.use((req, res, next) => {
       const error = new Error("Not Found");
