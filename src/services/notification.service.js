@@ -55,7 +55,7 @@ class NotificationService {
         profileHash: friend?.profileHash,
       },
       type: "friend",
-      image: friend?.userInfo?.avatar,
+      image: [friend?.userInfo?.avatar],
     });
     await this.sendSocketNotification(user_id, notification._id);
   };
@@ -99,15 +99,32 @@ class NotificationService {
     await this.sendSocketNotification(notification);
   };
 
-  sendNotificationWithTypeLike = async ({ link = "", user_id = "" }) => {
-    const message = `Someone liked your post`;
-    const path = `https://has.io.vn/posts/${link}`;
-    const notification = await createNewNotification({
-      user_id,
-      message,
-      link: path,
+  sendNotificationWithTypeLike = async ({ post, userID }) => {
+    let notification = await isExistNotification({
+      user_id: userID,
+      "payload.postId": post?._id,
       type: "like",
     });
+    const user = await findUserDetailById(userID);
+    if (notification) {
+      const userLikesCount = post?.likes?.length - 1;
+      const message = `${user?.displayName} và ${userLikesCount} người khác đã thích bài viết của bạn`;
+      await updateNotification(notification?._id, {
+        message,
+        image: [user?.userInfo?.avatar],
+      });
+    } else {
+      const message = `${user?.displayName} đã thích bài viết của bạn`;
+      notification = await createNewNotification({
+        user_id: post?.UserID,
+        message,
+        payload: {
+          postId: post?._id,
+        },
+        image: [user?.userInfo?.avatar],
+        type: "like",
+      });
+    }
     await this.sendSocketNotification(notification._id);
   };
 

@@ -38,14 +38,6 @@ const getAllNotification = async ({ user_id, limit, page }) => {
 const getNotificationSocket = async ({ notificationId }) => {
   return await notificationModel
     .find({ _id: notificationId })
-    .populate({
-      path: "user_id",
-      select: "displayName",
-      populate: {
-        path: "userInfo",
-        select: "avatar",
-      },
-    })
     .lean();
 };
 

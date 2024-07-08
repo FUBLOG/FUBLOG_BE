@@ -5,7 +5,7 @@ const notificationSchemas = mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ["comment", "system", "friend"],
+      enum: ["comment", "system", "friend", "like"],
       required: true,
     },
     message: {

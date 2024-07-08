@@ -1,7 +1,12 @@
-const Post = require('../model/post.model');
-const UserInfo = require('../model/userInfo.model');
-const { NotFoundError, ConflictRequestError, UnprocessableEntityError } = require("../core/response/error.response");
+const Post = require("../model/post.model");
+const UserInfo = require("../model/userInfo.model");
+const {
+  NotFoundError,
+  ConflictRequestError,
+  UnprocessableEntityError,
+} = require("../core/response/error.response");
 const { getAllLiked } = require("../repository/like.repo");
+const notificationService = require("./notification.service");
 
 class LikeService {
   static like = async (postID, userID) => {
@@ -20,9 +25,15 @@ class LikeService {
 
     post.likes.push(userID);
     post.countLike++;
-    post.score += 10; 
+    post.score += 10;
     await post.save();
-
+    notificationService.sendNotification({
+      type: "like",
+      payload: {
+        post,
+        userID: userID,
+      },
+    });
     return {
       userID: userID,
       postID: postID,
@@ -45,11 +56,13 @@ class LikeService {
       throw new ConflictRequestError("Post has not been liked by this user");
     }
 
-    post.likes = post.likes.filter(like => like.toString() !== userID.toString());
+    post.likes = post.likes.filter(
+      (like) => like.toString() !== userID.toString()
+    );
     if (post.countLike > 0) {
       post.countLike--;
     }
-    post.score -= 10; 
+    post.score -= 10;
     await post.save();
 
     return {
