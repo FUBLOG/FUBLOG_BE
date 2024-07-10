@@ -1,6 +1,6 @@
 "use strict";
 
-const { getReceiverSocketId } = require("../config/socket.config");
+const { getReceiverSocketId, io } = require("../config/socket.config");
 const { NotFoundError } = require("../core/response/error.response");
 const {
   createNewNotification,
