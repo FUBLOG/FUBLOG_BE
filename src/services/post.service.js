@@ -104,7 +104,7 @@ class PostService {
     if (!findPostsByUser) throw new NotFoundError();
     return findPostsByUser;
   };
-  getPostsForUser = async ({ userId, page, limit, seenIds }) => {
+  getPostsForUser = async ({ userId, page, limit, seenIds, tagId}) => {
     const friendPosts = await NewFeedsService.getFriendNewFeeds({
       userId,
       page,
