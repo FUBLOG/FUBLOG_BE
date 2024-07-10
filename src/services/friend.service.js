@@ -27,7 +27,6 @@ const { getReceiverSocketId, io } = require("../config/socket.config");
 const notificationService = require("./notification.service");
 const { isEmpty } = require("../core/validator/index");
 const { isMongoId } = require("validator");
-const { log } = require("../logger/log.system");
 class FriendService {
   static sendFriendRequest = async ({ sourceID = "", targetID = "" }) => {
     const check = await isEmpty(targetID);

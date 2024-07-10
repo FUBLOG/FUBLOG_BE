@@ -12,6 +12,10 @@ const {
 const deleteImage = require("../helpers/deleteImage");
 const validator = require("../core/validator");
 const NewFeedsService = require("./newfeeds.service");
+const {
+  findPostByTagForGuest,
+  findPostByTagForUser,
+} = require("../repository/newfeed.repo");
 
 class PostService {
   createPost = async ({ userId, post = {}, filesData = [], traceId }) => {
@@ -61,10 +65,38 @@ class PostService {
     return deletePost;
   };
 
-  findPostByTag = async ({ id }) => {
-    const findPostsByTag = await post.find({ postTagID: id });
+  findPostByTagForGuest = async ({ id, seenIds, page, limit }) => {
+    const findPostsByTag = await findPostByTagForGuest({
+      tagId: id,
+      page,
+      limit,
+      seenIds,
+    });
     if (!findPostsByTag) throw new NotFoundError();
     return findPostsByTag;
+  };
+
+  findPostByTagForUser = async ({ id, seenIds, page, limit, userId }) => {
+    const findPostsByTag = await findPostByTagForUser({
+      tagId: id,
+      page,
+      limit,
+      seenIds,
+      userId,
+    });
+    const newLimit =
+      findPostsByTag?.length > 0 ? limit - findPostsByTag?.length : limit;
+
+    const publicPosts = await findPostByTagForGuest({
+      tagId: id,
+      page,
+      limit: newLimit,
+      seenIds,
+    });
+    const feeds = publicPosts.concat(findPostsByTag).sort((a, b) => {
+      return b.createdAt - a.createdAt;
+    });
+    return { posts: feeds, seen: publicPosts.map((post) => post._id) };
   };
 
   findPostByUserId = async ({ id }) => {

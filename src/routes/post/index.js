@@ -7,6 +7,7 @@ const likeController = require("../../controller/like.controller");
 const uploadCloud = require("../../config/multer.config");
 
 router.get("/user/:id", asyncHandler(postController.searchPostsByUserId));
+router.get("/guest/:id", asyncHandler(postController.searchPostsByTagForGuest));
 
 router.get("/:id", asyncHandler(postController.getAPost));
 

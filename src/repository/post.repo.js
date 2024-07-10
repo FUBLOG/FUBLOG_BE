@@ -67,7 +67,7 @@ const findUserByPostID = async (postId) => {
     .populate({
       path: "UserID",
       model: "User",
-      select: "displayName",
+      select: "displayName profileHash",
     })
     .lean();
   return post;
@@ -81,7 +81,7 @@ const findPost = async (id) => {
     .populate({
       path: "UserID",
       model: "User",
-      select: "displayName",
+      select: "displayName profileHash",
       populate: {
         path: "userInfo",
         select: "avatar",
@@ -89,27 +89,30 @@ const findPost = async (id) => {
     })
     .populate({
       path: "postTagID",
-      model: "Tag", 
+      model: "Tag",
     })
     .lean();
 };
 
 const findAllPostOfUser = async (id) => {
-  return await postModel.find({ UserID: id }).populate({
-    path: "UserID",
-    model: "User",
-    select: "displayName",
-    populate: {
-      path: "userInfo",
-      select: "avatar",
-    },
-  })
-  .populate({
-    path: "postTagID",
-    model: "Tag", 
-  })
-  .lean();;
-}
+  return await postModel
+    .find({ UserID: id })
+    .populate({
+      path: "UserID",
+      model: "User",
+      select: "displayName profileHash",
+      populate: {
+        path: "userInfo",
+        select: "avatar",
+      },
+    })
+    .populate({
+      path: "postTagID",
+      model: "Tag",
+    })
+    .lean();
+};
+
 
 module.exports = {
   createNewPost,
@@ -119,5 +122,5 @@ module.exports = {
   findPostByUserID,
   findUserByPostID,
   findPost,
-  findAllPostOfUser
+  findAllPostOfUser,
 };

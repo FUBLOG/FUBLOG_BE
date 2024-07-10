@@ -16,7 +16,7 @@ class PostController {
     });
     result.send(res);
   };
-  
+
   getAllPost = async (req, res, next) => {
     const result = new OK({
       message: " View posts Sucess",
@@ -46,14 +46,44 @@ class PostController {
     result.send(res);
   };
 
-  searchPostsByTag = async (req, res, next) => {
+  searchPostsByTagForGuest = async (req, res, next) => {
+    const { page = 0, limit = 6 } = req.query;
+    const { id = "" } = req.params;
+    const seenIds = req.session.seenIds || [];
+    const posts = await postService.findPostByTagForGuest({
+      id,
+      seenIds,
+      page,
+      limit,
+    });
+    req.session.seenIds = seenIds.concat(posts.map((post) => post._id));
     const result = new OK({
       message: "Search By Tag was successful",
-      metadata: await postService.findPostByTag(req.params),
+      metadata: posts,
     });
     result.send(res);
   };
-  
+
+  searchPostsByTagForUser = async (req, res, next) => {
+    const { page = 0, limit = 6 } = req.query;
+    const { id = "" } = req.params;
+    const userId = req.user.userId;
+    const seenIds = req.session.seenIds || [];
+    const { posts, seen } = await postService.findPostByTagForUser({
+      id,
+      seenIds,
+      page,
+      limit,
+      userId,
+    });
+    req.session.seenIds = seenIds.concat(seen);
+    const result = new OK({
+      message: "Search By Tag was successful",
+      metadata: posts,
+    });
+    result.send(res);
+  };
+
   searchPostsByUserId = async (req, res, next) => {
     const result = new OK({
       message: "Search By User was successful",
@@ -61,9 +91,10 @@ class PostController {
     });
     result.send(res);
   };
+
   getPostForGuest = async (req, res, next) => {
-    const { page = 0, limit = 10 } = req.query;
-    const seenIds =  req.session.seenIds || [];
+    const { page = 0, limit = 6 } = req.query;
+    const seenIds = req.session.seenIds || [];
     const posts = await postService.getPostsForGuest({ page, limit, seenIds });
     req.session.seenIds = seenIds.concat(posts.map((post) => post._id));
     const result = new OK({
@@ -74,7 +105,7 @@ class PostController {
   };
 
   getPostForUser = async (req, res, next) => {
-    const { page = 0, limit = 10 } = req.query;
+    const { page = 0, limit = 6 } = req.query;
     const seenIds = req.session.seenIds || [];
     const userId = req.user.userId;
     const { posts, seen } = await postService.getPostsForUser({
