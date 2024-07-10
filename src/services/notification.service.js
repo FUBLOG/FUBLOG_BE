@@ -96,7 +96,7 @@ class NotificationService {
         type: "comment",
       });
     }
-    await this.sendSocketNotification(notification);
+    await this.sendSocketNotification(post?.UserID?._id, notification._id);
   };
 
   sendNotificationWithTypeLike = async ({ post, userID }) => {
@@ -125,7 +125,7 @@ class NotificationService {
         type: "like",
       });
     }
-    await this.sendSocketNotification(notification._id);
+    await this.sendSocketNotification(post?.UserID,notification._id);
   };
 
   sendSocketNotification = async (userId, notificationId) => {
