@@ -132,7 +132,7 @@ const findPostByTagForGuest = async ({ tagId, page, limit, seenIds }) => {
       },
     })
     .lean();
-  return feeds;
+  return feeds.filter((feed) => feed?.post !== null);
 };
 
 const findPostByTagForUser = async ({
@@ -171,9 +171,12 @@ const findPostByTagForUser = async ({
       },
     })
     .lean();
-
-  deleteNewFeed(feeds.map((feed) => feed._id));
-  return feeds;
+  deleteNewFeed(feeds.map((feed) => {
+    if (feed.post === null) {
+      return feed._id;
+    }
+  }));
+  return feeds.filter((feed) => feed.post !== null);
 };
 module.exports = {
   createNewFeed,
