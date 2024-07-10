@@ -29,7 +29,7 @@ const getAllNotification = async ({ user_id, limit, page }) => {
   const offset = page * limit;
   return await notificationModel
     .find({ user_id })
-    .sort({ createdAt: -1 })
+    .sort({ updatedAt: -1 })
     .limit(limit)
     .skip(offset)
     .lean();

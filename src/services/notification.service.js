@@ -130,8 +130,8 @@ class NotificationService {
 
   sendSocketNotification = async (userId, notificationId) => {
     // send notification to client
-    const receiverSocketId = getReceiverSocketId(userId);
-
+    const receiverSocketId = getReceiverSocketId(userId.toString());
+    console.log("receiverSocketId", receiverSocketId)
     if (receiverSocketId) {
       const notification = await getNotificationSocket({
         notificationId,
