@@ -109,6 +109,7 @@ class PostService {
       userId,
       page,
       limit: limit / 2,
+      tagId,
     });
 
     const newLimit =
@@ -117,17 +118,19 @@ class PostService {
       page,
       limit: newLimit,
       seenIds,
+      tagId,
     });
     const posts = publicPosts.concat(friendPosts).sort((a, b) => {
       return b.createdAt - a.createdAt;
     });
     return { posts, seen: publicPosts.map((post) => post._id) };
   };
-  getPostsForGuest = async ({ page, limit, seenIds }) => {
+  getPostsForGuest = async ({ page, limit, seenIds, tagId }) => {
     const feeds = await NewFeedsService.getPublicNewFeeds({
       page,
       limit,
       seenIds,
+      tagId,
     });
     return feeds;
   };

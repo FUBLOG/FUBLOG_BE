@@ -8,11 +8,11 @@ const {
 const { getFriendsList } = require("../repository/userInfo.repo");
 
 class NewFeedsService {
-  static async getPublicNewFeeds({ page, limit, seenIds }) {
-    return await getPublicNewFeeds({ page, limit, seenIds });
+  static async getPublicNewFeeds({ page, limit, seenIds, tagId }) {
+    return await getPublicNewFeeds({ page, limit, seenIds, tagId });
   }
-  static async getFriendNewFeeds({ userId, page, limit }) {
-    return await getFriendNewFeeds({ userId, page, limit });
+  static async getFriendNewFeeds({ userId, page, limit,tagId }) {
+    return await getFriendNewFeeds({ userId, page, limit,tagId });
   }
   static async pushNewFeed({ userId, post }) {
     const user = await getFriendsList(userId);

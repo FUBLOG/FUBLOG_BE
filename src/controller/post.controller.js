@@ -93,9 +93,9 @@ class PostController {
   };
 
   getPostForGuest = async (req, res, next) => {
-    const { page = 0, limit = 6 } = req.query;
+    const { page = 0, limit = 6, tagId = null } = req.query;
     const seenIds = req.session.seenIds || [];
-    const posts = await postService.getPostsForGuest({ page, limit, seenIds });
+    const posts = await postService.getPostsForGuest({ page, limit, seenIds,tagId });
     req.session.seenIds = seenIds.concat(posts.map((post) => post._id));
     const result = new OK({
       message: "Get post was successful",
@@ -105,7 +105,7 @@ class PostController {
   };
 
   getPostForUser = async (req, res, next) => {
-    const { page = 0, limit = 6 } = req.query;
+    const { page = 0, limit = 6 , tagId = null} = req.query;
     const seenIds = req.session.seenIds || [];
     const userId = req.user.userId;
     const { posts, seen } = await postService.getPostsForUser({
@@ -113,6 +113,7 @@ class PostController {
       page,
       limit,
       seenIds,
+      tagId,
     });
     req.session.seenIds = seenIds.concat(seen);
     const result = new OK({
