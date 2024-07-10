@@ -47,17 +47,7 @@ const getPublicNewFeeds = async ({ page, limit, seenIds, tagId }) => {
 
 const getFriendNewFeeds = async ({ userId, page, limit, tagId }) => {
   const offset = page * limit;
-  let feeds = [];
-  if (tagId !== null) {
-    feeds = await findPostByTagForUser({
-      tagId,
-      page,
-      limit,
-      seenIds,
-      userId,
-    });
-  } else {
-    feeds = await newfeedsModel
+  const feeds = await newfeedsModel
       .find({ friendId: userId })
       .sort({ createdAt: -1, rank: 1 })
       .skip(offset)
@@ -75,13 +65,14 @@ const getFriendNewFeeds = async ({ userId, page, limit, tagId }) => {
       .populate({
         path: "post",
         model: "Post",
+        match: { postTagID: tagId },
         populate: {
           path: "postTagID",
           model: "Tag",
         },
       })
       .lean();
-  }
+
   deleteNewFeed(feeds.map((feed) => feed._id));
   return feeds;
 };
@@ -176,7 +167,7 @@ const findPostByTagForUser = async ({
       return feed._id;
     }
   }));
-  return feeds.filter((feed) => feed.post !== null);
+  return feeds.filter((feed) => feed?.post !== null);
 };
 module.exports = {
   createNewFeed,
