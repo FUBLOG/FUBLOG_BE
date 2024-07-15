@@ -61,7 +61,7 @@ const findUserInfoById = async (userId, unselect = []) => {
 
 const getFriendsList = async (userId) => {
   return await userInfoModel
-    .findOne({ user_id: userId })
+    .findOne({user_id: userId})
     .select("friendList")
     .populate({
       path: "friendList",

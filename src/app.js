@@ -60,12 +60,15 @@ class App {
     //init routes
     app.use("/v1/api", require("./routes"));
 
+    app.use("/v1/admin", require("./adminRouters"));
+
     //handle Error
     app.use((req, res, next) => {
       const error = new Error("Not Found");
       error.status = 404;
       next(error);
     });
+    
 
     // hàm quản lí lỗi
     app.use((error, req, res, next) => {

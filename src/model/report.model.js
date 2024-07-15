@@ -1,37 +1,38 @@
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
+
 const DOCUMENT_NAME = "Report";
 const COLLECTION_NAME = "Reports";
-const report = mongoose.Schema(
+
+const reportSchema = new mongoose.Schema(
   {
-    userId: {
-      type: String,
-      require: true,
+    sourceID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserInfos",
+      required: true
     },
-
-    reportType: {
-      type: String,
-      enum: ["account", "post"],
-      require: true,
-      default: "post",
+    targetID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserInfos",
+      required: true,
     },
-
-    reason: {
-      type: String,
-      require: true,
+    postID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Posts",
     },
-
-    linkToPost: {
+    reportContent: {
       type: String,
-      require: true,
     },
-
     reportStatus: {
       type: String,
       enum: ["pending", "completed"],
       default: "pending",
     },
   },
-  { timestamps: true, collection: COLLECTION_NAME }
+  {
+    timestamps: true,
+    collection: COLLECTION_NAME,
+  }
 );
 
-module.exports = mongoose.model(DOCUMENT_NAME, report);
+
+module.exports = mongoose.model(DOCUMENT_NAME, reportSchema);

@@ -1,9 +1,10 @@
-const mongoose = require("mongoose"); // Erase if already required
+
+const mongoose = require("mongoose");
+
 const DOCUMENT_NAME = "UserInfo";
 const COLLECTION_NAME = "UserInfos";
-// Declare the Schema of the Mongo model
 
-const userInfoSchemas = new mongoose.Schema(
+const userInfoSchema = new mongoose.Schema(
   {
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -74,5 +75,5 @@ const userInfoSchemas = new mongoose.Schema(
   }
 );
 
-//Export the model
-module.exports = mongoose.model(DOCUMENT_NAME, userInfoSchemas);
+module.exports = mongoose.model(DOCUMENT_NAME, userInfoSchema);
+

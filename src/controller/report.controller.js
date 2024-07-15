@@ -1,46 +1,25 @@
-const express = require("express");
-const postTagController = require("./post.tag.controller");
-const reportService = require("../services/report.service");
-const { OK } = require("../core/response/success.response");
+const reportService = require('../services/report.service');
+const { OK } = require('../core/response/success.response');
+const reportRepo = require("../repository/report.repo")
 
+const createReport = async (req, res, next) => {
+  const sourceID = req.user.userId; 
+  const {postID, reportContent,reportStatus } = req.body;
+  const targetID = await reportRepo.getTargetID(postID); 
+  const response =  new OK({
+    message:"create new report",
+    metadata:  await reportService.createReport({
+        sourceID,
+        targetID,
+        postID,
+        reportContent,
+        reportStatus
+      })
+  })
+  response.send(res)
+};
 
+module.exports = {
+  createReport
 
-class reportController {
-    newReport = async(req, res, next)=> {
-        const result = new OK({
-            message: "Create Post Success",
-            metadata: await reportService.newReport(req.body)
-        })
-        result.send(res);
-    };
-    getAllReport = async(req, res, next)=>{
-        const result = new OK({
-            message:" View posts Success",
-            metadata: await reportService.viewAllReport()
-        })
-        result.send(res);
-    };
-    getAReport = async(req, res, next)=>{
-        const result = new OK({
-            message:" View a report Success",
-            metadata: await reportService.viewReport(req.params.id)
-        })
-        result.send(res);
-    };
-    updateReport = async(req, res, next)=>{
-        const result = new OK({
-            message:" Update a post tag Success",
-            metadata: await reportService.updateReport(req.params,req.body)
-        })
-        result.send(res);
-    };
-    deleteReport = async(req, res, next)=>{
-        const result = new OK({
-            message:" Update a post tag Sucess",
-            metadata: await reportService.deleteReport(req.params)
-        })
-        result.send(res);
-    };
-
-}
-module.exports = new reportController();
+};

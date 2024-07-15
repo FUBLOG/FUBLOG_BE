@@ -46,6 +46,10 @@ const postSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    reportContent: {
+      type: String,
+      required: false,
+    }
   },
   {
     collection: COLLECTION_NAME,
@@ -95,3 +99,4 @@ postSchema.post("findOneAndUpdate", async function (doc, next) {
 });
 
 module.exports = mongoose.model(DOCUMENT_NAME, postSchema);
+

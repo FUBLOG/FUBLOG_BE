@@ -21,7 +21,7 @@ const sendFriendRequest = async (req, res, next) => {
 const acceptFriendRequest = async (req, res, next) => {
   const { targetID } = req.body;
   const sourceID = req.user.userId;
-  const response = new NO_CONTENT({
+  const response = new OK({
     message: "Successfully accepted request",
     metadata: await friendService.acceptFriendRequest({
       sourceID,

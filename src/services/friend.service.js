@@ -1,4 +1,4 @@
-"use strict";
+ "use strict";
 
 const {
   NotFoundError,
@@ -30,10 +30,14 @@ const { isMongoId } = require("validator");
 const { log } = require("../logger/log.system");
 class FriendService {
   static sendFriendRequest = async ({ sourceID = "", targetID = "" }) => {
+
     const check = await isEmpty(targetID);
+
     if (check) throw new UnprocessableEntityError("Missing targetID");
+
     if (!isMongoId(sourceID) || !isMongoId(targetID))
       throw new UnprocessableEntityError("Invalid userID");
+
     const sender = await findUserById(sourceID);
     const receiver = await findUserById(targetID);
 
@@ -46,7 +50,9 @@ class FriendService {
     if (existingRequest) {
       throw new ConflictRequestError("Friend request already sent");
     }
+
     const request = await findRequest(targetID, sourceID);
+
     if (request) {
       return this.acceptFriendRequest({ sourceID, targetID });
     }
@@ -64,12 +70,16 @@ class FriendService {
   };
 
   static acceptFriendRequest = async ({ sourceID = "", targetID = "" }) => {
+    
     const check = await isEmpty(targetID);
+
     if (check) throw new UnprocessableEntityError("Missing targetID");
+
     if (!isMongoId(sourceID) || !isMongoId(targetID))
       throw new UnprocessableEntityError("Invalid userID");
 
     const existingRequest = await findRequest(sourceID, targetID);
+    
     console.log(existingRequest);
     if (!existingRequest) {
       throw new NotFoundError("Friend request not found");
@@ -77,6 +87,7 @@ class FriendService {
 
     await updateFriendList(sourceID, targetID);
     await updateFriendList(targetID, sourceID);
+
     //send notification
     notificationService.sendNotification({
       type: "friend",
