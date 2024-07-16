@@ -15,6 +15,7 @@ const NewFeedsService = require("./newfeeds.service");
 const {
   findPostByTagForGuest,
   findPostByTagForUser,
+  findDelete,
 } = require("../repository/newfeed.repo");
 
 class PostService {
@@ -55,13 +56,21 @@ class PostService {
   };
 
   updatePost = async ({ id }, data, filesData) => {
-    if (filesData) await deleteImage(aPost.postLinkToImages);
+    if (filesData) {
+      for (const file of filesData) {
+        deleteImage(file?.path);
+      }
+    }
     return await updatePost(id, data, filesData);
   };
 
   deletePost = async ({ id }) => {
     const deletePost = await post.findByIdAndDelete(id);
-    if (!deletePost) throw new NotFoundError("Cannot find ID");
+    if (!deletePost) {
+      throw new NotFoundError("Cannot find ID");
+    }else{
+      await findDelete(id);
+    }
     return deletePost;
   };
 
@@ -104,7 +113,7 @@ class PostService {
     if (!findPostsByUser) throw new NotFoundError();
     return findPostsByUser;
   };
-  getPostsForUser = async ({ userId, page, limit, seenIds, tagId}) => {
+  getPostsForUser = async ({ userId, page, limit, seenIds, tagId }) => {
     const friendPosts = await NewFeedsService.getFriendNewFeeds({
       userId,
       page,

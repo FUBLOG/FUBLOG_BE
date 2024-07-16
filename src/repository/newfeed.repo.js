@@ -48,30 +48,30 @@ const getPublicNewFeeds = async ({ page, limit, seenIds, tagId }) => {
 const getFriendNewFeeds = async ({ userId, page, limit, tagId }) => {
   const offset = page * limit;
   const feeds = await newfeedsModel
-      .find({ friendId: userId })
-      .sort({ createdAt: -1, rank: 1 })
-      .skip(offset)
-      .limit(limit)
-      .populate({
-        path: "userId",
-        model: "User",
-        select: "displayName userInfo profileHash",
-        populate: {
-          path: "userInfo",
-          model: "UserInfo",
-          select: "avatar -_id -user_id",
-        },
-      })
-      .populate({
-        path: "post",
-        model: "Post",
-        match: { postTagID: tagId },
-        populate: {
-          path: "postTagID",
-          model: "Tag",
-        },
-      })
-      .lean();
+    .find({ friendId: userId })
+    .sort({ createdAt: -1, rank: 1 })
+    .skip(offset)
+    .limit(limit)
+    .populate({
+      path: "userId",
+      model: "User",
+      select: "displayName userInfo profileHash",
+      populate: {
+        path: "userInfo",
+        model: "UserInfo",
+        select: "avatar -_id -user_id",
+      },
+    })
+    .populate({
+      path: "post",
+      model: "Post",
+      match: { postTagID: tagId },
+      populate: {
+        path: "postTagID",
+        model: "Tag",
+      },
+    })
+    .lean();
 
   deleteNewFeed(feeds.map((feed) => feed._id));
   return feeds;
@@ -162,12 +162,20 @@ const findPostByTagForUser = async ({
       },
     })
     .lean();
-  deleteNewFeed(feeds.map((feed) => {
-    if (feed.post === null) {
-      return feed._id;
-    }
-  }));
+  deleteNewFeed(
+    feeds.map((feed) => {
+      if (feed.post === null) {
+        return feed._id;
+      }
+    })
+  );
   return feeds.filter((feed) => feed?.post !== null);
+};
+
+const findDelete = async (id) => {
+  return await newfeedsModel.findByIdAndDelete({
+    post: id,
+  });
 };
 module.exports = {
   createNewFeed,
@@ -176,4 +184,5 @@ module.exports = {
   updateRankMessage,
   findPostByTagForGuest,
   findPostByTagForUser,
+  findDelete,
 };
