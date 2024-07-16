@@ -14,6 +14,7 @@ const {
   updateUserAvatar,
   findUserInfoById,
   updateUserInfo,
+  updateUserCVPhoto,
 } = require("../repository/userInfo.repo");
 const { unGetSelectData, removeAccents } = require("../utils");
 
@@ -73,7 +74,7 @@ class UserInfoService {
   };
   // Update COver Photo
   updateCoverPhoto = async (_id, filedata) => {
-    if (await Validator.isEmpty(_id)) throw new NotFoundError("ID Is Empty");
+    if (await validator.isEmpty(_id)) throw new NotFoundError("ID Is Empty");
     return await updateUserCVPhoto(_id, filedata);
   };
   //  View post photo
