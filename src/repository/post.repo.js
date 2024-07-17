@@ -37,18 +37,20 @@ const createNewPost = async (
 };
 const updatePost = async (
   id,
-  {
-    postTagID,
-    postContent,
-    postStatus,
-  },
-  filesdata
+  { postTagID, postContent, postStatus },
+  filesData = []
 ) => {
-  if (filesdata?.length > 0) {
-    const urls = filesdata.map((file) => {
-      const pID = file.filename;
-      return cloudinary.url(pID, { width: 750, height: 500, crop: "fill" });
-    });
+  if (filesData?.length > 0) {
+    const urls = await Promise.all(
+      filesData.map(async (file) => {
+        const pID = file.filename;
+        return cloudinary.url(pID, {
+          width: 750,
+          height: 500,
+          crop: "fill",
+        });
+      })
+    );
     return await postModel.findByIdAndUpdate(id, {
       postTagID,
       postContent,
