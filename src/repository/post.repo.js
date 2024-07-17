@@ -41,28 +41,21 @@ const updatePost = async (
   filesData = []
 ) => {
   if (filesData?.length > 0) {
-    const urls = await Promise.all(
-      filesData.map(async (file) => {
-        const pID = file.filename;
-        return cloudinary.url(pID, {
-          width: 750,
-          height: 500,
-          crop: "fill",
-        });
-      })
-    );
+    const imageLink = filesData.map((file) => file.path);
+    const finalImagePaths = imageLink?.length > 0 ? imageLink : [];
     return await postModel.findByIdAndUpdate(id, {
       postTagID,
       postContent,
-      postLinkToImages: urls,
+      postLinkToImages: finalImagePaths,
+      postStatus,
+    });
+  } else {
+    return await postModel.findByIdAndUpdate(id, {
+      postTagID,
+      postContent,
       postStatus,
     });
   }
-  return await postModel.findByIdAndUpdate(id, {
-    postTagID,
-    postContent,
-    postStatus,
-  });
 };
 
 const findUserByPostID = async (postId) => {
