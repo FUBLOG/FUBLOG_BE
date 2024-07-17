@@ -56,11 +56,6 @@ class PostService {
   };
 
   updatePost = async ({ id }, data, filesData) => {
-    if (filesData) {
-      for (const file of filesData) {
-        deleteImage(file?.path);
-      }
-    }
     return await updatePost(id, data, filesData);
   };
 
