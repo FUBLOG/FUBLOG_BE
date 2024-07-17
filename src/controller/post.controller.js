@@ -84,6 +84,7 @@ class PostController {
     result.send(res);
   };
 
+  
   searchPostsByUserId = async (req, res, next) => {
     const result = new OK({
       message: "Search By User was successful",

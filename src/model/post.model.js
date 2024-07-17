@@ -44,6 +44,10 @@ const postSchemas = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    reportContent: {
+      type: String,
+      required: false,
+    }
   },
   {
     collection: COLLECTION_NAME,
