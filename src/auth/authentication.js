@@ -8,6 +8,7 @@ const {
   UnauthorizedError,
 } = require("../core/response/error.response");
 const { error } = require("winston");
+const { findKey } = require("../repository/apikey.repo");
 
 /*
       1 - check profileHash missing
@@ -50,4 +51,41 @@ const authentication = asyncHandler(async (req, res, next) => {
     return next();
   }
 });
-module.exports = { authentication };
+const apiKey = async (req, res, next) => {
+  try {
+    const key = req.headers[HEADER.API_KEY]?.toString();
+    if (!key) {
+      return res.status(403).json({
+        message: "Forbidden Error",
+      });
+    }
+    //check objKey
+    const objKey = await findKey(key);
+    if (!objKey) {
+      return res.status(403).json({
+        message: "Forbidden Error",
+      });
+    }
+    req.objKey = objKey;
+    return next();
+  } catch (error) {}
+};
+
+const permissions = (permission) => {
+  return (req, res, next) => {
+    if (!req.objKey.permissions) {
+      return res.status(403).json({
+        message: "Permission Denied",
+      });
+    }
+    const validPermissions = req.objKey.permissions.includes(permission);
+    if (!validPermissions) {
+      return res.status(403).json({
+        message: "Permission Denied",
+      });
+    }
+    return next();
+  };
+};
+
+module.exports = { authentication, apiKey, permissions };
