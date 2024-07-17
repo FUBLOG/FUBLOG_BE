@@ -38,12 +38,9 @@ const createNewPost = async (
 const updatePost = async (
   id,
   {
-    UserID,
     postTagID,
     postContent,
-    postLinkToImages: filepath,
     postStatus,
-    likes,
   },
   filesdata
 ) => {
@@ -53,20 +50,16 @@ const updatePost = async (
       return cloudinary.url(pID, { width: 750, height: 500, crop: "fill" });
     });
     return await postModel.findByIdAndUpdate(id, {
-      UserID,
       postTagID,
       postContent,
       postLinkToImages: urls,
       postStatus,
-      likes,
     });
   }
   return await postModel.findByIdAndUpdate(id, {
-    UserID,
     postTagID,
     postContent,
     postStatus,
-    likes,
   });
 };
 
