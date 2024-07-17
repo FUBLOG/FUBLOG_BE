@@ -5,6 +5,7 @@ const { convertToObjectId } = require("../utils");
 const createDefaultUserInfo = async ({ userId }) => {
   return await userInfoModel.create({
     user_id: userId,
+    avatar: "https://res.cloudinary.com/dltzvpyh3/image/upload/v1719395762/posts/fyypw71lhgjqlcudpyud.jpg",
   });
 };
 
