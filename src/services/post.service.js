@@ -60,7 +60,9 @@ class PostService {
   };
 
   deletePost = async ({ id }) => {
-    const deletePost = await post.findByIdAndDelete(id);
+    const deletePost = await post.findOneAndDelete({
+      _id: id,
+    });
     if (!deletePost) {
       throw new NotFoundError("Cannot find ID");
     }else{

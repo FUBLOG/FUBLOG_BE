@@ -173,7 +173,7 @@ const findPostByTagForUser = async ({
 };
 
 const findDelete = async (id) => {
-  return await newfeedsModel.findByIdAndDelete({
+  return await newfeedsModel.findOneAndDelete({
     post: id,
   });
 };
