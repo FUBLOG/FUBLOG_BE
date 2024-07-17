@@ -10,27 +10,44 @@ const createDefaultUserInfo = async ({ userId }) => {
 
 const updateUserAvatar = async (id, fileData) => {
   // Move old avatar to avatarlist
-  const oldAvatar = await userInfoModel.findById(id).avatar;
-  const arrayOfAvatar = (await userInfoModel.findById(id).avatarList) || [];
+  const oldAvatar = await userInfoModel.findOne({
+    user_id: id,
+  }).avatar;
   const newAvatar = fileData.path;
   // update new avatar
-  return await userInfoModel.findByIdAndUpdate(id, {
+  return await userInfoModel.findOneAndUpdate({
+    user_id: id,
+  }, {
     avatar: newAvatar,
-    avatarList: arrayOfAvatar.push(oldAvatar),
+    $push: {
+      avatarList: oldAvatar,
+    },
+  },{
+    new: true
   });
 };
 
 const updateUserCVPhoto = async (id, fileData) => {
   // Clear old avatar
-  const oldCVPhoto = userInfoModel.findById(id).cover_photo;
-  const arrayOfCVPhoto = (await userInfoModel.findById(id).coverList) || [];
+  const oldCVPhoto = await userInfoModel.findOne({
+    user_id: id,
+  }).cover_photo;
   const newCVPhoto = fileData.path;
-
   // update new avatar
-  return await userInfoModel.findByIdAndUpdate(id, {
-    cover_photo: newCVPhoto,
-    coverList: arrayOfCVPhoto.push(oldCVPhoto),
-  });
+  return await userInfoModel.findOneAndUpdate(
+    {
+      user_id: id,
+    },
+    {
+      cover_photo: newCVPhoto,
+      $push: {
+        coverList: oldCVPhoto,
+      },
+    },
+    {
+      new: true,
+    }
+  );
 };
 
 //  View all Photos Post
@@ -60,7 +77,7 @@ const findUserInfoById = async (userId, unselect = []) => {
 
 const getFriendsList = async (userId) => {
   return await userInfoModel
-    .findOne({user_id: userId})
+    .findOne({ user_id: userId })
     .select("friendList")
     .populate({
       path: "friendList",
@@ -174,7 +191,6 @@ const getBlockedUsers = async (userId) => {
 const isExisProfileHash = async (profileHash) => {
   return await userInfoModel.findOne({ profileHash });
 };
-
 
 module.exports = {
   createDefaultUserInfo,
