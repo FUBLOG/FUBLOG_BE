@@ -7,5 +7,6 @@ const stttCtrl = require("../../controller/statistics.controller");
 router.use(authentication);
 
 router.get('/', asyncHandler(stttCtrl.getSttt));
+router.get('/mon', asyncHandler(stttCtrl.getMonSttt));
 
 module.exports = router;
