@@ -12,7 +12,8 @@ class UserInfoController {
   };
 
   changeAvatar = async (req, res, next) => {
-    const userId = req.user.userId;
+    //const userId = req.user.userId;
+    console.log(req);
     const result = new OK({
       message: "Change Avatar Success",
       metadata: await userInfoService.updateAvatar(userId, req.file),

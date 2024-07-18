@@ -141,4 +141,5 @@ class PostService {
     return feeds;
   };
 }
+
 module.exports = new PostService();
