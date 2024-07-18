@@ -44,11 +44,14 @@ class PostService {
 
   findPost = async (id) => {
     const viewApost = await post.findById(id);
-    if (viewApost.length > 0) throw new NotFoundError("Cannot Find Post Id");
+    if (!viewApost) throw new NotFoundError("Cannot Find Post Id");
     return viewApost;
   };
 
   updatePost = async ({ id }, data, filesData) => {
+    const aPost = await post.findById(id);
+    if (!aPost) throw new NotFoundError("Cannot Find Post Id");
+
     if (filesData) await deleteImage(aPost.postLinkToImages);
     return await updatePost(id, data, filesData);
   };
@@ -72,6 +75,7 @@ class PostService {
     if (!findPostsByUser) throw new NotFoundError();
     return findPostsByUser;
   };
+
   getPostsForUser = async ({ userId, page, limit, seenIds }) => {
     const newLimit = limit / 2;
     const publicPosts = await NewFeedsService.getPublicNewFeeds({
@@ -89,6 +93,7 @@ class PostService {
     });
     return { posts, seen: publicPosts.map((post) => post._id) };
   };
+
   getPostsForGuest = async ({ page, limit, seenIds }) => {
     const feeds = await NewFeedsService.getPublicNewFeeds({
       page,
@@ -98,4 +103,5 @@ class PostService {
     return feeds;
   };
 }
+
 module.exports = new PostService();

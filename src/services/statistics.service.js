@@ -1,17 +1,23 @@
 const userRepository = require('../repository/statistics.repo');
 
-const getStatistics= async (date) => {
-  const startDay = new Date(date.setHours(0, 0, 0, 0));
-  const endDay = new Date(date.setHours(23, 59, 59, 999));
+const getStatistics = async (date) => {
+  const months = [];
+  const userCounts = [];
+  const postCounts = [];
 
-  const userCount = await userRepository.getTotalUser();
-  const activeUserIds = await userRepository.getActUsers(startDay, endDay);
-  const userAct = activeUserIds.length;
-  const totalPosts = await userRepository.getTotalPost();
-  const dailyPosts = await userRepository.getPostInDay(startDay, endDay);
-  const newUsers = await userRepository.getUserInDay(startDay, endDay);
+  for (let i = 4; i >= 0; i--) {
+    const startDay = new Date(date.getFullYear(), date.getMonth() - i, 1);
+    const endDay = new Date(date.getFullYear(), date.getMonth() - i + 1, 0);
 
-  return { userCount, userAct, totalPosts, dailyPosts, newUsers };
+    const userCount = await userRepository.getUserCountByMonth(startDay, endDay);
+    const postCount = await userRepository.getPostCountByMonth(startDay, endDay);
+
+    months.push(startDay.toLocaleString('default', { month: 'long', year: 'numeric' }));
+    userCounts.push(userCount);
+    postCounts.push(postCount);
+  }
+
+  return { months, userCounts, postCounts };
 };
 
-module.exports = {getStatistics};
+module.exports = { getStatistics };

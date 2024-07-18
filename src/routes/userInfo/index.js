@@ -4,7 +4,6 @@ const userInfoController = require("../../controller/user.info.controller");
 const { authentication } = require("../../auth/authentication");
 const uploader = require("../../config/multer.config")
 
-
 // Get All User Info
 router.get('/getalluserinfo', asyncHandler(userInfoController.getAllUserInfo));
 
@@ -19,7 +18,7 @@ router.delete('/deleteuserinfo/:id', asyncHandler(userInfoController.deleteUserI
 router.patch('/updateuserinfo/:id', asyncHandler(userInfoController.updateInfo));
 
 // Update Avatar
-router.patch('/updateavatar/:id',uploader.single('image'), asyncHandler(userInfoController.changeAvatar));
+router.patch('/updateavatar/',uploader.single('image'), asyncHandler(userInfoController.changeAvatar));
 
 // Update Cover Photo
 router.patch('/updatecoverphoto',uploader.single('image'), asyncHandler(userInfoController.changeCoverPhoto));

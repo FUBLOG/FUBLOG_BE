@@ -16,4 +16,5 @@ router.use("/friend", require("./friend"));
 router.use("/likePost",require("./like"))
 router.use("/conversation", require("./conversation"));
 router.use("/newfeed", require("./newfeed"));
+router.use("./userinfo",require("./userInfo"))
 module.exports = router;

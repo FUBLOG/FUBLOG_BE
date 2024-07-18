@@ -1,12 +1,12 @@
 const stttSer = require("../services/statistics.service");
 const { OK } = require("../core/response/success.response");
 
-const getSttt = async (req, res,next) => {
+const getSttt = async (req, res, next) => {
   try {
     const date = req.query.date ? new Date(req.query.date) : new Date();
     const metadata = await stttSer.getStatistics(date);
     const response = new OK({
-      message: "got statistics",
+      message: "Got statistics",
       metadata
     });
     response.send(res);
@@ -15,4 +15,4 @@ const getSttt = async (req, res,next) => {
   }
 };
 
-module.exports = {getSttt};
+module.exports = { getSttt };
