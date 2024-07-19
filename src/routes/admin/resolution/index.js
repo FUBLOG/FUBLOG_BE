@@ -7,7 +7,7 @@ router.use(authentication);
 
 router.get("/", ReportController.getAllReports);
 router.get("/report", ReportController.getReport);
-router.delete("/", ReportController.deleteReport);
+router.post("/safe", ReportController.deleteReport);
 router.post("/del", ReportController.delReport);
 
 module.exports = router;
