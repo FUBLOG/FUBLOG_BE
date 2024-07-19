@@ -2,12 +2,30 @@ const Report = require("../model/report.model");
 const { NotFoundError } = require("../core/response/error.response");
 const postModel = require("../model/post.model");
 const { findDelete } = require("./newfeed.repo");
+const { path } = require("../app");
 
 class ReportRepository {
   static async getAllReports() {
-    const reports = await Report.find().select(
-      "_id sourceID targetID postId reportContent reportStatus createdAt updatedAt"
-    );
+    const reports = await Report.find()
+      .populate({
+        path: "sourceID",
+        select: "-password -__v -createdAt -updatedAt -status",
+        populate: {
+          path: "userInfo",
+          select: "avatar",
+        },
+      })
+      .populate({
+        path: "targetID",
+        select: "-password -__v -createdAt -updatedAt -status",
+        populate: {
+          path: "userInfo",
+          select: "avatar",
+        },
+      })
+      .populate({
+        path: "postID",
+      }).lean();
     if (!reports) throw new NotFoundError("report not found");
     return reports;
   }
