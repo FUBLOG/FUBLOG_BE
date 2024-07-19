@@ -23,11 +23,21 @@ const deleteReport = async (req, res, next) => {
   const { reportID } = req.body;
 
   await ReportService.deleteReport(reportID);
-  
+
   const response = new NO_CONTENT({
     message: "deleted the report",
   });
   response.send(res);
 };
 
-module.exports = { getAllReports, getReport, deleteReport };
+const delReport = async (req, res, next) => {
+  const { reportID } = req.body;
+
+  const response = new NO_CONTENT({
+    message: "deleted the report",
+    metadata: await ReportService.delReport(reportID),
+  });
+  response.send(res);
+};
+
+module.exports = { getAllReports, getReport, deleteReport, delReport };

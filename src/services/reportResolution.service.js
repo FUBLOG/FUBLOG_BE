@@ -15,6 +15,11 @@ class ReportService {
     const report = await ReportRepository.deleteReport(reportID);
     return report;
   }
+
+  static async delReport(reportID) {
+    const report = await ReportRepository.delReport(reportID);
+    return report;
+  }
 }
 
 module.exports = ReportService;

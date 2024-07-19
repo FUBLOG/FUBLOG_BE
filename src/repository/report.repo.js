@@ -8,7 +8,7 @@ const createReport = async ({ sourceID, targetID, postID, reportContent,reportSt
     targetID,
     postID,
     reportContent,
-    reportStatus
+    reportStatus: "pending",
   });
   return newReport.save();
 };

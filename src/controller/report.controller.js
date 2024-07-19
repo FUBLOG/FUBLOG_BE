@@ -4,7 +4,7 @@ const reportRepo = require("../repository/report.repo")
 
 const createReport = async (req, res, next) => {
   const sourceID = req.user.userId; 
-  const {postID, reportContent,reportStatus } = req.body;
+  const {postID, reportContent } = req.body;
   const targetID = await reportRepo.getTargetID(postID); 
   const response =  new OK({
     message:"create new report",
@@ -13,7 +13,6 @@ const createReport = async (req, res, next) => {
         targetID,
         postID,
         reportContent,
-        reportStatus
       })
   })
   response.send(res)
