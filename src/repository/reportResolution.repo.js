@@ -12,6 +12,7 @@ class ReportRepository {
         select: "-password -__v -createdAt -updatedAt -status",
         populate: {
           path: "userInfo",
+          model: "UserInfo",
           select: "avatar",
         },
       })
@@ -20,6 +21,7 @@ class ReportRepository {
         select: "-password -__v -createdAt -updatedAt -status",
         populate: {
           path: "userInfo",
+          model: "UserInfo",
           select: "avatar",
         },
       })

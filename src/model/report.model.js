@@ -7,17 +7,17 @@ const reportSchema = new mongoose.Schema(
   {
     sourceID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "UserInfos",
-      required: true
+      ref: "User",
+      required: true,
     },
     targetID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "UserInfos",
+      ref: "User",
       required: true,
     },
     postID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Posts",
+      ref: "Post",
     },
     reportContent: {
       type: String,
@@ -33,6 +33,5 @@ const reportSchema = new mongoose.Schema(
     collection: COLLECTION_NAME,
   }
 );
-
 
 module.exports = mongoose.model(DOCUMENT_NAME, reportSchema);
