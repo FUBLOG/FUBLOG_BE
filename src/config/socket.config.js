@@ -46,6 +46,20 @@ io.on("connection", (socket) => {
   socket.on("ping", async (conversationId) => {
     await readMessageFromConversation({ conversationId });
   });
+
+  //video call
+  socket.on("callUser", ({ userToCall, signalData, from, name }) => {
+    const receiverSocketId = getReceiverSocketId(userToCall);
+    io.to(receiverSocketId).emit("callUser", {
+      signal: signalData,
+      from,
+      name,
+    });
+  });
+  socket.on("answerCall", (data) => {
+    const receiverSocketId = getReceiverSocketId(data.to);
+    io.to(receiverSocketId).emit("callAccepted", data.signal);
+  });
 });
 
 module.exports = { app, io, server, getReceiverSocketId };
