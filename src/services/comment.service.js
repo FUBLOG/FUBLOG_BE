@@ -30,6 +30,7 @@ class CommentService {
       await Comment.updateMany(
         {
           comment_right: { $gte: rightValue },
+          comment_postID: comment_postID,
         },
         {
           $inc: { comment_right: 2 },
@@ -38,6 +39,7 @@ class CommentService {
       await Comment.updateMany(
         {
           comment_left: { $gt: rightValue },
+          comment_postID: comment_postID,
         },
         {
           $inc: { comment_left: 2 },
@@ -145,23 +147,25 @@ class CommentService {
     const commentsToDelete = await Comment.find({
       comment_left: { $gte: leftValue },
       comment_right: { $lte: rightValue },
+      comment_postID: comment_postID,
     }).lean();
 
     await Comment.deleteMany({
       comment_left: { $gte: leftValue },
       comment_right: { $lte: rightValue },
+      comment_postID: comment_postID,
     });
 
     await Comment.updateMany(
-      { comment_right: { $gt: rightValue } },
+      { comment_right: { $gt: rightValue }, comment_postID: comment_postID },
       { $inc: { comment_right: -width } }
     );
 
     await Comment.updateMany(
-      { comment_left: { $gt: rightValue } },
+      { comment_left: { $gt: rightValue }, comment_postID: comment_postID},
       { $inc: { comment_left: -width } }
     );
-    await commentRepo.updateCommentCount(comment_postID, -1);
+    await commentRepo.updateCommentCount(comment_postID, width / -2);
     return commentsToDelete;
   }
 
